@@ -1,0 +1,9 @@
+{
+  "DASHBOARD": "/Dashboard",
+  "DONATIONS": "/Donations",
+  "EXPENSES": "/Expenses",
+  "RENTS": "/Rents",
+  "REPORTS": "/reports",
+  "LOGIN": "/login",
+  "ABOUT": "/about"
+}

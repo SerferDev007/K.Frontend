@@ -1,0 +1,10 @@
+
+input:-webkit-autofill {
+    -webkit-text-fill-color: #000 !important;
+  }
+  .dark input:-webkit-autofill {
+    -webkit-text-fill-color: #fff !important;
+  }
+  
+
+ 
