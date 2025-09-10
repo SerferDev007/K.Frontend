@@ -245,7 +245,7 @@ const DonationForm: React.FC<DonationFormProps> = ({
               value={formData.amount}
               onChange={handleChange}
               onWheel={(e) => e.currentTarget.blur()} // disable scroll change
-              placeholder="Enter contact number"
+              placeholder="Enter Amount"
               className="focus-visible:ring-1 border-2 border-gray-200 rounded-xl
                  placeholder-gray-500 dark:placeholder-gray-400
                  !text-black dark:text-white bg-transparent w-full px-3 py-2
