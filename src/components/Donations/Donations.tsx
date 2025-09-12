@@ -21,7 +21,7 @@ const Donations = () => {
     setIsDonantionForm(true);
   };
   return (
-    <div className="relative w-full p-4 min-h-screen">
+    <div className="relative w-full mt-2 p-4 min-h-screen">
       {/* Button fixed at top-right of this div */}
       {!isDonationForm && (
         <>
@@ -32,7 +32,7 @@ const Donations = () => {
               Manage Donations
             </h4>
             <Button
-              className="!rounded-xl bg-amber-400 hover:bg-orange-400 text-gray-900 dark:text-white disabled:cursor-not-allowed"
+              className="!rounded-xl bg-amber-400 hover:bg-orange-400 !text-gray-900 dark:text-white disabled:cursor-not-allowed"
               onClick={addDonationBtnhandler}
             >
               Add Donation

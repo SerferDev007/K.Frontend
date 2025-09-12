@@ -10,6 +10,7 @@ import DonationPage from "../pages/DonationPage";
 import ExpensePage from "../pages/ExpensePage";
 import ReportPage from "../pages/ReportPage";
 import RentPage from "../pages/RentPage";
+import LoanPage from "../pages/LoanPage";
 
 const PageRoutes = () => {
   return (
@@ -20,6 +21,7 @@ const PageRoutes = () => {
         <Route path={route.DONATIONS} element={<DonationPage />} />
         <Route path={route.EXPENSES} element={<ExpensePage />} />
         <Route path={route.RENTS} element={<RentPage />} />
+        <Route path={route.LOANS} element={<LoanPage />} />
         <Route path={route.REPORTS} element={<ReportPage />} />
         <Route path={route.LOGIN} element={<LoginPage />} />
         <Route path={route.ABOUT} element={<AboutPage />} />

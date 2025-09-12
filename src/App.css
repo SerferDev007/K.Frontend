@@ -1,10 +1,22 @@
-
+/* Autofill fix for Safari/Chrome */
 input:-webkit-autofill {
-    -webkit-text-fill-color: #000 !important;
-  }
-  .dark input:-webkit-autofill {
-    -webkit-text-fill-color: #fff !important;
-  }
-  
+  -webkit-text-fill-color: #111827 !important;
+}
+.dark input:-webkit-autofill {
+  -webkit-text-fill-color: #F9FAFB !important;
+}
 
- 
+/* Optional: smooth transition for focus */
+input,
+select,
+textarea {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Focus visible ring for accessibility */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(251,191,36,0.5); /* amber-400 ring */
+}

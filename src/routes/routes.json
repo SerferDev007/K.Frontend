@@ -1,8 +1,9 @@
 {
-  "DASHBOARD": "/Dashboard",
-  "DONATIONS": "/Donations",
-  "EXPENSES": "/Expenses",
-  "RENTS": "/Rents",
+  "DASHBOARD": "/dashboard",
+  "DONATIONS": "/donations",
+  "EXPENSES": "/expenses",
+  "RENTS": "/rents",
+  "LOANS": "/loans",
   "REPORTS": "/reports",
   "LOGIN": "/login",
   "ABOUT": "/about"
