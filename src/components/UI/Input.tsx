@@ -1,12 +1,12 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-function Input({
+const Input = ({
   className,
   placeholder,
   type,
   ...props
-}: React.ComponentProps<"input">) {
+}: React.ComponentProps<"input">) => {
   return (
     <input
       type={type}
@@ -31,6 +31,6 @@ function Input({
       {...props}
     />
   );
-}
+};
 
 export { Input };
