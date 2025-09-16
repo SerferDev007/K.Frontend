@@ -1,8 +1,9 @@
+import { useState } from "react";
 import { Button } from "@/components/UI/Button";
 import { Input } from "@/components/UI/Input";
 
 const Login = () => {
-  //const viewPassword = false;
+  const [viewPassword, setViewPassword] = useState(false); // 👈 state for toggle
   const loading = false;
 
   return (
@@ -40,15 +41,18 @@ const Login = () => {
         <div className="relative flex items-center mt-2 mb-2 border-2 rounded-xl border-gray-200">
           <i className="bi bi-lock m-2 text-xl text-gray-600 dark:text-gray-400"></i>
           <Input
-            type="password"
+            type={viewPassword ? "text" : "password"} // 👈 toggle type
             placeholder="Password"
             className="focus-visible:ring-1 mx-1 border-none rounded-xl
                        placeholder-gray-500 dark:placeholder-gray-400
                        text-black dark:text-white bg-transparent"
           />
           <i
-            className="bi bi-eye absolute text-xl top-1/2 right-3 -translate-y-1/2
-                        text-gray-400 dark:text-gray-500 hover:cursor-pointer"
+            onClick={() => setViewPassword(!viewPassword)} // 👈 toggle state
+            className={`bi ${
+              viewPassword ? "bi-eye" : "bi-eye-slash"
+            } absolute text-xl top-1/2 right-3 -translate-y-1/2
+               text-gray-400 dark:text-gray-500 hover:cursor-pointer`}
           ></i>
         </div>
 
