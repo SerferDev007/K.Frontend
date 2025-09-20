@@ -19,6 +19,9 @@ interface AgreementData {
 
 const AgreementForm: React.FC<AgreementFormProps> = ({ onBack }) => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [aadhaarStatus, setAadhaarStatus] = useState<string | null>(null);
+  const [tenantId, setTenantId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const validate = (formData: FormData) => {
     const newErrors: { [key: string]: string } = {};
@@ -43,7 +46,31 @@ const AgreementForm: React.FC<AgreementFormProps> = ({ onBack }) => {
     return newErrors;
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  // --- Aadhaar Availability Check ---
+  const checkAadhaar = async (adharNumber: string | undefined) => {
+    if (!adharNumber) {
+      setAadhaarStatus("Please enter Aadhaar number");
+      return;
+    }
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/tenants/check-adhar/${adharNumber}`);
+      const data = await res.json();
+      if (data.exists) {
+        setAadhaarStatus("❌ Aadhaar already registered");
+        setTenantId(null);
+      } else {
+        setAadhaarStatus("✅ Aadhaar available");
+      }
+    } catch (error) {
+      setAadhaarStatus("Error checking Aadhaar");
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const validationErrors = validate(formData);
@@ -64,7 +91,55 @@ const AgreementForm: React.FC<AgreementFormProps> = ({ onBack }) => {
     const agreementFile = formData.get("agreementFile") as File | null;
     if (agreementFile) data.agreementFile = agreementFile;
 
-    console.log("Submitting agreement:", data);
+    try {
+      setLoading(true);
+
+      // ✅ Step 1: Create Tenant if not already
+      let newTenantId = tenantId;
+      if (!tenantId) {
+        const tenantRes = await fetch("/api/tenants", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            tenantName: data.tenantName,
+            mobileNo: data.contactNumber,
+            adharNo: data.adharNumber,
+          }),
+        });
+        const tenantResult = await tenantRes.json();
+        if (!tenantRes.ok) {
+          alert(tenantResult.message || "Failed to create tenant");
+          return;
+        }
+        newTenantId = tenantResult.tenant._id;
+        setTenantId(newTenantId);
+      }
+
+      // ✅ Step 2: Assign Shop
+      const shopRes = await fetch(`/api/tenants/${newTenantId}/shops`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          shopNo: data.shopNumber,
+          rentAmount: data.rentAmount,
+          depositAmount: data.depositAmount,
+          agreementStart: data.agreementStart,
+        }),
+      });
+
+      const shopResult = await shopRes.json();
+      if (!shopRes.ok) {
+        alert(shopResult.message || "Failed to assign shop");
+        return;
+      }
+
+      alert("✅ Tenant and Shop added successfully!");
+    } catch (err) {
+      console.error(err);
+      alert("Error submitting agreement");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -98,6 +173,64 @@ const AgreementForm: React.FC<AgreementFormProps> = ({ onBack }) => {
               <p className="text-red-500 text-sm mt-1">{errors.tenantName}</p>
             )}
           </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+              Contact Number
+            </label>
+            <input
+              type="number"
+              name="contactNumber"
+              placeholder="Enter contact number"
+              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
+                errors.contactNumber ? "border-red-500" : "border-gray-200"
+              }`}
+            />
+            {errors.contactNumber && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.contactNumber}
+              </p>
+            )}
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+          {/* Aadhaar Number */}
+          <div>
+            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+              Aadhaar Number
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                name="adharNumber"
+                placeholder="Enter Aadhaar number"
+                className="focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300"
+              />
+              <Button
+                type="button"
+                onClick={() =>
+                  checkAadhaar(
+                    (
+                      document.querySelector(
+                        "input[name='adharNumber']"
+                      ) as HTMLInputElement
+                    )?.value
+                  )
+                }
+                className="!rounded-xl bg-blue-400 hover:bg-blue-500 text-gray-900"
+              >
+                Check
+              </Button>
+            </div>
+            {aadhaarStatus && <p className="text-sm mt-1">{aadhaarStatus}</p>}
+          </div>
+          <div>
+            <div>Tenant Create successfull</div>
+          </div>
+        </div>
+
+        {/* Contact & Email */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
           <div>
             <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
               Shop Number
@@ -112,6 +245,24 @@ const AgreementForm: React.FC<AgreementFormProps> = ({ onBack }) => {
             />
             {errors.shopNumber && (
               <p className="text-red-500 text-sm mt-1">{errors.shopNumber}</p>
+            )}
+          </div>
+          {/* Agreement Start */}
+          <div>
+            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+              Agreement Start
+            </label>
+            <input
+              type="date"
+              name="agreementStart"
+              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
+                errors.agreementStart ? "border-red-500" : "border-gray-200"
+              }`}
+            />
+            {errors.agreementStart && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.agreementStart}
+              </p>
             )}
           </div>
         </div>
@@ -154,77 +305,6 @@ const AgreementForm: React.FC<AgreementFormProps> = ({ onBack }) => {
           </div>
         </div>
 
-        {/* Contact & Email */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
-              Contact Number
-            </label>
-            <input
-              type="number"
-              name="contactNumber"
-              placeholder="Enter contact number"
-              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
-                errors.contactNumber ? "border-red-500" : "border-gray-200"
-              }`}
-            />
-            {errors.contactNumber && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.contactNumber}
-              </p>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter email"
-              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
-                errors.email ? "border-red-500" : "border-gray-200"
-              }`}
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-            )}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-          {/* Aadhaar Number */}
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
-              Aadhaar Number
-            </label>
-            <input
-              type="text"
-              name="adharNumber"
-              placeholder="Enter Aadhaar number"
-              className="focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300"
-            />
-          </div>
-          {/* Agreement Start */}
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
-              Agreement Start
-            </label>
-            <input
-              type="date"
-              name="agreementStart"
-              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
-                errors.agreementStart ? "border-red-500" : "border-gray-200"
-              }`}
-            />
-            {errors.agreementStart && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.agreementStart}
-              </p>
-            )}
-          </div>
-        </div>
-
         {/* Agreement File Upload */}
         <div className="mt-2">
           <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
@@ -249,9 +329,10 @@ const AgreementForm: React.FC<AgreementFormProps> = ({ onBack }) => {
           </Button>
           <Button
             type="submit"
+            disabled={loading}
             className="flex-1 !rounded-xl bg-amber-400 hover:bg-orange-400 text-gray-900"
           >
-            Submit Agreement
+            {loading ? "Processing..." : "Submit Agreement"}
           </Button>
         </div>
       </form>
