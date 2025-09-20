@@ -21,8 +21,6 @@ export const FloatingNav = ({
   isLogin,
   loginPath,
   onLogout,
-  isDark,
-  onThemeToggle,
 }: {
   navItems: NavItem[];
   className?: string;
@@ -131,7 +129,7 @@ export const FloatingNav = ({
         )}
 
         {/* Theme toggle */}
-        <button
+        {/* <button
           onClick={onThemeToggle}
           className="rounded-sm"
           aria-label="Toggle theme"
@@ -141,7 +139,7 @@ export const FloatingNav = ({
           ) : (
             <img src="./pics/night.svg" className="w-5 h-5" />
           )}
-        </button>
+        </button> */}
       </motion.div>
     </AnimatePresence>
   );
