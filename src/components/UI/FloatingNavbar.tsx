@@ -28,8 +28,6 @@ export const FloatingNav = ({
   isLogin: boolean;
   loginPath: string;
   onLogout?: () => void;
-  isDark: boolean;
-  onThemeToggle?: () => void;
 }) => {
   const { scrollY } = useScroll();
   const [visible, setVisible] = useState(true);

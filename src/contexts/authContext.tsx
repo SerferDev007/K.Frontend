@@ -1,26 +1,10 @@
-import { createContext, useState, useEffect, type ReactNode } from "react";
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-}
-
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  login: (userData: User) => void;
-  logout: () => void;
-}
-
-export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined
-);
+import { useState, useEffect, type ReactNode } from "react";
+import { AuthContext, type User } from "./authContext";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
-  // Load from localStorage
+  // Load user from localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("authUser");
     if (storedUser) setUser(JSON.parse(storedUser));
