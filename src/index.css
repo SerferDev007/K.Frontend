@@ -1,6 +1,21 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* For Chrome, Safari, Opera */
+::-webkit-scrollbar {
+    width: 6px;               /* make scrollbar thin */
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent;   /* hide track */
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: orange;  /* yellow scrollbar */
+    border-radius: 10px;       /* rounded edges */
+  }
+
+  
 /* Headings */
 .head-text-shadow {
     text-shadow: 2px 2px 4px rgba(0,0,0,0.5);

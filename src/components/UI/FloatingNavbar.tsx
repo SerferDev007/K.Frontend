@@ -33,6 +33,10 @@ export const FloatingNav = ({
   const [visible, setVisible] = useState(true);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // dropdown state
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const armHideTimer = (ms: number) => {
     if (hideTimer.current) clearTimeout(hideTimer.current);
     hideTimer.current = setTimeout(() => {
@@ -45,6 +49,20 @@ export const FloatingNav = ({
     return () => {
       if (hideTimer.current) clearTimeout(hideTimer.current);
     };
+  }, []);
+
+  // close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   useMotionValueEvent(scrollY, "change", () => {
@@ -75,7 +93,7 @@ export const FloatingNav = ({
         animate={{ y: visible ? 0 : -100, opacity: visible ? 1 : 0 }}
         transition={{ duration: 0.2 }}
         className={cn(
-          "flex top-5 inset-x-0 mx-auto max-w-fit z-[5000] px-6 items-center bExpenses bExpenses-transparent dark:bExpenses-white/[0.2] rounded-full dark:bg-black bg-white shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] space-x-4",
+          "flex top-5 inset-x-0 mx-auto max-w-fit z-[5000] px-6 items-center bg-white dark:bg-black rounded-full shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] space-x-4",
           className
         )}
       >
@@ -87,57 +105,80 @@ export const FloatingNav = ({
             className={({ isActive }) =>
               cn(
                 "p-2 rounded-sm text-neutral-600 hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1",
-                isActive && "font-bold" // bold active nav item
+                isActive && "font-bold underline"
               )
             }
-            style={({ isActive }) => ({
-              textDecoration: isActive ? "underline" : "none",
-            })}
           >
             {item.icon && <span>{item.icon}</span>}
             <span className="text-sm">{item.name}</span>
           </NavLink>
         ))}
 
-        {/* Login / Logout (no bold effect) */}
-        {isLogin ? (
-          <NavLink
-            to={loginPath}
-            className={({ isActive }) =>
-              cn(
-                "p-2 rounded-sm text-neutral-600 hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1",
-                isActive && "font-bold " // bold active nav item
-              )
-            }
-            style={({ isActive }) => ({
-              textDecoration: isActive ? "underline" : "none",
-            })}
-          >
-            <span className="text-sm">Login</span>
-          </NavLink>
-        ) : (
-          <NavLink
-            to=""
-            onClick={onLogout}
-            className="p-2 rounded-sm text-neutral-600 hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1"
-            style={{ textDecoration: "none" }}
-          >
-            <span className="text-sm">Logout</span>
-          </NavLink>
-        )}
-
-        {/* Theme toggle */}
-        {/* <button
-          onClick={onThemeToggle}
-          className="rounded-sm"
-          aria-label="Toggle theme"
-        >
-          {isDark ? (
-            <img src="./pics/day.svg" className="w-5 h-5" />
+        {/* Login / Dropdown */}
+        <div className="relative">
+          {!isLogin ? (
+            <NavLink
+              to={loginPath}
+              className={({ isActive }) =>
+                cn(
+                  "p-2 rounded-sm text-neutral-600 hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1",
+                  isActive && "font-bold underline"
+                )
+              }
+            >
+              <span className="text-sm">Login</span>
+            </NavLink>
           ) : (
-            <img src="./pics/night.svg" className="w-5 h-5" />
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="p-2 rounded-sm !text-blue-600 !hover:text-blue-950 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1"
+              >
+                <span className="text-sm">User ▾</span>
+              </button>
+
+              {isOpen && (
+                <div className="absolute mt-2 w-44 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-md shadow-lg z-50">
+                  <NavLink
+                    to="/add-tenant"
+                    className={({ isActive }) =>
+                      cn(
+                        "block px-4 py-2 text-sm",
+                        isActive && "font-bold underline"
+                      )
+                    }
+                    style={{ textDecoration: "none" }}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Add Tenant
+                  </NavLink>
+                  <NavLink
+                    to="/"
+                    className={({ isActive }) =>
+                      cn(
+                        "block px-4 py-2 text-sm",
+                        isActive && "font-bold underline"
+                      )
+                    }
+                    style={{ textDecoration: "none" }}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Profile
+                  </NavLink>
+                  <button
+                    onClick={() => {
+                      onLogout?.();
+                      setIsOpen(false);
+                    }}
+                    className="w-full text-left block px-4 py-2 text-sm text-red-600 font-bold"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           )}
-        </button> */}
+        </div>
       </motion.div>
     </AnimatePresence>
   );

@@ -6,5 +6,6 @@
   "LOANS": "/loans",
   "REPORTS": "/reports",
   "LOGIN": "/login",
-  "ABOUT": "/about"
+  "ADD-TENANT": "/add-tenant",
+  "PROFILE": "/profile"
 }
