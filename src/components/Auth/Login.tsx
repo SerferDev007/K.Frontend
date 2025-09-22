@@ -2,15 +2,18 @@ import { useState, useRef, type FormEvent } from "react";
 import { Button } from "@/components/UI/Button";
 import { Input } from "@/components/UI/Input";
 import { loginUser } from "../../services/authService";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [viewPassword, setViewPassword] = useState(false); // toggle password
   const [loading, setLoading] = useState(false);
-
-  // 👇 refs for uncontrolled inputs
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
+  const { login } = useAuth();
+  const navigate = useNavigate();
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -19,14 +22,17 @@ const Login = () => {
     const password = passwordRef.current?.value || "";
 
     try {
-      const user = await loginUser({ email, password });
-      alert(`Login successful! Welcome ${user.name}`);
-      // ✅ redirect or store user state here
+      const response = await loginUser({ email, password });
+      toast.success(response.message);
+      login(response.user);
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
     } catch (error) {
       if (error instanceof Error) {
-        alert(error.message);
+        toast.error(error.message);
       } else {
-        alert("An unexpected error occurred");
+        toast.error("An unexpected error occurred");
       }
     } finally {
       setLoading(false);

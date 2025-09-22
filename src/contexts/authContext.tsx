@@ -1,30 +1,25 @@
-import { useState, useEffect, type ReactNode } from "react";
-import { AuthContext, type User } from "./authContext";
+import { createContext, useContext } from "react";
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+}
 
-  // Load user from localStorage
-  useEffect(() => {
-    const storedUser = localStorage.getItem("authUser");
-    if (storedUser) setUser(JSON.parse(storedUser));
-  }, []);
+interface AuthContextType {
+  user: User | null;
+  isAuthenticated: boolean;
+  login: (user: User) => void;
+  logout: () => void;
+}
 
-  const login = (userData: User) => {
-    setUser(userData);
-    localStorage.setItem("authUser", JSON.stringify(userData));
-  };
+// 👇 default value (empty)
+export const AuthContext = createContext<AuthContextType>({
+  user: null,
+  isAuthenticated: false,
+  login: () => {},
+  logout: () => {},
+});
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("authUser");
-  };
-
-  return (
-    <AuthContext.Provider
-      value={{ user, isAuthenticated: !!user, login, logout }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
-};
+// Custom hook to use AuthContext
+export const useAuth = () => useContext(AuthContext);

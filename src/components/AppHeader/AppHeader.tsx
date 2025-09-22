@@ -1,11 +1,10 @@
+import { useAuth } from "@/hooks/useAuth";
 import route from "../../routes/routes.json";
 import { FloatingNav } from "../UI/FloatingNavbar";
-
 import { FloatingTextBar } from "../UI/FloatingTextBar";
 
 const AppHeader = () => {
-  const isLogin = true;
-  const handleLogout = () => {};
+  const { user, isAuthenticated, logout } = useAuth();
 
   return (
     <div className="fixed top-3 inset-x-0 mx-auto flex justify-between max-w-8xl z-[5000] px-6">
@@ -19,9 +18,10 @@ const AppHeader = () => {
           { name: "Loans", link: route.LOANS },
           { name: "Reports", link: route.REPORTS },
         ]}
-        isLogin={isLogin}
+        isLogin={isAuthenticated}
         loginPath={route.LOGIN}
-        onLogout={handleLogout}
+        onLogout={logout}
+        userName={user?.name}
       />
     </div>
   );

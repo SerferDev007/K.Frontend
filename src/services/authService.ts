@@ -1,5 +1,7 @@
 // api/authService.ts
 
+import toast from "react-hot-toast";
+
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 export interface LoginData {
@@ -7,13 +9,18 @@ export interface LoginData {
   password: string;
 }
 
-export interface UserResponse {
+export interface User {
   id: string;
   name: string;
   email: string;
 }
 
-export const loginUser = async (data: LoginData): Promise<UserResponse> => {
+export interface LoginResponse {
+  message: string;
+  user: User;
+}
+
+export const loginUser = async (data: LoginData): Promise<LoginResponse> => {
   const res = await fetch(`${BASE_URL}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -22,17 +29,18 @@ export const loginUser = async (data: LoginData): Promise<UserResponse> => {
   });
 
   const result = await res.json();
-  if (!res.ok) throw new Error(result.message || "Login failed");
-  return result.user;
+  if (!res.ok) toast.error(result.message || "Login failed");
+
+  return result as LoginResponse;
 };
 
-export const logoutUser = async (): Promise<string> => {
+export const logoutUser = async (): Promise<{ message: string }> => {
   const res = await fetch(`${BASE_URL}/api/auth/logout`, {
     method: "POST",
     credentials: "include",
   });
 
   const result = await res.json();
-  if (!res.ok) throw new Error(result.message || "Logout failed");
-  return result.message;
+  if (!res.ok) toast.error(result.message || "Logout failed");
+  return result as { message: string };
 };

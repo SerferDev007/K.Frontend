@@ -2,12 +2,14 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import App from "./App.tsx";
-import { AuthProvider } from "./contexts/authContext.tsx";
+import { AuthProvider } from "./contexts/authProvider.tsx";
+import { Toaster } from "react-hot-toast"; // ✅ make sure you import this
 
 createRoot(document.getElementById("root")!).render(
-  <AuthProvider>
-    <BrowserRouter>
+  <BrowserRouter>
+    <AuthProvider>
       <App />
-    </BrowserRouter>
-  </AuthProvider>
+      <Toaster position="top-center" reverseOrder={false} />
+    </AuthProvider>
+  </BrowserRouter>
 );

@@ -21,6 +21,7 @@ export const FloatingNav = ({
   isLogin,
   loginPath,
   onLogout,
+  userName,
 }: {
   navItems: NavItem[];
   className?: string;
@@ -28,6 +29,7 @@ export const FloatingNav = ({
   isLogin: boolean;
   loginPath: string;
   onLogout?: () => void;
+  userName?: string;
 }) => {
   const { scrollY } = useScroll();
   const [visible, setVisible] = useState(true);
@@ -105,7 +107,7 @@ export const FloatingNav = ({
             className={({ isActive }) =>
               cn(
                 "p-2 rounded-sm text-neutral-600 hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1",
-                isActive && "font-bold underline"
+                isActive && "font-bold underline underline-offset-4"
               )
             }
           >
@@ -114,7 +116,7 @@ export const FloatingNav = ({
           </NavLink>
         ))}
 
-        {/* Login / Dropdown */}
+        {/* Login / User Dropdown */}
         <div className="relative">
           {!isLogin ? (
             <NavLink
@@ -122,7 +124,7 @@ export const FloatingNav = ({
               className={({ isActive }) =>
                 cn(
                   "p-2 rounded-sm text-neutral-600 hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1",
-                  isActive && "font-bold underline"
+                  isActive && "font-bold underline underline-offset-4"
                 )
               }
             >
@@ -132,9 +134,9 @@ export const FloatingNav = ({
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="p-2 rounded-sm !text-blue-600 !hover:text-blue-950 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1"
+                className=" !text-blue-600 font-bold flex items-center space-x-1"
               >
-                <span className="text-sm">User ▾</span>
+                <span className="!text-lg">{userName ?? "User"} ▾</span>
               </button>
 
               {isOpen && (
@@ -144,23 +146,21 @@ export const FloatingNav = ({
                     className={({ isActive }) =>
                       cn(
                         "block px-4 py-2 text-sm",
-                        isActive && "font-bold underline"
+                        isActive && "font-bold underline text-lg"
                       )
                     }
-                    style={{ textDecoration: "none" }}
                     onClick={() => setIsOpen(false)}
                   >
                     Add Tenant
                   </NavLink>
                   <NavLink
-                    to="/"
+                    to="/profile"
                     className={({ isActive }) =>
                       cn(
                         "block px-4 py-2 text-sm",
-                        isActive && "font-bold underline"
+                        isActive && "font-bold underline text-lg"
                       )
                     }
-                    style={{ textDecoration: "none" }}
                     onClick={() => setIsOpen(false)}
                   >
                     Profile

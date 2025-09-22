@@ -1,26 +1,26 @@
 import { useState } from "react";
 import RentForm from "./RentForm";
-import AgreementForm from "./AgreementForm";
+import ShopForm from "../Tenants/ShopForm";
 import { Button } from "../UI/Button";
 import ViewRents from "./ViewRents";
 
 const Rents = () => {
   const [isRentForm, setIsRentForm] = useState(false);
-  const [isAgreementForm, setIsAgreementForm] = useState(false);
+  const [isShopForm, setIsShopForm] = useState(false);
 
   const addRentBtnHandler = () => {
     setIsRentForm(true);
-    setIsAgreementForm(false); // ensure only one form is open
+    setIsShopForm(false); // ensure only one form is open
   };
 
-  const addAgreementBtnHandler = () => {
-    setIsAgreementForm(true);
+  const addShopBtnHandler = () => {
+    setIsShopForm(true);
     setIsRentForm(false); // ensure only one form is open
   };
 
   return (
     <div className="relative w-full mt-2 p-4 min-h-screen">
-      {!isRentForm && !isAgreementForm && (
+      {!isRentForm && !isShopForm && (
         <>
           <div className="w-full h-px bg-gray-300 my-2" />
           <div className="flex justify-between items-center m-2">
@@ -36,9 +36,9 @@ const Rents = () => {
               </Button>
               <Button
                 className="!rounded-xl bg-amber-400 hover:bg-orange-400 !text-gray-900 dark:text-white disabled:cursor-not-allowed"
-                onClick={addAgreementBtnHandler}
+                onClick={addShopBtnHandler}
               >
-                Add Agreement
+                Add Shop
               </Button>
             </div>
           </div>
@@ -49,10 +49,8 @@ const Rents = () => {
 
       <div>
         {isRentForm && <RentForm onBack={() => setIsRentForm(false)} />}
-        {isAgreementForm && (
-          <AgreementForm onBack={() => setIsAgreementForm(false)} />
-        )}
-        {!isRentForm && !isAgreementForm && <ViewRents />}
+        {isShopForm && <ShopForm onBack={() => setIsShopForm(false)} />}
+        {!isRentForm && !isShopForm && <ViewRents />}
       </div>
     </div>
   );
