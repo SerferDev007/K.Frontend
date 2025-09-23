@@ -106,10 +106,11 @@ export const FloatingNav = ({
             to={item.link}
             className={({ isActive }) =>
               cn(
-                "p-2 rounded-sm text-neutral-600 hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1",
-                isActive && "font-bold underline underline-offset-4"
+                "p-2 rounded-sm text-neutral-600 hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1 no-underline",
+                isActive && "font-bold bg-yellow-400 text-black rounded-md"
               )
             }
+            style={{ textDecoration: "none" }}
           >
             {item.icon && <span>{item.icon}</span>}
             <span className="text-sm">{item.name}</span>
@@ -123,10 +124,11 @@ export const FloatingNav = ({
               to={loginPath}
               className={({ isActive }) =>
                 cn(
-                  "p-2 rounded-sm text-neutral-600 hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1",
-                  isActive && "font-bold underline underline-offset-4"
+                  "p-2 rounded-sm text-neutral-600 hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1 no-underline",
+                  isActive && "font-bold bg-yellow-400 text-black rounded-md"
                 )
               }
+              style={{ textDecoration: "none" }}
             >
               <span className="text-sm">Login</span>
             </NavLink>
@@ -145,11 +147,12 @@ export const FloatingNav = ({
                     to="/add-tenant"
                     className={({ isActive }) =>
                       cn(
-                        "block px-4 py-2 text-sm",
-                        isActive && "font-bold underline text-lg"
+                        "px-4 py-2 rounded-sm text-neutral-600 hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1 no-underline",
+                        isActive &&
+                          "font-bold bg-yellow-400 text-black rounded-md"
                       )
                     }
-                    onClick={() => setIsOpen(false)}
+                    style={{ textDecoration: "none" }}
                   >
                     Add Tenant
                   </NavLink>
@@ -157,10 +160,12 @@ export const FloatingNav = ({
                     to="/profile"
                     className={({ isActive }) =>
                       cn(
-                        "block px-4 py-2 text-sm",
-                        isActive && "font-bold underline text-lg"
+                        "px-4 py-2 rounded-sm text-neutral-600 hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1 no-underline",
+                        isActive &&
+                          "font-bold bg-yellow-400 text-black rounded-md"
                       )
                     }
+                    style={{ textDecoration: "none" }}
                     onClick={() => setIsOpen(false)}
                   >
                     Profile

@@ -32,7 +32,9 @@ const TenantForm: React.FC<TenantFormProps> = ({ onBack }) => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
     const validationErrors = validate(formData);
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
@@ -49,19 +51,26 @@ const TenantForm: React.FC<TenantFormProps> = ({ onBack }) => {
     try {
       setLoading(true);
       let newTenantId = tenantId;
+
       if (!tenantId) {
         const tenantResult = await createTenant({
           tenantName: data.tenantName!,
           mobileNo: data.contactNumber!,
           adharNo: data.adharNumber,
         });
+
         if (!tenantResult.tenant?._id) {
-          toast.error("Failed to create tenant");
+          toast.error(tenantResult.message || "Failed to create tenant");
           return;
         }
+
+        toast.success("Tenant created successfully!");
         newTenantId = tenantResult.tenant._id;
         setTenantId(newTenantId);
-        toast.success("Tenant created successfully!");
+
+        form.reset();
+        setErrors({});
+        setTenantId("");
       }
     } catch (err: unknown) {
       console.error(err);
