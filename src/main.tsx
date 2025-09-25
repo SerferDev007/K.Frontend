@@ -17,8 +17,31 @@ createRoot(document.getElementById("root")!).render(
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
-            maxWidth: "none",
+            maxWidth: "500px",
+            fontSize: "18px",
+            padding: "16px 24px",
+            borderRadius: "12px",
+            color: "#fff",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
           },
+          // Dynamic colors
+          success: {
+            style: {
+              background: "green",
+            },
+          },
+          error: {
+            style: {
+              background: "red",
+            },
+          },
+          loading: {
+            style: {
+              background: "yellow",
+              color: "#000",
+            },
+          },
+          duration: 3000, // stay for 5 seconds
         }}
       />
     </AuthProvider>

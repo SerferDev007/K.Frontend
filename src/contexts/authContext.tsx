@@ -1,4 +1,5 @@
-import { createContext, useContext } from "react";
+import { createContext } from "react";
+import type { LoginData } from "../services/authService";
 
 export interface User {
   id: string;
@@ -6,20 +7,14 @@ export interface User {
   email: string;
 }
 
-interface AuthContextType {
+export interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (user: User) => void;
-  logout: () => void;
+  login: (data: LoginData) => Promise<void>;
+  logout: () => Promise<void>;
+  token: string | null;
 }
 
-// 👇 default value (empty)
-export const AuthContext = createContext<AuthContextType>({
-  user: null,
-  isAuthenticated: false,
-  login: () => {},
-  logout: () => {},
-});
-
-// Custom hook to use AuthContext
-export const useAuth = () => useContext(AuthContext);
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined
+);

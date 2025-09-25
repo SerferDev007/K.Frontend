@@ -1,29 +1,63 @@
-// src/contexts/AuthProvider.tsx
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { AuthContext, type User } from "./authContext";
+import { loginUser, logoutUser, type LoginData } from "../services/authService";
+import Cookies from "js-cookie";
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
-  // Load from localStorage on first render
-  useEffect(() => {
-    const storedUser = localStorage.getItem("authUser");
-    if (storedUser) setUser(JSON.parse(storedUser));
-  }, []);
+  // Load user + token on first render
+  // useEffect(() => {
+  //   const storedUser = localStorage.getItem("authUser");
+  //   if (storedUser) {
+  //     setUser(JSON.parse(storedUser));
+  //   }
+  //   const cookieToken = Cookies.get("authToken");
+  //   if (cookieToken) setToken(cookieToken);
+  // }, []);
 
-  const login = (userData: User) => {
-    setUser(userData);
-    localStorage.setItem("authUser", JSON.stringify(userData));
+  // 🔹 Login
+  const login = async (data: LoginData) => {
+    try {
+      const response = await loginUser(data);
+      if (response.user) {
+        setUser(response.user);
+        localStorage.setItem("authUser", JSON.stringify(response.user));
+
+        const cookieToken = Cookies.get("authToken");
+        if (cookieToken) setToken(cookieToken);
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+    }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("authUser");
+  // 🔹 Logout
+  const logout = async () => {
+    try {
+      await logoutUser();
+      setUser(null);
+      setToken(null);
+      localStorage.removeItem("authUser");
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
   };
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated: !!user, login, logout }}
+      value={{
+        user,
+        isAuthenticated: !!user,
+        login,
+        logout,
+        token,
+      }}
     >
       {children}
     </AuthContext.Provider>

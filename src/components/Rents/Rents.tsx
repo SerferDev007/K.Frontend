@@ -3,10 +3,13 @@ import RentForm from "./RentForm";
 import ShopForm from "../Tenants/ShopForm";
 import { Button } from "../UI/Button";
 import ViewRents from "./ViewRents";
+import { useAuth } from "@/hooks/useAuth";
 
 const Rents = () => {
   const [isRentForm, setIsRentForm] = useState(false);
   const [isShopForm, setIsShopForm] = useState(false);
+
+  const { token } = useAuth();
 
   const addRentBtnHandler = () => {
     setIsRentForm(true);
@@ -49,7 +52,9 @@ const Rents = () => {
 
       <div>
         {isRentForm && <RentForm onBack={() => setIsRentForm(false)} />}
-        {isShopForm && <ShopForm onBack={() => setIsShopForm(false)} />}
+        {isShopForm && (
+          <ShopForm onBack={() => setIsShopForm(false)} token={token || ""} />
+        )}
         {!isRentForm && !isShopForm && <ViewRents />}
       </div>
     </div>

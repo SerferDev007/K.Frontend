@@ -24,6 +24,7 @@
     "clsx": "^2.1.1",
     "daisyui": "^5.0.50",
     "dom": "^0.0.3",
+    "js-cookie": "^3.0.5",
     "lucide-react": "^0.536.0",
     "motion": "^12.23.12",
     "react": "^19.1.1",
@@ -35,6 +36,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^24.2.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",

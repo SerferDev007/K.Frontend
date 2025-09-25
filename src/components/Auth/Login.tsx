@@ -1,7 +1,6 @@
 import { useState, useRef, type FormEvent } from "react";
 import { Button } from "@/components/UI/Button";
 import { Input } from "@/components/UI/Input";
-import { loginUser } from "../../services/authService";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -22,9 +21,8 @@ const Login = () => {
     const password = passwordRef.current?.value || "";
 
     try {
-      const response = await loginUser({ email, password });
-      toast.success(response.message);
-      login(response.user);
+      await login({ email, password });
+      toast.success(`Succeed`);
       setTimeout(() => {
         navigate("/");
       }, 1000);

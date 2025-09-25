@@ -8,8 +8,31 @@ interface TenantData {
 interface ShopData {
   shopNo: string;
   rentAmount: number;
-  depositAmount: number;
-  agreementStart: string;
+  deposit: number;
+  agreementDate: string;
+}
+
+interface RentData {
+  tenantId: string;
+  shopNo: string;
+  year: number;
+  month: number;
+  paidDate: string;
+  rentAmount: number;
+  details?: string;
+}
+
+interface PenaltyDetail {
+  year: number;
+  month: number;
+  penalty: number;
+  isPaid?: boolean;
+}
+
+interface CheckPenaltiesResponse {
+  shopNo: string;
+  hasPenalty: boolean;
+  penaltyDetails: PenaltyDetail[];
 }
 
 import toast from "react-hot-toast";
@@ -19,14 +42,14 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 // Get all tenants
 export const getTenants = async () => {
-  const res = await fetch(`${BASE_URL}/`);
+  const res = await fetch(`${BASE_URL}/api/tenant`);
   if (!res.ok) toast.error("Failed to fetch tenants");
   return res.json();
 };
 
 // Get single tenant details
 export const getTenantDetails = async (tenantId: string) => {
-  const res = await fetch(`${BASE_URL}/details/${tenantId}`);
+  const res = await fetch(`${BASE_URL}/api/tenant/details/${tenantId}`);
   if (!res.ok) toast.error("Failed to fetch tenant details");
   return res.json();
 };
@@ -56,34 +79,63 @@ export const assignShop = async (
   shopData: ShopData,
   token: string
 ) => {
-  const res = await fetch(`${BASE_URL}/assign-shop/${tenantId}`, {
+  const res = await fetch(`${BASE_URL}/api/tenant/assign-shop/${tenantId}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(shopData),
+    credentials: "include",
   });
   if (!res.ok) toast.error("Failed to assign shop");
-  return res.json();
+  return await res.json();
+};
+
+//get available shops
+export const getAvailableShops = async () => {
+  const res = await fetch(`${BASE_URL}/api/shop/available`);
+  if (!res.ok) toast.error("Failed to fetch available shops");
+  return await res.json();
+};
+
+export const getShopsByTenant = async (tenantId: string) => {
+  const res = await fetch(
+    `${BASE_URL}/api/shop/tenants-with-shop/${tenantId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
+  );
+  if (!res.ok) {
+    toast.error("Failed to fetch available shops");
+    return { shops: [] };
+  }
+  return await res.json();
 };
 
 // Pay rent
-export const payRent = async (
-  tenantId: string,
-  token: string,
-  amount: number
-) => {
-  const res = await fetch(`${BASE_URL}/pay-rent/${tenantId}`, {
+export const payRent = async (data: RentData, token: string) => {
+  const res = await fetch(`${BASE_URL}/api/tenant/pay-rent/${data.tenantId}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ amount }),
+    body: JSON.stringify(data), // 👈 send raw data
+    credentials: "include",
   });
-  if (!res.ok) toast.error("Failed to pay rent");
-  return res.json();
+
+  if (!res.ok) {
+    const errMsg = (await res.json())?.message || "Failed to pay rent";
+    toast.error(errMsg);
+    return { success: false, message: errMsg };
+  }
+
+  return res.json(); // should be { success, message, rent }
 };
 
 // Mark rent/loan/lump sum as paid
@@ -102,15 +154,32 @@ export const markAsPaid = async (tenantId: string, token: string) => {
 export const checkPenalties = async (
   tenantId: string,
   shopNo: string,
-  token: string
-) => {
-  const res = await fetch(`${BASE_URL}/${tenantId}/shops/${shopNo}/penalties`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  token?: string
+): Promise<CheckPenaltiesResponse> => {
+  // correct backend route — update if your backend route differs
+  const url = `${BASE_URL}/api/tenant/${tenantId}/shops/${shopNo}/penalties`;
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+
+  const res = await fetch(url, {
+    method: "GET",
+    headers,
+    credentials: "include", // include cookies/session if needed
   });
-  if (!res.ok) toast.error("Failed to fetch penalties");
-  return res.json();
+
+  if (!res.ok) {
+    // try to parse backend message
+    const body = await res.json().catch(() => null);
+    const errMsg =
+      body?.message || res.statusText || "Failed to fetch penalties";
+    toast.error(errMsg);
+    throw new Error(errMsg);
+  }
+
+  return (await res.json()) as CheckPenaltiesResponse;
 };
 
 // Clear all pending payments
