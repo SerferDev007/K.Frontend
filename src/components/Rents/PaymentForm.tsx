@@ -4,12 +4,13 @@ import {
   getTenants,
   getShopsByTenant,
   payRent,
-  checkPenalties,
+  payEmi,
+  checkPenalties, // ✅ single API for both rent & emi
 } from "@/services/tenantApi";
 import toast from "react-hot-toast";
 import { generateReceipt } from "@/services/reportsApi";
 
-interface RentFormProps {
+interface PaymentFormProps {
   onBack: () => void;
   token: string; // for API calls
 }
@@ -31,24 +32,67 @@ interface PenaltyDetail {
   isPaid: boolean;
 }
 
-interface RawPenaltyDetail {
+interface SubmittedPayment {
+  tenantId: string;
+  tenantName: string;
+  shopNo: string;
+  paidDate: string;
+  rentAmount?: number;
+  emiAmount?: number;
+  penalty: number;
+  details?: string;
+  type: "rent" | "emi";
+}
+
+interface PenaltyDetail {
+  year: number;
+  month: number;
+  penalty: number;
+  isPaid: boolean;
+  type: "rent" | "emi";
+}
+
+// Type for penalty items returned by API
+interface ApiPenaltyItem {
   year: number;
   month: number;
   penalty: number | string;
   isPaid?: boolean | null;
 }
 
-interface SubmittedRent {
-  tenantId: string;
-  tenantName: string;
-  shopNo: string;
-  paidDate: string;
-  rentAmount: number;
-  penalty: number;
-  details?: string;
+interface Loan {
+  emiPerMonth: number;
+  startDate: Date;
+  isLoanActive: boolean;
+  emiPaymentHistory: {
+    year: number;
+    month: number;
+    monthlyEmi: number;
+    penalty: number;
+    isEmiPaid: boolean;
+    paidDate?: string;
+  }[];
+  totalEmiPaid?: number;
+  totalPenaltyPaid?: number;
 }
 
-const RentForm: React.FC<RentFormProps> = ({ onBack, token }) => {
+interface AssignedShop {
+  shopNo: string;
+  rentAmount: number;
+  agreementDate: Date;
+  rentPaymentHistory: {
+    year: number;
+    month: number;
+    penalty: number;
+    isPaid: boolean;
+    paidDate?: string;
+  }[];
+  totalRentPaid?: number;
+  totalRentPenaltyPaid?: number;
+  loans?: Loan[]; // 👈 add this
+}
+
+const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [allTenants, setAllTenants] = useState<Tenant[]>([]);
   const [assignedShops, setAssignedShops] = useState<AssignedShop[]>([]);
@@ -58,9 +102,12 @@ const RentForm: React.FC<RentFormProps> = ({ onBack, token }) => {
   const [penaltyLoading, setPenaltyLoading] = useState(false);
   const [penaltyAmount, setPenaltyAmount] = useState<number>(0);
   const [penaltyDetails, setPenaltyDetails] = useState<PenaltyDetail[]>([]);
-  const [submittedRent, setSubmittedRent] = useState<SubmittedRent | null>(
-    null
-  );
+  const [submittedPayments, setSubmittedPayments] = useState<
+    SubmittedPayment[]
+  >([]);
+
+  const [payRentChecked, setPayRentChecked] = useState(false);
+  const [payEmiChecked, setPayEmiChecked] = useState(false);
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -90,9 +137,12 @@ const RentForm: React.FC<RentFormProps> = ({ onBack, token }) => {
     if (!selectedTenantId) newErrors.tenantName = "Select tenant";
     if (!formData.get("shopNo")?.toString().trim())
       newErrors.shopNo = "Select shop";
+    if (!payRentChecked && !payEmiChecked)
+      newErrors.paymentType = "Select Rent and/or EMI";
     return newErrors;
   };
 
+  // ✅ unified checkPenalties for both rent and emi
   const checkPenaltiesBtnHandler = async () => {
     if (!selectedTenantId) {
       toast.error("Please select a tenant first.");
@@ -102,46 +152,64 @@ const RentForm: React.FC<RentFormProps> = ({ onBack, token }) => {
       toast.error("Please select a shop first.");
       return;
     }
+    if (!payRentChecked && !payEmiChecked) {
+      toast.error("Please select Rent and/or EMI first.");
+      return;
+    }
 
     try {
       setPenaltyLoading(true);
+
       const res = await checkPenalties(
         selectedTenantId,
         selectedShop.shopNo,
         token
       );
 
-      if (!res) {
-        toast.error("No response from server");
-        return;
+      let details: PenaltyDetail[] = [];
+      let totalPenalty = 0;
+
+      if (payRentChecked && res.rentPenaltyDetails?.length) {
+        const rentDetails: PenaltyDetail[] = res.rentPenaltyDetails.map(
+          (d: ApiPenaltyItem) => ({
+            year: d.year,
+            month: d.month,
+            penalty: Number(d.penalty),
+            isPaid: !!d.isPaid,
+            type: "rent", // 👈 added
+          })
+        );
+        details = [...details, ...rentDetails];
+        totalPenalty += res.totalRentPenalty;
       }
 
-      if (!res.hasPenalty || (res.penaltyDetails?.length || 0) === 0) {
-        toast.success("No penalties for this shop.");
+      if (payEmiChecked && res.emiPenaltyDetails?.length) {
+        const emiDetails: PenaltyDetail[] = res.emiPenaltyDetails.map(
+          (d: ApiPenaltyItem) => ({
+            year: d.year,
+            month: d.month,
+            penalty: Number(d.penalty),
+            isPaid: !!d.isPaid,
+            type: "emi", // 👈 added
+          })
+        );
+        details = [...details, ...emiDetails];
+        totalPenalty += res.totalEmiPenalty;
+      }
+
+      if (details.length === 0) {
         setPenaltyAmount(0);
         setPenaltyDetails([]);
-        return;
+        toast.success("No penalties for this shop.");
+      } else {
+        setPenaltyAmount(totalPenalty);
+        setPenaltyDetails(details);
+        toast.success(
+          `Total ${details.length} Pending Entries. Total Penalty ₹${totalPenalty.toFixed(
+            2
+          )}`
+        );
       }
-
-      const details: PenaltyDetail[] = (
-        res.penaltyDetails as RawPenaltyDetail[]
-      ).map((d) => ({
-        year: d.year,
-        month: d.month,
-        penalty: Number(d.penalty),
-        isPaid: !!d.isPaid,
-      }));
-
-      const totalPenalty = details.reduce((s, d) => s + d.penalty, 0);
-
-      setPenaltyAmount(totalPenalty);
-      setPenaltyDetails(details);
-
-      toast.success(
-        `${details.length} pending month(s). Total penalty ₹${totalPenalty.toFixed(
-          2
-        )}`
-      );
     } catch (err) {
       console.error("checkPenalties error:", err);
       toast.error("Failed to check penalties");
@@ -163,7 +231,7 @@ const RentForm: React.FC<RentFormProps> = ({ onBack, token }) => {
     const tenantName =
       allTenants.find((t) => t._id === selectedTenantId)?.tenantName || "";
 
-    const data = {
+    const baseData = {
       tenantId: selectedTenantId,
       shopNo: selectedShop.shopNo,
       year: new Date().getFullYear(),
@@ -171,17 +239,69 @@ const RentForm: React.FC<RentFormProps> = ({ onBack, token }) => {
       paidDate:
         formData.get("paidDate")?.toString() ||
         new Date().toISOString().split("T")[0],
-      rentAmount: selectedShop.rentAmount,
       details: formData.get("details")?.toString(),
       penalty: penaltyAmount,
     };
 
     try {
       setLoading(true);
-      const res = await payRent(data, token);
+      const results: SubmittedPayment[] = [];
 
-      if (res.success) {
-        toast.success(res.message || "Rent added successfully!");
+      // Rent payment
+      if (payRentChecked) {
+        const rentData = {
+          ...baseData,
+          rentAmount: selectedShop.rentAmount,
+        };
+        const res = await payRent(rentData, token);
+        if (res.success) {
+          toast.success("Rent payment successful!");
+          results.push({
+            ...rentData,
+            tenantName,
+            penalty: rentData.penalty,
+            type: "rent",
+          });
+        } else {
+          toast.error(res.message || "Failed to pay rent");
+        }
+      }
+
+      // EMI payment
+      if (payEmiChecked) {
+        const activeLoan = selectedShop.loans?.find((l) => l.isLoanActive);
+        if (!activeLoan) {
+          toast.error("No active loan found for this shop");
+        } else {
+          const emiData = {
+            ...baseData,
+            emiPerMonth: activeLoan.emiPerMonth, // 👈 send EMI instead of rent
+          };
+          const res = await payEmi(emiData, token);
+          if (res.success) {
+            toast.success("EMI payment successful!");
+            results.push({
+              ...emiData,
+              tenantName,
+              penalty: emiData.penalty,
+              type: "emi",
+            });
+          } else {
+            toast.error(res.message || "Failed to pay EMI");
+          }
+        }
+      }
+
+      // Reset form only if all selected payments succeeded
+      const allSelectedPayments = [
+        ...(payRentChecked ? ["rent"] : []),
+        ...(payEmiChecked ? ["emi"] : []),
+      ];
+      const allSucceeded =
+        allSelectedPayments.length > 0 &&
+        allSelectedPayments.every((t) => results.some((r) => r.type === t));
+
+      if (allSucceeded) {
         formRef.current?.reset();
         setSelectedTenantId("");
         setSelectedShop(null);
@@ -189,42 +309,35 @@ const RentForm: React.FC<RentFormProps> = ({ onBack, token }) => {
         setErrors({});
         setPenaltyAmount(0);
         setPenaltyDetails([]);
-
-        // Save submitted rent for Print Receipt button
-        setSubmittedRent({
-          tenantId: selectedTenantId,
-          tenantName,
-          shopNo: data.shopNo,
-          paidDate: data.paidDate,
-          rentAmount: data.rentAmount,
-          penalty: data.penalty,
-          details: data.details,
-        });
-      } else {
-        toast.error(res.message || "Failed to add rent");
+        setPayRentChecked(false);
+        setPayEmiChecked(false);
+        setSubmittedPayments(results);
       }
     } catch (err) {
       console.error(err);
-      toast.error("Failed to add rent");
+      toast.error("Payment failed");
     } finally {
       setLoading(false);
     }
   };
 
   const handlePrintReceipt = () => {
-    if (!submittedRent) return;
+    if (!submittedPayments.length) return;
 
-    generateReceipt({
-      tenantId: submittedRent.tenantId,
-      shopNo: submittedRent.shopNo,
-      month: new Date().getMonth() + 1,
-      year: new Date().getFullYear(),
-      isRent: true,
-      isEmi: false,
+    submittedPayments.forEach((payment) => {
+      generateReceipt({
+        tenantId: payment.tenantId,
+        shopNo: payment.shopNo,
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+        isRent: payment.type === "rent",
+        isEmi: payment.type === "emi",
+      });
     });
   };
+
   return (
-    <div className="flex w-full justify-center max-h-screen">
+    <div className="flex w-full justify-center">
       <form
         ref={formRef}
         onSubmit={handleSubmit}
@@ -232,10 +345,37 @@ const RentForm: React.FC<RentFormProps> = ({ onBack, token }) => {
       >
         <div className="text-center">
           <h3 className="font-bold text-2xl head-text-shadow text-gray-900 dark:text-gray-100">
-            Add Rent
+            Pay Rent & EMI
           </h3>
         </div>
         <div className="w-full h-px bg-gray-300 m-2 mt-3" />
+
+        {/* Payment Type */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+          <div>
+            <label className="flex items-center gap-2 font-bold">
+              <input
+                type="checkbox"
+                checked={payRentChecked}
+                onChange={(e) => setPayRentChecked(e.target.checked)}
+              />{" "}
+              Pay Rent
+            </label>
+          </div>
+          <div>
+            <label className="flex items-center gap-2 font-bold">
+              <input
+                type="checkbox"
+                checked={payEmiChecked}
+                onChange={(e) => setPayEmiChecked(e.target.checked)}
+              />{" "}
+              Pay EMI
+            </label>
+          </div>
+        </div>
+        {errors.paymentType && (
+          <p className="text-red-500 text-sm mt-1">{errors.paymentType}</p>
+        )}
 
         {/* Tenant + Shop selectors */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
@@ -247,7 +387,7 @@ const RentForm: React.FC<RentFormProps> = ({ onBack, token }) => {
               value={selectedTenantId}
               onClick={handleTenantDropdownClick}
               onChange={(e) => setSelectedTenantId(e.target.value)}
-              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
+              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 ${
                 errors.tenantName ? "border-red-500" : "border-gray-200"
               }`}
             >
@@ -310,20 +450,54 @@ const RentForm: React.FC<RentFormProps> = ({ onBack, token }) => {
         </div>
 
         {penaltyDetails.length > 0 && (
-          <div className="flex justify-center border-2 border-red-400 rounded-lg p-2 bg-red-100 dark:bg-red-200 mt-2">
-            <h4 className="font-semibold mb-1 !text-red-700">
-              Penalty Details:
-            </h4>
-            {penaltyDetails.map((d, i) => (
-              <p key={i} className="text-sm mb-2 text-red-800">
-                {d.year}-{d.month} : ₹{d.penalty.toFixed(2)}
-                {d.isPaid ? "  (Paid)" : "  (Pending)"}
-              </p>
-            ))}
+          <div className="flex flex-col justify-center border-2 border-red-400 rounded-lg p-2 bg-red-100 dark:bg-red-200 mt-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+              {/* Rent Penalty */}
+              <div className="mx-3">
+                <h4 className="font-semibold mb-1 !text-red-700">
+                  Rent Penalty Details:
+                </h4>
+                {penaltyDetails
+                  .filter((d) => d.type === "rent")
+                  .map((d, i) => (
+                    <p key={`rent-${i}`} className="text-sm mb-1 text-black">
+                      {d.year}-{d.month} : ₹{d.penalty.toFixed(2)}
+                    </p>
+                  ))}
+                <p className="text-sm font-bold mt-1 bg-amber-300 border-2 border-amber-900 text-black">
+                  Total Rent Penalty: ₹
+                  {penaltyDetails
+                    .filter((d) => d.type === "rent")
+                    .reduce((sum, d) => sum + d.penalty, 0)
+                    .toFixed(2)}
+                </p>
+              </div>
+
+              {/* EMI Penalty */}
+              <div>
+                <h4 className="font-semibold mb-1 !text-red-700">
+                  Loan Penalty Details:
+                </h4>
+                {penaltyDetails
+                  .filter((d) => d.type === "emi")
+                  .map((d, i) => (
+                    <p key={`emi-${i}`} className="text-sm mb-1 text-black">
+                      {d.year}-{d.month} : ₹{d.penalty.toFixed(2)}
+                    </p>
+                  ))}
+                <p className="text-sm font-bold mt-1 bg-amber-300 border-2 border-amber-900 text-black">
+                  Total EMI Penalty: ₹
+                  {penaltyDetails
+                    .filter((d) => d.type === "emi")
+                    .reduce((sum, d) => sum + d.penalty, 0)
+                    .toFixed(2)}
+                </p>
+              </div>
+            </div>
           </div>
         )}
 
-        <div className="mt-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
           <div>
             <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
               Penalty Amount
@@ -335,9 +509,6 @@ const RentForm: React.FC<RentFormProps> = ({ onBack, token }) => {
               className="focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 bg-gray-200"
             />
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
           <div>
             <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
               Paid Date
@@ -349,6 +520,9 @@ const RentForm: React.FC<RentFormProps> = ({ onBack, token }) => {
               className="focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100"
             />
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
           <div>
             <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
               Rent Amount
@@ -357,6 +531,21 @@ const RentForm: React.FC<RentFormProps> = ({ onBack, token }) => {
               type="number"
               name="rentAmount"
               value={selectedShop?.rentAmount || ""}
+              readOnly
+              className="focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 bg-gray-200"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+              EMI Amount
+            </label>
+            <input
+              type="number"
+              name="emiAmount"
+              value={
+                selectedShop?.loans?.find((loan) => loan.isLoanActive)
+                  ?.emiPerMonth ?? ""
+              }
               readOnly
               className="focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 bg-gray-200"
             />
@@ -387,18 +576,18 @@ const RentForm: React.FC<RentFormProps> = ({ onBack, token }) => {
             type="submit"
             className="flex-1 !rounded-xl bg-amber-400 hover:bg-orange-400 text-gray-900"
           >
-            {loading ? "Processing..." : "Submit Rent"}
+            {loading ? "Processing..." : "Submit Payment"}
           </Button>
         </div>
 
-        {submittedRent && (
+        {submittedPayments.length > 0 && (
           <div className="mt-4 text-center">
             <Button
               type="button"
               onClick={handlePrintReceipt}
               className="!rounded-xl bg-green-600 hover:bg-green-800 text-white"
             >
-              Print Receipt
+              Print Receipt(s)
             </Button>
           </div>
         )}
@@ -407,4 +596,4 @@ const RentForm: React.FC<RentFormProps> = ({ onBack, token }) => {
   );
 };
 
-export default RentForm;
+export default PaymentForm;

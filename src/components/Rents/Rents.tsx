@@ -1,29 +1,29 @@
 import { useState } from "react";
-import RentForm from "./RentForm";
+import PaymentForm from "./PaymentForm";
 import ShopForm from "../Tenants/ShopForm";
 import { Button } from "../UI/Button";
 import ViewRents from "./ViewRents";
 import { useAuth } from "@/hooks/useAuth";
 
 const Rents = () => {
-  const [isRentForm, setIsRentForm] = useState(false);
+  const [isPaymentForm, setIsPaymentForm] = useState(false);
   const [isShopForm, setIsShopForm] = useState(false);
 
   const { token } = useAuth();
 
   const addRentBtnHandler = () => {
-    setIsRentForm(true);
+    setIsPaymentForm(true);
     setIsShopForm(false); // ensure only one form is open
   };
 
   const addShopBtnHandler = () => {
     setIsShopForm(true);
-    setIsRentForm(false); // ensure only one form is open
+    setIsPaymentForm(false); // ensure only one form is open
   };
 
   return (
     <div className="relative w-full mt-2 p-4 min-h-screen">
-      {!isRentForm && !isShopForm && (
+      {!isPaymentForm && !isShopForm && (
         <>
           <div className="w-full h-px bg-gray-300 my-2" />
           <div className="flex justify-between items-center m-2">
@@ -51,11 +51,16 @@ const Rents = () => {
       <div className="w-full h-px bg-gray-300 my-2" />
 
       <div>
-        {isRentForm && <RentForm onBack={() => setIsRentForm(false)} />}
+        {isPaymentForm && (
+          <PaymentForm
+            onBack={() => setIsPaymentForm(false)}
+            token={token || ""}
+          />
+        )}
         {isShopForm && (
           <ShopForm onBack={() => setIsShopForm(false)} token={token || ""} />
         )}
-        {!isRentForm && !isShopForm && <ViewRents />}
+        {!isPaymentForm && !isShopForm && <ViewRents />}
       </div>
     </div>
   );

@@ -20,19 +20,35 @@ interface RentData {
   paidDate: string;
   rentAmount: number;
   details?: string;
+  penalty?: number;
 }
 
-interface PenaltyDetail {
+interface EmiData {
+  tenantId: string;
+  shopNo: string;
   year: number;
   month: number;
-  penalty: number;
-  isPaid?: boolean;
+  paidDate: string;
+  emiPerMonth: number; // 👈 changed from rentAmount
+  details?: string;
+  penalty?: number; // 👈 add this so penalty passes properly
 }
 
-interface CheckPenaltiesResponse {
+export interface RawPenaltyDetail {
+  year: number;
+  month: number;
+  penalty: number | string; // depending on backend
+  isPaid?: boolean;
+  type: "rent" | "emi";
+}
+
+export interface CheckPenaltiesResponse {
   shopNo: string;
   hasPenalty: boolean;
-  penaltyDetails: PenaltyDetail[];
+  totalRentPenalty: number;
+  totalEmiPenalty: number;
+  rentPenaltyDetails: RawPenaltyDetail[];
+  emiPenaltyDetails: RawPenaltyDetail[];
 }
 
 import toast from "react-hot-toast";
@@ -44,14 +60,14 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 export const getTenants = async () => {
   const res = await fetch(`${BASE_URL}/api/tenant`);
   if (!res.ok) toast.error("Failed to fetch tenants");
-  return res.json();
+  return await res.json();
 };
 
 // Get single tenant details
 export const getTenantDetails = async (tenantId: string) => {
   const res = await fetch(`${BASE_URL}/api/tenant/details/${tenantId}`);
   if (!res.ok) toast.error("Failed to fetch tenant details");
-  return res.json();
+  return await res.json();
 };
 
 // tenantApi.ts
@@ -135,7 +151,28 @@ export const payRent = async (data: RentData, token: string) => {
     return { success: false, message: errMsg };
   }
 
-  return res.json(); // should be { success, message, rent }
+  return await res.json(); // should be { success, message, rent }
+};
+
+// Pay EMI
+export const payEmi = async (data: EmiData, token: string) => {
+  const res = await fetch(`${BASE_URL}/api/tenant/pay-loan/${data.tenantId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data), // 👈 sending emiPerMonth instead of rentAmount
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    const errMsg = (await res.json())?.message || "Failed to pay EMI";
+    toast.error(errMsg);
+    return { success: false, message: errMsg };
+  }
+
+  return await res.json(); // should be { success, message, tenant, details }
 };
 
 // Mark rent/loan/lump sum as paid
@@ -147,7 +184,7 @@ export const markAsPaid = async (tenantId: string, token: string) => {
     },
   });
   if (!res.ok) toast.error("Failed to mark as paid");
-  return res.json();
+  return await res.json();
 };
 
 // Check penalties for a shop
@@ -156,7 +193,6 @@ export const checkPenalties = async (
   shopNo: string,
   token?: string
 ): Promise<CheckPenaltiesResponse> => {
-  // correct backend route — update if your backend route differs
   const url = `${BASE_URL}/api/tenant/${tenantId}/shops/${shopNo}/penalties`;
 
   const headers: Record<string, string> = {
@@ -167,15 +203,13 @@ export const checkPenalties = async (
   const res = await fetch(url, {
     method: "GET",
     headers,
-    credentials: "include", // include cookies/session if needed
+    credentials: "include",
   });
 
   if (!res.ok) {
-    // try to parse backend message
     const body = await res.json().catch(() => null);
     const errMsg =
       body?.message || res.statusText || "Failed to fetch penalties";
-    toast.error(errMsg);
     throw new Error(errMsg);
   }
 
@@ -189,5 +223,5 @@ export const clearAllPending = async (tenantId: string, token: string) => {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) toast.error("Failed to clear pending payments");
-  return res.json();
+  return await res.json();
 };
