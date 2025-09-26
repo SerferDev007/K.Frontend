@@ -235,7 +235,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
       tenantId: selectedTenantId,
       shopNo: selectedShop.shopNo,
       year: new Date().getFullYear(),
-      month: new Date().getMonth() + 1,
+      month: new Date().getMonth(),
       paidDate:
         formData.get("paidDate")?.toString() ||
         new Date().toISOString().split("T")[0],
@@ -328,7 +328,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
       generateReceipt({
         tenantId: payment.tenantId,
         shopNo: payment.shopNo,
-        month: new Date().getMonth() + 1,
+        month: new Date().getMonth(),
         year: new Date().getFullYear(),
         isRent: payment.type === "rent",
         isEmi: payment.type === "emi",
@@ -460,11 +460,14 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
                 {penaltyDetails
                   .filter((d) => d.type === "rent")
                   .map((d, i) => (
-                    <p key={`rent-${i}`} className="text-sm mb-1 text-black">
+                    <p
+                      key={`rent-${i}`}
+                      className="text-sm mb-1 text-black mx-5"
+                    >
                       {d.year}-{d.month} : ₹{d.penalty.toFixed(2)}
                     </p>
                   ))}
-                <p className="text-sm font-bold mt-1 bg-amber-300 border-2 border-amber-900 text-black">
+                <p className="text-sm font-bold mt-1 bg-green-300 border-2 border-green-900 text-black px-2 py-1 rounded">
                   Total Rent Penalty: ₹
                   {penaltyDetails
                     .filter((d) => d.type === "rent")
@@ -474,18 +477,21 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
               </div>
 
               {/* EMI Penalty */}
-              <div>
+              <div className="mx-3">
                 <h4 className="font-semibold mb-1 !text-red-700">
                   Loan Penalty Details:
                 </h4>
                 {penaltyDetails
                   .filter((d) => d.type === "emi")
                   .map((d, i) => (
-                    <p key={`emi-${i}`} className="text-sm mb-1 text-black">
+                    <p
+                      key={`emi-${i}`}
+                      className="text-sm mb-1 text-black mx-5"
+                    >
                       {d.year}-{d.month} : ₹{d.penalty.toFixed(2)}
                     </p>
                   ))}
-                <p className="text-sm font-bold mt-1 bg-amber-300 border-2 border-amber-900 text-black">
+                <p className="text-sm font-bold mt-1 bg-green-300 border-2 border-green-900 text-black px-2 py-1 rounded">
                   Total EMI Penalty: ₹
                   {penaltyDetails
                     .filter((d) => d.type === "emi")
@@ -534,6 +540,18 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
               readOnly
               className="focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 bg-gray-200"
             />
+            {payRentChecked && selectedShop && (
+              <p className="text-sm font-bold mt-1 bg-yellow-200 border-2 border-yellow-700 text-black p-1 rounded">
+                Total Rent (Pending + Current): ₹
+                {(() => {
+                  const pendingMonths = penaltyDetails.filter(
+                    (d) => d.type === "rent"
+                  ).length;
+                  const rent = selectedShop.rentAmount || 0;
+                  return ((pendingMonths + 1) * rent).toFixed(2);
+                })()}
+              </p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
@@ -549,6 +567,22 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
               readOnly
               className="focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 bg-gray-200"
             />
+            {payEmiChecked && selectedShop && (
+              <p className="text-sm font-bold mt-1 bg-yellow-200 border-2 border-yellow-700 text-black p-1 rounded">
+                Total EMI (Pending + Current): ₹
+                {(() => {
+                  const activeLoan = selectedShop.loans?.find(
+                    (l) => l.isLoanActive
+                  );
+                  if (!activeLoan) return "0.00";
+                  const pendingMonths = penaltyDetails.filter(
+                    (d) => d.type === "emi"
+                  ).length;
+                  const emi = activeLoan.emiPerMonth || 0;
+                  return ((pendingMonths + 1) * emi).toFixed(2);
+                })()}
+              </p>
+            )}
           </div>
         </div>
 
@@ -560,7 +594,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
             name="details"
             placeholder="Any details"
             className="focus-visible:ring-1 border-2 border-gray-200 rounded-xl w-full p-2 resize-none text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300"
-            rows={3}
+            rows={1}
           />
         </div>
 
