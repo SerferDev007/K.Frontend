@@ -41,7 +41,7 @@ createRoot(document.getElementById("root")!).render(
               color: "#000",
             },
           },
-          duration: 3000, // stay for 5 seconds
+          duration: 3000, // stay for 3 seconds
         }}
       />
     </AuthProvider>

@@ -21,11 +21,15 @@ const Login = () => {
     const password = passwordRef.current?.value || "";
 
     try {
-      await login({ email, password });
-      toast.success(`Succeed`);
-      setTimeout(() => {
-        navigate("/");
-      }, 1000);
+      const response = await login({ email, password });
+
+      if (response?.user) {
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
+      } else {
+        toast.error(response?.message || "Login failed");
+      }
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

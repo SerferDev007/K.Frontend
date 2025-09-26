@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import type { LoginData } from "../services/authService";
+import type { LoginData, LoginResponse } from "../services/authService";
 
 export interface User {
   id: string;
@@ -10,7 +10,7 @@ export interface User {
 export interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (data: LoginData) => Promise<void>;
+  login: (data: LoginData) => Promise<LoginResponse | undefined>;
   logout: () => Promise<void>;
   token: string | null;
 }

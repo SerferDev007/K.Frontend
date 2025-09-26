@@ -29,7 +29,8 @@ export const loginUser = async (data: LoginData): Promise<LoginResponse> => {
   });
 
   const result = await res.json();
-  console.log(result);
+
+  if (res.ok) toast.success(result.message || "Login Successfull");
   if (!res.ok) toast.error(result.message || "Login failed");
 
   return result as LoginResponse;
