@@ -324,16 +324,34 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
   const handlePrintReceipt = () => {
     if (!submittedPayments.length) return;
 
-    submittedPayments.forEach((payment) => {
+    // Combine rent + EMI for same tenant/shop
+    const grouped = submittedPayments.reduce(
+      (acc, payment) => {
+        const key = payment.tenantId + "_" + payment.shopNo;
+        if (!acc[key])
+          acc[key] = {
+            tenantId: payment.tenantId,
+            shopNo: payment.shopNo,
+            isRent: false,
+            isEmi: false,
+          };
+        if (payment.type === "rent") acc[key].isRent = true;
+        if (payment.type === "emi") acc[key].isEmi = true;
+        return acc;
+      },
+      {} as Record<
+        string,
+        { tenantId: string; shopNo: string; isRent: boolean; isEmi: boolean }
+      >
+    );
+
+    Object.values(grouped).forEach((data) =>
       generateReceipt({
-        tenantId: payment.tenantId,
-        shopNo: payment.shopNo,
+        ...data,
         month: new Date().getMonth(),
         year: new Date().getFullYear(),
-        isRent: payment.type === "rent",
-        isEmi: payment.type === "emi",
-      });
-    });
+      })
+    );
   };
 
   return (
