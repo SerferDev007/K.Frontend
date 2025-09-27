@@ -53,13 +53,13 @@ const TenantsDetails = () => {
       </div>
 
       {/* Tenant Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-2 w-full max-w-6xl">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-2 w-full max-w-6xl">
         {filteredTenants?.map((tenant) => (
           <div
             key={tenant._id}
             onClick={() => navigate(`/tenants/${tenant._id}`)}
-            className="p-3 rounded-xl border-2 border-amber-400 bg-green-300 
-              dark:bg-gray-500 text-gray-900 dark:text-gray-100 
+            className="p-3 rounded-xl border-2 border-amber-400 !bg-yellow-500 
+              dark:bg-gray-500 !text-gray-900 dark:text-gray-100 
               shadow-lg flex items-center !justify-start cursor-pointer hover:scale-105 transition-transform"
           >
             <h3 className="font-bold !text-lg truncate">{tenant.tenantName}</h3>

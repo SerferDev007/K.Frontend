@@ -1,11 +1,11 @@
-import Rents from "../components/Rents/Rents";
+import Tenants from "../components/Rents/Tenants";
 
-const RentPage = () => {
+const TenantPage = () => {
   return (
-    <div className="flex items-center justify-center w-full mx-auto border !border-white/30 bg-black/20 backdrop-blur-md rounded-xl shadow-lg p-4 my-4">
-      <Rents />
+    <div className="flex items-center justify-center w-full mx-auto border !border-white/30 bg-black/20 backdrop-blur-md rounded-xl shadow-lg p-4 !my-4">
+      <Tenants />
     </div>
   );
 };
 
-export default RentPage;
+export default TenantPage;

@@ -105,12 +105,9 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
   const [submittedPayments, setSubmittedPayments] = useState<
     SubmittedPayment[]
   >([]);
-
   const [payRentChecked, setPayRentChecked] = useState(false);
   const [payEmiChecked, setPayEmiChecked] = useState(false);
-
   const formRef = useRef<HTMLFormElement>(null);
-
   const handleTenantDropdownClick = async () => {
     try {
       const res = await getAllTenants();
@@ -120,7 +117,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
       toast.error("Failed to refresh tenants");
     }
   };
-
   const handleShopDropdownClick = async () => {
     if (!selectedTenantId) return;
     try {
@@ -131,7 +127,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
       toast.error("Failed to refresh shops");
     }
   };
-
   const validate = (formData: FormData) => {
     const newErrors: { [key: string]: string } = {};
     if (!selectedTenantId) newErrors.tenantName = "Select tenant";
@@ -141,7 +136,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
       newErrors.paymentType = "Select Rent and/or EMI";
     return newErrors;
   };
-
   // ✅ unified checkPenalties for both rent and emi
   const checkPenaltiesBtnHandler = async () => {
     if (!selectedTenantId) {
@@ -359,7 +353,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
       <form
         ref={formRef}
         onSubmit={handleSubmit}
-        className="md:px-8 w-full max-w-2xl p-3 rounded-lg border-4 border-amber-400 bg-green-300 dark:bg-gray-500 text-gray-900 dark:text-gray-100 shadow-sm"
+        className="md:px-8 w-full max-w-2xl p-3 rounded-lg border-4 border-amber-400 !bg-gradient-to-br !from-gray-400 !to-gray-800 dark:bg-gray-500 text-gray-900 dark:text-gray-100 shadow-sm"
       >
         <div className="text-center">
           <h3 className="font-bold text-2xl head-text-shadow text-gray-900 dark:text-gray-100">
