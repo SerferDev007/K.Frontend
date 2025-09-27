@@ -57,7 +57,7 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 // ---------------- Tenant APIs ----------------
 
 // Get all tenants
-export const getTenants = async () => {
+export const getAllTenants = async () => {
   const res = await fetch(`${BASE_URL}/api/tenant`);
   if (!res.ok) toast.error("Failed to fetch tenants");
   return await res.json();
@@ -72,7 +72,7 @@ export const getTenantDetails = async (tenantId: string) => {
 
 // tenantApi.ts
 export const createTenant = async (tenantData: TenantData) => {
-  const res = await fetch(`${BASE_URL}/api/tenant/add`, {
+  const res = await fetch(`${BASE_URL}/api/tenant`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

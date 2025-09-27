@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Button } from "@/components/UI/Button";
 import {
-  getTenants,
+  getAllTenants,
   assignShop,
   getAvailableShops,
 } from "@/services/tenantApi";
@@ -39,7 +39,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ onBack, token }) => {
   useEffect(() => {
     const fetchTenants = async () => {
       try {
-        const response = await getTenants();
+        const response = await getAllTenants();
         setAllTenants(response.tenants || []);
       } catch (err) {
         console.error(err);

@@ -2,8 +2,8 @@ import { useState } from "react";
 import PaymentForm from "./PaymentForm";
 import ShopForm from "../Tenants/ShopForm";
 import { Button } from "../UI/Button";
-import ViewRents from "./ViewRents";
 import { useAuth } from "@/hooks/useAuth";
+import TenantsDetails from "./TenantsDetails";
 
 const Rents = () => {
   const [isPaymentForm, setIsPaymentForm] = useState(false);
@@ -22,7 +22,7 @@ const Rents = () => {
   };
 
   return (
-    <div className="relative w-full mt-2 p-4 min-h-screen">
+    <div className="relative w-full mt-2 p-4 h-screen">
       {!isPaymentForm && !isShopForm && (
         <>
           <div className="w-full h-px bg-gray-300 my-2" />
@@ -60,7 +60,7 @@ const Rents = () => {
         {isShopForm && (
           <ShopForm onBack={() => setIsShopForm(false)} token={token || ""} />
         )}
-        {!isPaymentForm && !isShopForm && <ViewRents />}
+        {!isPaymentForm && !isShopForm && <TenantsDetails />}
       </div>
     </div>
   );

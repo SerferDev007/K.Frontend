@@ -6,11 +6,12 @@ import DashboardPage from "../pages/DashboardPage";
 import DonationPage from "../pages/DonationPage";
 import ExpensePage from "../pages/ExpensePage";
 import ReportPage from "../pages/ReportPage";
-import RentPage from "../pages/RentPage";
+import TenantsPage from "../pages/TenantsPage";
 import LoanPage from "../pages/LoanPage";
 import AddTenant from "../pages/AddTenantPage";
 import Profile from "../pages/ProfilePage";
 import ErrorPage from "../pages/ErrorPage";
+import ViewTenantsDetailsPage from "@/pages/ViewTenantsDetailsPage";
 
 const PageRoutes = () => {
   return (
@@ -20,7 +21,11 @@ const PageRoutes = () => {
         <Route path={route.DASHBOARD} element={<DashboardPage />} />
         <Route path={route.DONATIONS} element={<DonationPage />} />
         <Route path={route.EXPENSES} element={<ExpensePage />} />
-        <Route path={route.RENTS} element={<RentPage />} />
+        <Route path={route.TENANTS} element={<TenantsPage />} />
+        <Route
+          path={`${route.TENANTS}/:tenantId`}
+          element={<ViewTenantsDetailsPage />}
+        />
         <Route path={route.LOANS} element={<LoanPage />} />
         <Route path={route.REPORTS} element={<ReportPage />} />
         <Route path={route.LOGIN} element={<LoginPage />} />

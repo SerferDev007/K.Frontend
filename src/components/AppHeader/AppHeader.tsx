@@ -14,7 +14,7 @@ const AppHeader = () => {
           { name: "Dashboard", link: route.DASHBOARD },
           { name: "Donations", link: route.DONATIONS },
           { name: "Expenses", link: route.EXPENSES },
-          { name: "Rents", link: route.RENTS },
+          { name: "Tenants", link: route.TENANTS },
           { name: "Loans", link: route.LOANS },
           { name: "Reports", link: route.REPORTS },
         ]}

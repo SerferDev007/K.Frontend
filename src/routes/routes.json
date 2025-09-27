@@ -2,6 +2,8 @@
   "DASHBOARD": "/dashboard",
   "DONATIONS": "/donations",
   "EXPENSES": "/expenses",
+  "PAYMENTS": "/payments",
+  "TENANTS": "/tenants",
   "RENTS": "/rents",
   "LOANS": "/loans",
   "REPORTS": "/reports",

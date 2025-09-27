@@ -1,7 +1,7 @@
 import { useState, useRef, type FormEvent } from "react";
 import { Button } from "@/components/UI/Button";
 import {
-  getTenants,
+  getAllTenants,
   getShopsByTenant,
   payRent,
   payEmi,
@@ -113,7 +113,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
 
   const handleTenantDropdownClick = async () => {
     try {
-      const res = await getTenants();
+      const res = await getAllTenants();
       setAllTenants(res.tenants || []);
     } catch (err) {
       console.error(err);
