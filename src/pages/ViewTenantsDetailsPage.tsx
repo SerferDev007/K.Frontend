@@ -1,7 +1,8 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getTenantDetails } from "@/services/tenantApi";
 import toast from "react-hot-toast";
+import { Button } from "@/components/UI/Button";
 
 interface Loan {
   emiPerMonth: number;
@@ -43,6 +44,8 @@ const ViewTenantsDetailsPage = () => {
   const [tenant, setTenant] = useState<Tenant | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchTenant = async () => {
       if (!tenantId) return;
@@ -63,23 +66,37 @@ const ViewTenantsDetailsPage = () => {
   if (loading) return <p className="text-center mt-6">Loading...</p>;
   if (!tenant) return <p className="text-center mt-6">Tenant not found</p>;
 
+  const goBackBtnHandler = () => {
+    navigate(`/tenants`);
+  };
+
   return (
     <div className="flex items-center justify-center w-full mx-auto border !border-white/30 bg-black/20 backdrop-blur-md rounded-xl shadow-lg p-4 my-4">
       <div className="mt-15 flex flex-col items-center w-full max-w-6xl mx-auto">
         {/* Tenant Info Card */}
-        <div className="w-full bg-amber-300 border border-gray-300 dark:border-gray-700 rounded-2xl shadow-md ps-4 pt-2 mb-4">
-          <h2 className="!text-4xl font-bold text-amber-600 mb-2">
-            {tenant.tenantName}
-          </h2>
-          <div className="flex flex-wrap gap-6 text-lg !text-gray-900 dark:text-gray-200">
-            <p>
-              📱 <span className="font-semibold">Mobile:</span>{" "}
-              {tenant.mobileNo}
-            </p>
-            <p>
-              🆔 <span className="font-semibold">Adhar:</span> {tenant.adharNo}
-            </p>
+        <div className="w-full flex justify-between bg-amber-300 border border-gray-300 dark:border-gray-700 rounded-2xl shadow-md ps-4 pt-2 mb-4">
+          <div>
+            <h2 className="!text-4xl font-bold text-amber-600 mb-2">
+              {tenant.tenantName}
+            </h2>
+            <div className="flex flex-wrap gap-6 text-lg !text-gray-900 dark:text-gray-200">
+              <p>
+                📱 <span className="font-semibold">Mobile:</span>{" "}
+                {tenant.mobileNo}
+              </p>
+              <p>
+                🆔 <span className="font-semibold">Adhar:</span>{" "}
+                {tenant.adharNo}
+              </p>
+            </div>
           </div>
+          <Button
+            className="my-3 mx-3 !rounded-2xl text-white bg-blue-900"
+            onClick={goBackBtnHandler}
+          >
+            {" "}
+            ⬅️ Go Back
+          </Button>
         </div>
 
         {/* Shops Section */}

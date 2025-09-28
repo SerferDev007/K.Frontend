@@ -1,3 +1,6 @@
+import toast from "react-hot-toast";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 // src/api/tenantApi.ts
 interface TenantData {
   tenantName: string;
@@ -10,6 +13,13 @@ interface ShopData {
   rentAmount: number;
   deposit: number;
   agreementDate: string;
+}
+
+interface LoanData {
+  shopNo: string;
+  loanAmount: number;
+  tenureMonths: number;
+  startDate: string;
 }
 
 interface RentData {
@@ -50,9 +60,6 @@ export interface CheckPenaltiesResponse {
   rentPenaltyDetails: RawPenaltyDetail[];
   emiPenaltyDetails: RawPenaltyDetail[];
 }
-
-import toast from "react-hot-toast";
-const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 // ---------------- Tenant APIs ----------------
 
@@ -108,6 +115,25 @@ export const assignShop = async (
   return await res.json();
 };
 
+//Assign a Loan to a tenant
+export const assignLoan = async (
+  tenantId: string,
+  loanData: LoanData,
+  token: string
+) => {
+  const res = await fetch(`${BASE_URL}/api/tenant/assign-loan/${tenantId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(loanData),
+    credentials: "include",
+  });
+  if (!res.ok) toast.error("Failed to assign shop");
+  return await res.json();
+};
+
 //get available shops
 export const getAvailableShops = async () => {
   const res = await fetch(`${BASE_URL}/api/shop/available`);
@@ -130,6 +156,7 @@ export const getShopsByTenant = async (tenantId: string) => {
     toast.error("Failed to fetch available shops");
     return { shops: [] };
   }
+  console.log(res);
   return await res.json();
 };
 

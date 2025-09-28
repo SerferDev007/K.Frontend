@@ -15,7 +15,6 @@ const AppHeader = () => {
           { name: "Donations", link: route.DONATIONS },
           { name: "Expenses", link: route.EXPENSES },
           { name: "Tenants", link: route.TENANTS },
-          { name: "Loans", link: route.LOANS },
           { name: "Reports", link: route.REPORTS },
         ]}
         isLogin={isAuthenticated}
