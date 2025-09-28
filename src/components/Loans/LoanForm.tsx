@@ -249,21 +249,23 @@ const AssignLoan: React.FC<LoanFormProps> = ({ onBack, token }) => {
           </div>
         </div>
 
-        {/* Loan Start Date */}
-        <div className="mt-2">
-          <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
-            Loan Start Date
-          </label>
-          <input
-            type="date"
-            name="startDate"
-            className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 ${
-              errors.startDate ? "border-red-500" : "border-gray-200"
-            }`}
-          />
-          {errors.startDate && (
-            <p className="text-red-500 text-sm mt-1">{errors.startDate}</p>
-          )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+          {/* Loan Start Date */}
+          <div className="mt-2">
+            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+              Loan Start Date
+            </label>
+            <input
+              type="date"
+              name="startDate"
+              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 ${
+                errors.startDate ? "border-red-500" : "border-gray-200"
+              }`}
+            />
+            {errors.startDate && (
+              <p className="text-red-500 text-sm mt-1">{errors.startDate}</p>
+            )}
+          </div>
         </div>
 
         {/* Buttons */}

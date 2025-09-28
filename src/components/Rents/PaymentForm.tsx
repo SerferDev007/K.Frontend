@@ -153,7 +153,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
 
     try {
       setPenaltyLoading(true);
-
       const res = await checkPenalties(
         selectedTenantId,
         selectedShop.shopNo,
