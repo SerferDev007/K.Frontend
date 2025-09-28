@@ -156,7 +156,7 @@ export const getShopsByTenant = async (tenantId: string) => {
     toast.error("Failed to fetch available shops");
     return { shops: [] };
   }
-  console.log(res);
+
   return await res.json();
 };
 
@@ -200,18 +200,6 @@ export const payEmi = async (data: EmiData, token: string) => {
   }
 
   return await res.json(); // should be { success, message, tenant, details }
-};
-
-// Mark rent/loan/lump sum as paid
-export const markAsPaid = async (tenantId: string, token: string) => {
-  const res = await fetch(`${BASE_URL}/mark-paid/${tenantId}`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (!res.ok) toast.error("Failed to mark as paid");
-  return await res.json();
 };
 
 // Check penalties for a shop

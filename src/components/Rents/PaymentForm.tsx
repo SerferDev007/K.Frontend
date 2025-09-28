@@ -435,11 +435,15 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
               }`}
             >
               <option value="">-- Select Shop --</option>
-              {assignedShops.map((shop) => (
-                <option key={shop.shopNo} value={shop.shopNo}>
-                  {shop.shopNo}
-                </option>
-              ))}
+              {assignedShops && assignedShops.length > 0 ? (
+                assignedShops.map((shop) => (
+                  <option key={shop.shopNo} value={shop.shopNo}>
+                    {shop.shopNo}
+                  </option>
+                ))
+              ) : (
+                <option disabled>No Shops Assigned</option>
+              )}
             </select>
             {errors.shopNo && (
               <p className="text-red-500 text-sm mt-1">{errors.shopNo}</p>
