@@ -1,10 +1,11 @@
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { Button } from "@/components/UI/Button";
+import { getDonationCategories } from "@/services/financeServices";
+import toast from "react-hot-toast";
+import { addDonation } from "@/services/financeServices";
 
 interface DonationFormProps {
   onBack: () => void;
-  categories: string[];
-  subCategories: string[];
 }
 
 interface DonationData {
@@ -17,12 +18,59 @@ interface DonationData {
   details: string | undefined;
 }
 
-const DonationForm: React.FC<DonationFormProps> = ({
-  onBack,
-  categories,
-  subCategories,
-}) => {
+const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [categories, setCategories] = useState<string[]>([]);
+  const [subCategories, setSubCategories] = useState<string[]>([]);
+  const [allCategories, setAllCategories] = useState<Record<string, string[]>>(
+    {}
+  );
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const showMessage = (msg: string, type: "success" | "error") => {
+    if (type === "success") {
+      setSuccessMessage(msg);
+      setErrorMessage("");
+    } else {
+      setErrorMessage(msg);
+      setSuccessMessage("");
+    }
+
+    // auto-clear after 3 sec
+    setTimeout(() => {
+      setSuccessMessage("");
+      setErrorMessage("");
+    }, 3000);
+  };
+
+  // ✅ Fetch categories on mount
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await getDonationCategories();
+        setAllCategories(data.categories);
+        setCategories(Object.keys(data.categories));
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          toast.error(
+            err.message || "Error fetching Categories / Sub-Categories"
+          );
+        }
+        throw new Error("Something went wrong");
+      }
+    })();
+  }, []);
+
+  // ✅ When category changes → update subCategories
+  useEffect(() => {
+    if (selectedCategory && allCategories[selectedCategory]) {
+      setSubCategories(allCategories[selectedCategory]);
+    } else {
+      setSubCategories([]);
+    }
+  }, [selectedCategory, allCategories]);
 
   const validate = (formData: FormData) => {
     const newErrors: { [key: string]: string } = {};
@@ -34,8 +82,12 @@ const DonationForm: React.FC<DonationFormProps> = ({
       newErrors.subCategory = "Sub-category is required";
     if (!formData.get("donorName")?.toString().trim())
       newErrors.donorName = "Donor name is required";
-    if (!formData.get("donorContact")?.toString().trim())
+    const donorContact = formData.get("donorContact")?.toString().trim();
+    if (!donorContact) {
       newErrors.donorContact = "Donor contact is required";
+    } else if (!/^\d{10}$/.test(donorContact)) {
+      newErrors.donorContact = "Donor contact must be a 10-digit number";
+    }
     if (!formData.get("amount")?.toString().trim())
       newErrors.amount = "Amount is required";
     else if (isNaN(Number(formData.get("amount"))))
@@ -43,9 +95,11 @@ const DonationForm: React.FC<DonationFormProps> = ({
     return newErrors;
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    const form = e.currentTarget; // store form reference immediately
+
+    const formData = new FormData(form);
     const validationErrors = validate(formData);
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
@@ -60,19 +114,39 @@ const DonationForm: React.FC<DonationFormProps> = ({
       details: formData.get("details")?.toString(),
     };
 
-    console.log("Submitting donation:", data);
+    try {
+      const result = await addDonation(data);
+      toast.success(result.message);
+      showMessage(result.message, "success");
+      // ✅ use stored reference instead of e.currentTarget
+      form.reset();
+      setSelectedCategory("");
+      setSubCategories([]);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+        showMessage(error.message, "error");
+      }
+    }
   };
 
   return (
-    <div className="flex w-full justify-center max-h-screen">
+    <div className="flex w-full justify-center ">
       <form
         onSubmit={handleSubmit}
         className="md:px-8 w-full max-w-2xl p-3 rounded-lg border-4 border-amber-400 bg-green-300 dark:bg-gray-500 text-gray-900 dark:text-gray-100 shadow-sm"
       >
-        <div className="text-center">
+        <div className="flex items-center justify-between">
           <h3 className="font-bold text-2xl head-text-shadow text-gray-900 dark:text-gray-100">
             Add Donation
           </h3>
+          <Button
+            type="button"
+            onClick={onBack}
+            className="!rounded-2xl text-white bg-blue-900"
+          >
+            Back
+          </Button>
         </div>
         <div className="w-full h-px bg-gray-300 m-2 mt-3" />
 
@@ -84,7 +158,9 @@ const DonationForm: React.FC<DonationFormProps> = ({
             </label>
             <select
               name="category"
-              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 cursor-pointer text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 cursor-pointer text-gray-900 dark:text-gray-100 ${
                 errors.category ? "border-red-500" : "border-gray-200"
               }`}
             >
@@ -107,7 +183,8 @@ const DonationForm: React.FC<DonationFormProps> = ({
             </label>
             <select
               name="subCategory"
-              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 cursor-pointer text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
+              disabled={!selectedCategory}
+              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 cursor-pointer text-gray-900 dark:text-gray-100 ${
                 errors.subCategory ? "border-red-500" : "border-gray-200"
               }`}
             >
@@ -180,10 +257,9 @@ const DonationForm: React.FC<DonationFormProps> = ({
               <p className="text-red-500 text-sm mt-1">{errors.amount}</p>
             )}
           </div>
-
           {/* Date */}
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text sm font-medium mb-1 text-gray-800 dark:text-gray-200">
               Date
             </label>
             <input
@@ -227,6 +303,20 @@ const DonationForm: React.FC<DonationFormProps> = ({
           >
             Submit Donation
           </Button>
+        </div>
+
+        {/* Messages */}
+        <div className="flex justify-center mt-4">
+          {successMessage && (
+            <p className="bg-green-100 text-green-800 px-4 py-2 rounded-lg shadow-md text-center font-medium animate-fadeIn">
+              {successMessage}
+            </p>
+          )}
+          {errorMessage && (
+            <p className="bg-red-100 text-red-800 px-4 py-2 rounded-lg shadow-md text-center font-medium animate-fadeIn">
+              {errorMessage}
+            </p>
+          )}
         </div>
       </form>
     </div>
