@@ -95,7 +95,7 @@ const ViewDonations = () => {
   return (
     <div className="w-full p-4">
       {/* Filters */}
-      <div className="flex flex-col md:flex-row gap-4 mb-4">
+      <div className="flex flex-col justify-around md:flex-row gap-4 mb-4">
         <div>
           <label className="block mb-1 font-medium">Filter by Category</label>
           <select
@@ -136,7 +136,7 @@ const ViewDonations = () => {
                 S.No.
               </th>
               <th className="border-2 !border-gray-900 px-2 py-2 w-20">Date</th>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-24">
+              <th className="border-2 !border-gray-900 px-2 py-2 w-40">
                 Category
               </th>
               <th className="border-2 !border-gray-900 px-2 py-2 w-35">
