@@ -6,17 +6,6 @@ import ViewDonations from "./ViewDonations";
 const Donations = () => {
   const [isDonationForm, setIsDonantionForm] = useState(false);
 
-  // Sample categories and sub-categories - in real app, these would come from API
-  const categories = ["Education", "Health", "Food", "Clothing", "Other"];
-  const subCategories = [
-    "Books",
-    "Medicine",
-    "Meals",
-    "Clothes",
-    "Stationery",
-    "Emergency",
-  ];
-
   const addDonationBtnhandler = () => {
     setIsDonantionForm(true);
   };
@@ -46,11 +35,7 @@ const Donations = () => {
       {/* Content */}
       <div>
         {isDonationForm ? (
-          <DonationForm
-            onBack={() => setIsDonantionForm(false)}
-            categories={categories}
-            subCategories={subCategories}
-          />
+          <DonationForm onBack={() => setIsDonantionForm(false)} />
         ) : (
           <ViewDonations />
         )}
