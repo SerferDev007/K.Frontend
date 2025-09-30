@@ -10,7 +10,7 @@ const Donations = () => {
     setIsDonantionForm(true);
   };
   return (
-    <div className="relative w-full mt-2 p-4">
+    <div className="relative w-full mt-5 ">
       {/* Button fixed at top-right of this div */}
       {!isDonationForm && (
         <>

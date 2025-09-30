@@ -306,18 +306,21 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
         </div>
 
         {/* Messages */}
-        <div className="flex justify-center mt-4">
-          {successMessage && (
-            <p className="bg-green-100 text-green-800 px-4 py-2 rounded-lg shadow-md text-center font-medium animate-fadeIn">
-              {successMessage}
-            </p>
-          )}
-          {errorMessage && (
-            <p className="bg-red-100 text-red-800 px-4 py-2 rounded-lg shadow-md text-center font-medium animate-fadeIn">
-              {errorMessage}
-            </p>
-          )}
-        </div>
+        {successMessage ||
+          (errorMessage && (
+            <div className="flex justify-center mt-4">
+              {successMessage && (
+                <p className="bg-green-100 text-green-800 px-4 py-2 rounded-lg shadow-md text-center font-medium animate-fadeIn">
+                  {successMessage}
+                </p>
+              )}
+              {errorMessage && (
+                <p className="bg-red-100 text-red-800 px-4 py-2 rounded-lg shadow-md text-center font-medium animate-fadeIn">
+                  {errorMessage}
+                </p>
+              )}
+            </div>
+          ))}
       </form>
     </div>
   );
