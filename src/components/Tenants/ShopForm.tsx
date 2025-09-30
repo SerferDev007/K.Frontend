@@ -266,7 +266,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ onBack, token }) => {
               disabled={loading}
               className="flex-1 !rounded-xl bg-amber-400 hover:bg-orange-400 text-gray-900"
             >
-              {loading ? "Processing..." : "Submit Shop"}
+              {loading ? "Processing..." : "Assign Shop"}
             </Button>
           </div>
         </form>

@@ -71,7 +71,7 @@ const ViewTenantsDetailsPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center w-full mx-auto border !border-white/30 bg-black/20 backdrop-blur-md rounded-xl shadow-lg p-4 my-4">
+    <div className="flex items-center justify-center w-full mx-auto border !border-white/30 bg-black/20 backdrop-blur-md rounded-xl shadow-lg p-4 m-4">
       <div className="mt-15 flex flex-col items-center w-full max-w-6xl mx-auto">
         {/* Tenant Info Card */}
         <div className="w-full flex justify-between bg-amber-300 border border-gray-300 dark:border-gray-700 rounded-2xl shadow-md ps-4 pt-2 mb-4">
@@ -251,6 +251,13 @@ const ViewTenantsDetailsPage = () => {
               )}
             </div>
           ))}
+          {tenant?.shopsAllotted.length === 0 && (
+            <div>
+              <p className="italic text-gray-900">
+                No Shops Allotted to this Tenant
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

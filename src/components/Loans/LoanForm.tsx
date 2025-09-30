@@ -282,7 +282,7 @@ const AssignLoan: React.FC<LoanFormProps> = ({ onBack, token }) => {
             disabled={loading}
             className="flex-1 !rounded-xl bg-amber-400 hover:bg-orange-400 text-gray-900"
           >
-            {loading ? "Processing..." : "Submit Loan"}
+            {loading ? "Processing..." : "Assign Loan"}
           </Button>
         </div>
         <div className="mt-3 text-center">
@@ -292,7 +292,7 @@ const AssignLoan: React.FC<LoanFormProps> = ({ onBack, token }) => {
               onClick={handlePrintReceipt}
               className="flex-1 !rounded-xl bg-green-600 hover:bg-green-700 text-white"
             >
-              Print Receipt
+              Print Loan Assigned Receipt
             </Button>
           )}
         </div>

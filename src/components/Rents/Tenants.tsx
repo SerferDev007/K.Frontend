@@ -4,7 +4,7 @@ import ShopForm from "../Tenants/ShopForm";
 import LoanForm from "../Loans/LoanForm";
 import { Button } from "../UI/Button";
 import { useAuth } from "@/hooks/useAuth";
-import TenantsDetails from "./TenantsDetails";
+//import TenantsDetails from "./TenantsDetails";
 
 const Tenants = () => {
   const [isPaymentForm, setIsPaymentForm] = useState(false);
@@ -32,7 +32,7 @@ const Tenants = () => {
   };
 
   return (
-    <div className="relative mt-4 w-full min-h-screen p-4">
+    <div className="relative mt-4 w-full p-4">
       {/* Header Section */}
       {!isPaymentForm && !isShopForm && !isLoanForm && (
         <div className="flex flex-col md:flex-row justify-between items-center border border-gray-200 dark:border-gray-700 rounded-2xl shadow-md p-3 mb-6">
@@ -63,24 +63,33 @@ const Tenants = () => {
       )}
 
       {/* Divider */}
-      <div className="w-full h-px bg-gray-300 dark:bg-gray-700 mb-6" />
+      <div className="w-full h-px bg-gray-300 dark:bg-gray-700 mb-2" />
 
       {/* Content Section */}
-      <div className="rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-2">
-        {isPaymentForm && (
-          <PaymentForm
-            onBack={() => setIsPaymentForm(false)}
-            token={token || ""}
-          />
-        )}
-        {isShopForm && (
-          <ShopForm onBack={() => setIsShopForm(false)} token={token || ""} />
-        )}
-        {isLoanForm && (
-          <LoanForm onBack={() => setIsLoanForm(false)} token={token || ""} />
-        )}
-        {!isPaymentForm && !isShopForm && !isLoanForm && <TenantsDetails />}
-      </div>
+      {isPaymentForm ||
+        isShopForm ||
+        (isLoanForm && (
+          <div className="rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-2">
+            {isPaymentForm && (
+              <PaymentForm
+                onBack={() => setIsPaymentForm(false)}
+                token={token || ""}
+              />
+            )}
+            {isShopForm && (
+              <ShopForm
+                onBack={() => setIsShopForm(false)}
+                token={token || ""}
+              />
+            )}
+            {isLoanForm && (
+              <LoanForm
+                onBack={() => setIsLoanForm(false)}
+                token={token || ""}
+              />
+            )}
+          </div>
+        ))}
     </div>
   );
 };
