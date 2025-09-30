@@ -124,22 +124,22 @@ const ViewDonations = () => {
       </div>
 
       {/* Total Donation */}
-      <div className="mb-4 font-bold text-lg">
+      <div className="text-center mb-4 font-bold text-lg bg-amber-300 w-1/4 shadow-black">
         Total Donation: ₹{totalDonation.toLocaleString()}
       </div>
 
-      <div className="overflow-x-auto border !border-gray-900 !rounded-2xl">
-        <table className="min-w-full border-collapse border !border-gray-900 text-left table-auto">
+      <div className="w-full overflow-x-auto border !border-gray-900 !rounded-2xl">
+        <table className="w-full border-collapse border !border-gray-900 text-left table-auto">
           <thead className="text-center !bg-amber-200 border !border-gray-900 dark:bg-gray-700">
             <tr>
               <th className="border-2 !border-gray-900 px-2 py-2 w-12">
                 S.No.
               </th>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-20">Date</th>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-40">
+              <th className="border-2 !border-gray-900 px-2 py-2 w-18">Date</th>
+              <th className="border-2 !border-gray-900 px-2 py-2 w-36">
                 Category
               </th>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-35">
+              <th className="border-2 !border-gray-900 px-2 py-2 w-26">
                 Sub-Category
               </th>
               <th className="border-2 !border-gray-900 px-2 py-2 w-60">
