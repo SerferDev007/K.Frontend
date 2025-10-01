@@ -135,7 +135,10 @@ export type GetExpensesResponse = {
 export const getExpenseCategories =
   async (): Promise<ExpenseCategoriesResponse> => {
     try {
-      const res = await fetch(`${BASE_URL}/api/expense/categories`);
+      const res = await fetch(`${BASE_URL}/api/expense/categories`, {
+        method: "GET",
+        credentials: "include",
+      });
       if (!res.ok) throw new Error("Failed to fetch expense categories");
       return (await res.json()) as ExpenseCategoriesResponse;
     } catch (err: unknown) {
@@ -168,7 +171,6 @@ export const addExpense = async (
       }
     });
     body = formData;
-    headers = undefined; // browser sets multipart headers automatically
   } else {
     // Else → JSON
     headers = {
