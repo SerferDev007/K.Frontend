@@ -159,7 +159,6 @@ export const addExpense = async (
   let headers: HeadersInit | undefined;
 
   if (data.billImage) {
-    // If file is attached → use FormData
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
@@ -172,10 +171,7 @@ export const addExpense = async (
     });
     body = formData;
   } else {
-    // Else → JSON
-    headers = {
-      "Content-Type": "application/json",
-    };
+    headers = { "Content-Type": "application/json" };
     body = JSON.stringify(data);
   }
 
@@ -183,16 +179,14 @@ export const addExpense = async (
     method: "POST",
     headers,
     body,
-    credentials: "include",
+    credentials: "include", // ✅ required for cookies
   });
 
   const result = await res.json();
 
-  if (!res.ok) {
-    throw new Error(result.message || "Failed to add expense");
-  }
+  if (!res.ok) throw new Error(result.message || "Failed to add expense");
 
-  return result; // { message, expense }
+  return result;
 };
 
 // ────────────────────────────────
