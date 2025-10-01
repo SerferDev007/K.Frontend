@@ -2,27 +2,33 @@ import toast from "react-hot-toast";
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 // src/api/tenantApi.ts
-interface TenantData {
+export interface TenantData {
   tenantName: string;
   mobileNo: string;
   adharNo?: string;
+  shopsAllotted?: ShopData[];
 }
 
-interface ShopData {
+export interface ShopData {
   shopNo: string;
   rentAmount: number;
   deposit: number;
   agreementDate: string;
+  rentPaymentHistory?: RentData[];
+  loans?: LoanData[];
 }
 
-interface LoanData {
+export interface LoanData {
   shopNo: string;
   loanAmount: number;
   tenureMonths: number;
   startDate: string;
+  emiPerMonth: number;
+  emiPaymentHistory: EmiData[];
 }
 
-interface RentData {
+export interface RentData {
+  isPaid: boolean;
   tenantId: string;
   shopNo: string;
   year: number;
@@ -33,7 +39,7 @@ interface RentData {
   penalty?: number;
 }
 
-interface EmiData {
+export interface EmiData {
   tenantId: string;
   shopNo: string;
   year: number;
@@ -42,6 +48,7 @@ interface EmiData {
   emiPerMonth: number; // 👈 changed from rentAmount
   details?: string;
   penalty?: number; // 👈 add this so penalty passes properly
+  isEmiPaid: boolean;
 }
 
 export interface RawPenaltyDetail {

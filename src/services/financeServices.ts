@@ -183,7 +183,7 @@ export type Expense = {
   payeeContact?: string;
   amount: number;
   details?: string;
-  billImage?: string;
+  receiptImage?: string;
 };
 
 // ✅ Get All Expenses Response

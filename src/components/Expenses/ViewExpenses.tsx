@@ -145,7 +145,7 @@ const ViewExpenses = () => {
     try {
       // Map editFormData (Partial<Expense>) → Partial<ExpensePayload> (omit billImage:string)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { billImage, ...rest } = editFormData;
+      const { receiptImage, ...rest } = editFormData;
       const payload: Partial<ExpensePayload> = rest; // properly typed
       await updateExpense(id, payload);
       // fields align except billImage
@@ -172,6 +172,27 @@ const ViewExpenses = () => {
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete expense");
+    }
+  };
+
+  const handleDownloadClick = (imageUrl?: string) => {
+    if (!imageUrl) {
+      toast.error("No receipt image available to download");
+      return;
+    }
+
+    try {
+      const link = document.createElement("a");
+      link.href = imageUrl;
+      // Extract file name from URL or fallback to "receipt.jpg"
+      const fileName = imageUrl.split("/").pop() || "receipt.jpg";
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error("Download failed:", err);
+      toast.error("Failed to download image");
     }
   };
 
@@ -220,13 +241,14 @@ const ViewExpenses = () => {
           <thead className="text-center !bg-red-200 border !border-gray-900">
             <tr>
               <th className="border px-2 py-2 w-[4%]">Sr.No.</th>
-              <th className="border px-2 py-2 w-[10%]">Date</th>
+              <th className="border px-2 py-2 w-[8%]">Date</th>
               <th className="border px-2 py-2 w-[10%]">Category</th>
               <th className="border px-2 py-2 w-[10%]">Sub-Category</th>
               <th className="border px-2 py-2 w-[21%]">Paid To</th>
               <th className="border px-2 py-2 w-[9%]">Contact</th>
-              <th className="border px-2 py-2 w-[8%]">Amount</th>
+              <th className="border px-2 py-2 w-[6%]">Amount</th>
               <th className="border px-2 py-2 w-[18%]">Details</th>
+              <th className="border px-2 py-2 w-[4%]">Bill</th>
               <th className="border px-2 py-2 w-[10%]">Actions</th>
             </tr>
           </thead>
@@ -384,6 +406,15 @@ const ViewExpenses = () => {
                   ) : (
                     expense.details || "-"
                   )}
+                </td>
+
+                <td className="border px-2">
+                  <Button
+                    onClick={() => handleDownloadClick(expense.receiptImage)}
+                    className="bg-green-500 text-white rounded px-2"
+                  >
+                    ⬇️
+                  </Button>
                 </td>
 
                 {/* Actions */}
