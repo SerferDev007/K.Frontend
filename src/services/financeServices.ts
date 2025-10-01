@@ -246,12 +246,11 @@ export const addExpense = async (
 
   const result = await res.json();
 
-  if (!res.ok)
-    throw new Error(
-      (result as ApiMessageResponse).message || "Failed to add expense"
-    );
+  if (!res.ok) {
+    throw new Error(result.message || "Failed to add expense");
+  }
 
-  return result as AddExpenseResponse;
+  return result; // { message, expense }
 };
 
 // ────────────────────────────────
