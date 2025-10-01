@@ -1,8 +1,15 @@
 import { useEffect, useState, useMemo } from "react";
-import { getAllDonations, type Donation } from "@/services/financeServices";
+import {
+  getAllDonations,
+  type Donation,
+  getDonationCategories,
+  updateDonation,
+  deleteDonation,
+} from "@/services/financeServices";
 import toast from "react-hot-toast";
+import { Button } from "../UI/Button";
 
-// Utility to format date to dd/mm/yyyy
+// Utility to format date
 const formatDate = (dateStr: string) => {
   const d = new Date(dateStr);
   const day = String(d.getDate()).padStart(2, "0");
@@ -18,59 +25,68 @@ const ViewDonations = () => {
   const [categoryFilter, setCategoryFilter] = useState<string>("");
   const [monthFilter, setMonthFilter] = useState<string>(""); // format: YYYY-MM
   const [categories, setCategories] = useState<string[]>([]);
+  const [allCategories, setAllCategories] = useState<Record<string, string[]>>(
+    {}
+  );
 
-  // Pagination state
+  // Editing state
+  const [editRowId, setEditRowId] = useState<string | null>(null);
+  const [editFormData, setEditFormData] = useState<Partial<Donation>>({});
+  const [subCategories, setSubCategories] = useState<string[]>([]);
+
+  // Pagination
   const [currentPage, setCurrentPage] = useState<number>(1);
   const entriesPerPage = 20;
 
+  // Fetch donations
+  const fetchDonations = async () => {
+    try {
+      const res = await getAllDonations();
+      setDonations(res.donations);
+      setFilteredDonations(res.donations);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to fetch donations");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch categories
+  const fetchCategories = async () => {
+    try {
+      const data = await getDonationCategories();
+      setAllCategories(data.categories);
+      setCategories(Object.keys(data.categories));
+    } catch {
+      toast.error("Failed to fetch categories");
+    }
+  };
+
   useEffect(() => {
-    const fetchDonations = async () => {
-      try {
-        const res = await getAllDonations();
-        setDonations(res.donations);
-        setFilteredDonations(res.donations);
-
-        // Extract unique categories for filter dropdown
-        const uniqueCategories = Array.from(
-          new Set(res.donations.map((d) => d.category))
-        );
-        setCategories(uniqueCategories);
-      } catch (err) {
-        console.error(err);
-        toast.error("Failed to fetch donations");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchDonations();
+    fetchCategories();
   }, []);
 
-  // Filter donations whenever filter changes
+  // Filter donations
   useEffect(() => {
     let updated = [...donations];
-
     if (categoryFilter) {
       updated = updated.filter((d) => d.category === categoryFilter);
     }
-
     if (monthFilter) {
-      updated = updated.filter((d) => {
-        const donationMonth = d.date.slice(0, 7); // YYYY-MM
-        return donationMonth === monthFilter;
-      });
+      updated = updated.filter((d) => d.date.slice(0, 7) === monthFilter);
     }
-
     setFilteredDonations(updated);
-    setCurrentPage(1); // reset page to 1 when filters change
+    setCurrentPage(1);
   }, [categoryFilter, monthFilter, donations]);
 
-  // ✅ Compute total donation dynamically
+  // Compute total donation
   const totalDonation = useMemo(() => {
     return filteredDonations.reduce((sum, d) => sum + Number(d.amount), 0);
   }, [filteredDonations]);
 
-  // ✅ Pagination logic
+  // Pagination
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
   const currentEntries = filteredDonations.slice(
@@ -82,6 +98,65 @@ const ViewDonations = () => {
   const handlePageChange = (page: number) => {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
+  };
+
+  // Handle Edit Click
+  const handleEditClick = (donation: Donation) => {
+    setEditRowId(donation._id);
+    setEditFormData(donation);
+    if (donation.category && allCategories[donation.category]) {
+      setSubCategories(allCategories[donation.category]);
+    }
+  };
+
+  // Handle Cancel
+  const handleCancelClick = () => {
+    setEditRowId(null);
+    setEditFormData({});
+  };
+
+  // Handle Input Change (generic)
+  const handleChange = <K extends keyof Donation>(
+    field: K,
+    value: Donation[K]
+  ) => {
+    setEditFormData((prev) => ({ ...prev, [field]: value }));
+
+    if (
+      field === "category" &&
+      typeof value === "string" &&
+      allCategories[value]
+    ) {
+      setSubCategories(allCategories[value]);
+      setEditFormData((prev) => ({ ...prev, subCategory: "" }));
+    }
+  };
+
+  // Handle Save Update
+  const handleSaveClick = async (id: string) => {
+    try {
+      await updateDonation(id, editFormData);
+      toast.success("Donation updated successfully");
+      await fetchDonations();
+      setEditRowId(null);
+      setEditFormData({});
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update donation");
+    }
+  };
+
+  // Handle Delete
+  const handleDeleteClick = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this donation?")) return;
+    try {
+      await deleteDonation(id);
+      toast.success("Donation deleted successfully");
+      await fetchDonations();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete donation");
+    }
   };
 
   if (loading) {
@@ -128,64 +203,214 @@ const ViewDonations = () => {
         Total Donation: ₹{totalDonation.toLocaleString()}
       </div>
 
+      {/* Table */}
       <div className="w-full overflow-x-auto border !border-gray-900 !rounded-2xl">
-        <table className="w-full border-collapse border !border-gray-900 text-left table-auto">
-          <thead className="text-center !bg-amber-200 border !border-gray-900 dark:bg-gray-700">
+        <table className="w-full border-collapse border !border-gray-900 text-left table-fixed">
+          <thead className="text-center !bg-amber-200 border !border-gray-900 ">
             <tr>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-12">
-                S.No.
-              </th>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-18">Date</th>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-36">
-                Category
-              </th>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-26">
-                Sub-Category
-              </th>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-60">
-                Donor Name
-              </th>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-28">
-                Contact
-              </th>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-20">
-                Amount
-              </th>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-64">
-                Details
-              </th>
+              <th className="border px-2 py-2 w-[4%]">Sr.No.</th>
+              <th className="border px-2 py-2 w-[10%]">Date</th>
+              <th className="border px-2 py-2 w-[10%]">Category</th>
+              <th className="border px-2 py-2 w-[10%]">Sub-Category</th>
+              <th className="border px-2 py-2 w-[21%]">Donor Name</th>
+              <th className="border px-2 py-2 w-[9%]">Contact</th>
+              <th className="border px-2 py-2 w-[8%]">Amount</th>
+              <th className="border px-2 py-2 w-[18%]">Details</th>
+              <th className="border px-2 py-2 w-[10%]">Actions</th>
             </tr>
           </thead>
           <tbody>
             {currentEntries.map((donation, index) => (
               <tr
                 key={donation._id}
-                className="bg-amber-50 hover:bg-amber-300 transition-colors"
-                style={{ height: "40px" }}
+                className="bg-amber-50 hover:bg-amber-200 text-center"
               >
-                <td className="border !border-gray-900 px-2 py-2 text-center">
+                {/* Sr.No */}
+                <td className="border px-2 w-[5%]">
                   {indexOfFirstEntry + index + 1}
                 </td>
-                <td className="border !border-gray-900 px-2 py-2 text-center">
-                  {formatDate(donation.date)}
+
+                {/* Date */}
+                <td className="border px-2 w-[10%]">
+                  {editRowId === donation._id ? (
+                    <input
+                      type="date"
+                      value={
+                        editFormData.date
+                          ? new Date(editFormData.date)
+                              .toISOString()
+                              .slice(0, 10)
+                          : ""
+                      }
+                      onChange={(e) =>
+                        handleChange("date", e.target.value as Donation["date"])
+                      }
+                      className="border rounded p-1 w-full truncate"
+                    />
+                  ) : (
+                    formatDate(donation.date)
+                  )}
                 </td>
-                <td className="border !border-gray-900 px-2 py-2">
-                  {donation.category}
+
+                {/* Category */}
+                <td className="border px-2 w-[12%]">
+                  {editRowId === donation._id ? (
+                    <select
+                      value={editFormData.category || ""}
+                      onChange={(e) =>
+                        handleChange(
+                          "category",
+                          e.target.value as Donation["category"]
+                        )
+                      }
+                      className="border rounded p-1 w-full truncate"
+                    >
+                      <option value="">Select</option>
+                      {categories.map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    donation.category
+                  )}
                 </td>
-                <td className="border !border-gray-900 px-2 py-2">
-                  {donation.subCategory}
+
+                {/* SubCategory */}
+                <td className="border px-2 w-[12%]">
+                  {editRowId === donation._id ? (
+                    <select
+                      value={editFormData.subCategory || ""}
+                      onChange={(e) =>
+                        handleChange(
+                          "subCategory",
+                          e.target.value as Donation["subCategory"]
+                        )
+                      }
+                      className="border rounded p-1 w-full truncate"
+                    >
+                      <option value="">Select</option>
+                      {subCategories.map((sub) => (
+                        <option key={sub} value={sub}>
+                          {sub}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    donation.subCategory
+                  )}
                 </td>
-                <td className="border !border-gray-900 px-2 py-2">
-                  {donation.donorName}
+
+                {/* Donor Name */}
+                <td className="border px-2 w-[20%]">
+                  {editRowId === donation._id ? (
+                    <input
+                      type="text"
+                      value={editFormData.donorName || ""}
+                      onChange={(e) =>
+                        handleChange(
+                          "donorName",
+                          e.target.value as Donation["donorName"]
+                        )
+                      }
+                      className="border rounded p-1 w-full truncate"
+                    />
+                  ) : (
+                    donation.donorName
+                  )}
                 </td>
-                <td className="border  text-right !border-gray-900 px-2 py-2">
-                  {donation.donorContact}
+
+                {/* Contact */}
+                <td className="border px-2 w-[10%]">
+                  {editRowId === donation._id ? (
+                    <input
+                      type="text"
+                      value={editFormData.donorContact || ""}
+                      onChange={(e) =>
+                        handleChange(
+                          "donorContact",
+                          e.target.value as Donation["donorContact"]
+                        )
+                      }
+                      className="border rounded p-1 w-full truncate"
+                    />
+                  ) : (
+                    donation.donorContact
+                  )}
                 </td>
-                <td className="border  text-right !border-gray-900 px-2 py-2">
-                  ₹{donation.amount}
+
+                {/* Amount */}
+                <td className="border px-2 w-[8%] text-right">
+                  {editRowId === donation._id ? (
+                    <input
+                      type="number"
+                      value={editFormData.amount || ""}
+                      onChange={(e) =>
+                        handleChange(
+                          "amount",
+                          Number(e.target.value) as Donation["amount"]
+                        )
+                      }
+                      className="border rounded p-1 w-full truncate text-right"
+                    />
+                  ) : (
+                    `₹${donation.amount}`
+                  )}
                 </td>
-                <td className="border !border-gray-900 px-2 py-2 truncate max-w-[250px]">
-                  {donation.details || "-"}
+
+                {/* Details */}
+                <td className="border px-2 w-[15%] truncate">
+                  {editRowId === donation._id ? (
+                    <input
+                      type="text"
+                      value={editFormData.details || ""}
+                      onChange={(e) =>
+                        handleChange(
+                          "details",
+                          e.target.value as Donation["details"]
+                        )
+                      }
+                      className="border rounded p-1 w-full truncate"
+                    />
+                  ) : (
+                    donation.details || "-"
+                  )}
+                </td>
+
+                {/* Actions */}
+                <td className="border px-2 w-[8%]">
+                  {editRowId === donation._id ? (
+                    <div className="flex gap-2 justify-center">
+                      <Button
+                        onClick={() => handleSaveClick(donation._id)}
+                        className="bg-green-500 text-white rounded px-2"
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        onClick={handleCancelClick}
+                        className="bg-gray-500 text-white rounded px-2"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2 justify-center">
+                      <Button
+                        onClick={() => handleEditClick(donation)}
+                        className="bg-blue-500 text-white rounded px-2"
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        onClick={() => handleDeleteClick(donation._id)}
+                        className="bg-red-500 text-white rounded px-2"
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  )}
                 </td>
               </tr>
             ))}
@@ -207,7 +432,7 @@ const ViewDonations = () => {
             <button
               key={page}
               onClick={() => handlePageChange(page)}
-              className={`px-3 py-1 border rounded bg-amber-100  ${
+              className={`px-3 py-1 border rounded bg-amber-100 ${
                 page === currentPage ? "bg-amber-400 text-white" : ""
               }`}
             >
@@ -217,17 +442,11 @@ const ViewDonations = () => {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-3 py-1 bg-amber-100  border rounded disabled:opacity-50"
+            className="px-3 py-1 bg-amber-100 border rounded disabled:opacity-50"
           >
             Next
           </button>
         </div>
-      )}
-
-      {filteredDonations.length === 0 && (
-        <p className="text-center text-white underline mt-6 italic font-bold">
-          No donations match the filter.
-        </p>
       )}
     </div>
   );

@@ -37,6 +37,8 @@ export type GetDonationsResponse = {
   donations: Donation[];
 };
 
+export type ApiMessageResponse = { message: string };
+
 export const getDonationCategories =
   async (): Promise<DonationCategoriesResponse> => {
     try {
@@ -67,7 +69,9 @@ export const addDonation = async (
   const result = await res.json(); // read once
 
   if (!res.ok) {
-    throw new Error(result.message || "Failed to add donation");
+    const errMsg =
+      (result as ApiMessageResponse).message || "Failed to add donation";
+    throw new Error(errMsg);
   }
 
   return result; // { message, donation }
@@ -82,11 +86,69 @@ export const getAllDonations = async (): Promise<GetDonationsResponse> => {
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.message || "Failed to fetch donations");
+    throw new Error(
+      (data as ApiMessageResponse).message || "Failed to fetch donations"
+    );
   }
 
-  return data;
+  return data as GetDonationsResponse;
 };
+
+// Update donation
+export const updateDonation = async (
+  id: string,
+  data: Partial<DonationPayload>
+): Promise<AddDonationResponse> => {
+  try {
+    const res = await fetch(`${BASE_URL}/api/donation/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+      credentials: "include",
+    });
+    const result = (await res.json()) as
+      | AddDonationResponse
+      | ApiMessageResponse;
+
+    if (!res.ok) {
+      const errMsg =
+        (result as ApiMessageResponse).message || "Failed to update donation";
+      throw new Error(errMsg);
+    }
+    return result as AddDonationResponse;
+  } catch (err: unknown) {
+    const message =
+      err instanceof Error ? err.message : "Failed to update donation";
+    toast.error(message);
+    throw new Error(message);
+  }
+};
+
+// Delete donation
+export const deleteDonation = async (
+  id: string
+): Promise<ApiMessageResponse> => {
+  try {
+    const res = await fetch(`${BASE_URL}/api/donation/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    const result = (await res.json()) as ApiMessageResponse;
+    if (!res.ok) {
+      throw new Error(result.message || "Failed to delete donation");
+    }
+    return result;
+  } catch (err: unknown) {
+    const message =
+      err instanceof Error ? err.message : "Failed to delete donation";
+    toast.error(message);
+    throw new Error(message);
+  }
+};
+
+//
+//
+//
 
 // ✅ Expense Category response
 export type ExpenseCategoriesResponse = {
@@ -159,7 +221,6 @@ export const addExpense = async (
   let headers: HeadersInit | undefined;
 
   if (data.billImage) {
-    // If file is attached → use FormData
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
@@ -172,10 +233,7 @@ export const addExpense = async (
     });
     body = formData;
   } else {
-    // Else → JSON
-    headers = {
-      "Content-Type": "application/json",
-    };
+    headers = { "Content-Type": "application/json" };
     body = JSON.stringify(data);
   }
 
@@ -183,16 +241,17 @@ export const addExpense = async (
     method: "POST",
     headers,
     body,
-    credentials: "include",
+    credentials: "include", // ✅ required for cookies
   });
 
   const result = await res.json();
 
-  if (!res.ok) {
-    throw new Error(result.message || "Failed to add expense");
-  }
+  if (!res.ok)
+    throw new Error(
+      (result as ApiMessageResponse).message || "Failed to add expense"
+    );
 
-  return result; // { message, expense }
+  return result as AddExpenseResponse;
 };
 
 // ────────────────────────────────
@@ -207,8 +266,62 @@ export const getAllExpenses = async (): Promise<GetExpensesResponse> => {
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.message || "Failed to fetch expenses");
+    throw new Error(
+      (data as ApiMessageResponse).message || "Failed to fetch expenses"
+    );
   }
 
-  return data;
+  return data as GetExpensesResponse;
+};
+
+// Update expense
+export const updateExpense = async (
+  id: string,
+  data: Partial<ExpensePayload>
+): Promise<AddExpenseResponse> => {
+  try {
+    const res = await fetch(`${BASE_URL}/api/expense/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+      credentials: "include",
+    });
+    const result = (await res.json()) as
+      | AddExpenseResponse
+      | ApiMessageResponse;
+    if (!res.ok) {
+      const errMsg =
+        (result as ApiMessageResponse).message || "Failed to update expense";
+      throw new Error(errMsg);
+    }
+    return result as AddExpenseResponse;
+  } catch (err: unknown) {
+    const message =
+      err instanceof Error ? err.message : "Failed to update expense";
+    toast.error(message);
+    throw new Error(message);
+  }
+};
+
+// Delete expense
+export const deleteExpense = async (
+  id: string
+): Promise<ApiMessageResponse> => {
+  try {
+    const res = await fetch(`${BASE_URL}/api/expense/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    const result = (await res.json()) as ApiMessageResponse;
+
+    if (!res.ok) {
+      throw new Error(result.message || "Failed to delete expense");
+    }
+    return result;
+  } catch (err: unknown) {
+    const message =
+      err instanceof Error ? err.message : "Failed to delete expense";
+    toast.error(message);
+    throw new Error(message);
+  }
 };

@@ -1,5 +1,11 @@
 import { useEffect, useState, useMemo } from "react";
-import { getAllExpenses, type Expense } from "@/services/financeServices";
+import {
+  getAllExpenses,
+  updateExpense,
+  deleteExpense,
+  type Expense,
+  type ExpensePayload,
+} from "@/services/financeServices";
 import toast from "react-hot-toast";
 import { Button } from "../UI/Button";
 
@@ -19,11 +25,20 @@ const ViewExpenses = () => {
   const [categoryFilter, setCategoryFilter] = useState<string>("");
   const [monthFilter, setMonthFilter] = useState<string>(""); // YYYY-MM
   const [categories, setCategories] = useState<string[]>([]);
+  const [allCategories, setAllCategories] = useState<Record<string, string[]>>(
+    {}
+  );
+
+  // Editing state
+  const [editRowId, setEditRowId] = useState<string | null>(null);
+  const [editFormData, setEditFormData] = useState<Partial<Expense>>({});
+  const [subCategories, setSubCategories] = useState<string[]>([]);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState<number>(1);
   const entriesPerPage = 20;
 
+  // Fetch expenses
   useEffect(() => {
     const fetchExpenses = async () => {
       try {
@@ -36,6 +51,20 @@ const ViewExpenses = () => {
           new Set(res.expenses.map((e) => e.category))
         );
         setCategories(uniqueCategories);
+
+        // Build category → subcategory map
+        const categoryMap: Record<string, string[]> = {};
+        res.expenses.forEach((e) => {
+          if (e.category) {
+            if (!categoryMap[e.category]) categoryMap[e.category] = [];
+            if (
+              e.subCategory &&
+              !categoryMap[e.category].includes(e.subCategory)
+            )
+              categoryMap[e.category].push(e.subCategory);
+          }
+        });
+        setAllCategories(categoryMap);
       } catch (err) {
         console.error(err);
         toast.error("Failed to fetch expenses");
@@ -51,27 +80,24 @@ const ViewExpenses = () => {
   useEffect(() => {
     let updated = [...expenses];
 
-    if (categoryFilter) {
+    if (categoryFilter)
       updated = updated.filter((e) => e.category === categoryFilter);
-    }
 
     if (monthFilter) {
-      updated = updated.filter((e) => {
-        const expenseMonth = e.date.slice(0, 7); // YYYY-MM
-        return expenseMonth === monthFilter;
-      });
+      updated = updated.filter((e) => e.date.slice(0, 7) === monthFilter);
     }
 
     setFilteredExpenses(updated);
     setCurrentPage(1);
   }, [categoryFilter, monthFilter, expenses]);
 
-  // ✅ Compute total expense dynamically
-  const totalExpense = useMemo(() => {
-    return filteredExpenses.reduce((sum, e) => sum + Number(e.amount), 0);
-  }, [filteredExpenses]);
+  // Total expense
+  const totalExpense = useMemo(
+    () => filteredExpenses.reduce((sum, e) => sum + Number(e.amount), 0),
+    [filteredExpenses]
+  );
 
-  // ✅ Pagination logic
+  // Pagination
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
   const currentEntries = filteredExpenses.slice(
@@ -85,13 +111,73 @@ const ViewExpenses = () => {
     setCurrentPage(page);
   };
 
-  if (loading) {
-    return <p className="text-center mt-6">Loading expenses...</p>;
-  }
+  // Handle edit click
+  const handleEditClick = (expense: Expense) => {
+    setEditRowId(expense._id);
+    setEditFormData(expense);
+    if (expense.category && allCategories[expense.category]) {
+      setSubCategories(allCategories[expense.category]);
+    }
+  };
 
-  if (expenses.length === 0) {
+  const handleCancelClick = () => {
+    setEditRowId(null);
+    setEditFormData({});
+  };
+
+  const handleChange = <K extends keyof Expense>(
+    field: K,
+    value: Expense[K]
+  ) => {
+    setEditFormData((prev) => ({ ...prev, [field]: value }));
+
+    if (
+      field === "category" &&
+      typeof value === "string" &&
+      allCategories[value]
+    ) {
+      setSubCategories(allCategories[value]);
+      setEditFormData((prev) => ({ ...prev, subCategory: "" }));
+    }
+  };
+
+  const handleSaveClick = async (id: string) => {
+    try {
+      // Map editFormData (Partial<Expense>) → Partial<ExpensePayload> (omit billImage:string)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { billImage, ...rest } = editFormData;
+      const payload: Partial<ExpensePayload> = rest; // properly typed
+      await updateExpense(id, payload);
+      // fields align except billImage
+      toast.success("Expense updated successfully");
+      const res = await getAllExpenses();
+      setExpenses(res.expenses);
+      setFilteredExpenses(res.expenses);
+      setEditRowId(null);
+      setEditFormData({});
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update expense");
+    }
+  };
+
+  const handleDeleteClick = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this expense?")) return;
+    try {
+      await deleteExpense(id);
+      toast.success("Expense deleted successfully");
+      const res = await getAllExpenses();
+      setExpenses(res.expenses);
+      setFilteredExpenses(res.expenses);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete expense");
+    }
+  };
+
+  if (loading) return <p className="text-center mt-6">Loading expenses...</p>;
+  if (expenses.length === 0)
     return <p className="text-center mt-6">No expenses found.</p>;
-  }
 
   return (
     <div className="w-full p-2">
@@ -112,7 +198,6 @@ const ViewExpenses = () => {
             ))}
           </select>
         </div>
-
         <div>
           <label className="block mb-1 font-medium">Filter by Month</label>
           <input
@@ -129,77 +214,210 @@ const ViewExpenses = () => {
         Total Expense: ₹{totalExpense.toLocaleString()}
       </div>
 
+      {/* Table */}
       <div className="w-full overflow-x-auto border !border-gray-900 !rounded-2xl">
-        <table className="w-full border-collapse border !border-gray-900 text-left table-auto">
-          <thead className="text-center !bg-red-200 border !border-gray-900 dark:bg-gray-700">
+        <table className="w-full border-collapse border !border-gray-900 text-left table-fixed">
+          <thead className="text-center !bg-red-200 border !border-gray-900">
             <tr>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-12">
-                S.No.
-              </th>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-18">Date</th>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-30">
-                Category
-              </th>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-30">
-                Sub-Category
-              </th>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-65">
-                Paid To
-              </th>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-28">
-                Contact
-              </th>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-20">
-                Amount
-              </th>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-64">
-                Details
-              </th>
-              <th className="border-2 !border-gray-900 px-2 py-2 w-34">Bill</th>
+              <th className="border px-2 py-2 w-[4%]">Sr.No.</th>
+              <th className="border px-2 py-2 w-[10%]">Date</th>
+              <th className="border px-2 py-2 w-[10%]">Category</th>
+              <th className="border px-2 py-2 w-[10%]">Sub-Category</th>
+              <th className="border px-2 py-2 w-[21%]">Paid To</th>
+              <th className="border px-2 py-2 w-[9%]">Contact</th>
+              <th className="border px-2 py-2 w-[8%]">Amount</th>
+              <th className="border px-2 py-2 w-[18%]">Details</th>
+              <th className="border px-2 py-2 w-[10%]">Actions</th>
             </tr>
           </thead>
           <tbody>
             {currentEntries.map((expense, index) => (
               <tr
                 key={expense._id}
-                className="bg-red-50 hover:bg-red-300 transition-colors"
-                style={{ height: "40px" }}
+                className="bg-red-50 hover:bg-red-300 text-center"
               >
-                <td className="border !border-gray-900 px-2 py-2 text-center">
-                  {indexOfFirstEntry + index + 1}
-                </td>
-                <td className="border !border-gray-900 px-2 py-2 text-center">
-                  {formatDate(expense.date)}
-                </td>
-                <td className="border !border-gray-900 px-2 py-2">
-                  {expense.category}
-                </td>
-                <td className="border !border-gray-900 px-2 py-2">
-                  {expense.subCategory}
-                </td>
-                <td className="border !border-gray-900 px-2 py-2">
-                  {expense.payeeName}
-                </td>
-                <td className="border text-right !border-gray-900 px-2 py-2">
-                  {expense.payeeContact || "-"}
-                </td>
-                <td className="border  text-right !border-gray-900 px-2 py-2">
-                  ₹{expense.amount}
-                </td>
-                <td className="border !border-gray-900 px-2 py-2 truncate max-w-[250px]">
-                  {expense.details || "-"}
-                </td>
-                <td className="border text-center !border-gray-900 px-2 py-2 max-w-[250px] overflow-hidden">
-                  {expense.billImage ? (
-                    <Button className="rounded bg-amber-900 ">
-                      <img
-                        className="w-5 invert brightness-0"
-                        src="./pics/download.svg"
-                        alt="Download"
-                      />
-                    </Button>
+                <td className="border px-2">{indexOfFirstEntry + index + 1}</td>
+
+                {/* Date */}
+                <td className="border px-2">
+                  {editRowId === expense._id ? (
+                    <input
+                      type="date"
+                      value={
+                        editFormData.date
+                          ? new Date(editFormData.date)
+                              .toISOString()
+                              .slice(0, 10)
+                          : ""
+                      }
+                      onChange={(e) =>
+                        handleChange("date", e.target.value as Expense["date"])
+                      }
+                      className="border rounded p-1 w-full truncate"
+                    />
                   ) : (
-                    <span className="text-gray-500">No Bill Available</span>
+                    formatDate(expense.date)
+                  )}
+                </td>
+
+                {/* Category */}
+                <td className="border px-2">
+                  {editRowId === expense._id ? (
+                    <select
+                      value={editFormData.category || ""}
+                      onChange={(e) =>
+                        handleChange(
+                          "category",
+                          e.target.value as Expense["category"]
+                        )
+                      }
+                      className="border rounded p-1 w-full truncate"
+                    >
+                      <option value="">Select</option>
+                      {categories.map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    expense.category
+                  )}
+                </td>
+
+                {/* SubCategory */}
+                <td className="border px-2">
+                  {editRowId === expense._id ? (
+                    <select
+                      value={editFormData.subCategory || ""}
+                      onChange={(e) =>
+                        handleChange(
+                          "subCategory",
+                          e.target.value as Expense["subCategory"]
+                        )
+                      }
+                      className="border rounded p-1 w-full truncate"
+                    >
+                      <option value="">Select</option>
+                      {subCategories.map((sub) => (
+                        <option key={sub} value={sub}>
+                          {sub}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    expense.subCategory
+                  )}
+                </td>
+
+                {/* Paid To */}
+                <td className="border px-2">
+                  {editRowId === expense._id ? (
+                    <input
+                      type="text"
+                      value={editFormData.payeeName || ""}
+                      onChange={(e) =>
+                        handleChange(
+                          "payeeName",
+                          e.target.value as Expense["payeeName"]
+                        )
+                      }
+                      className="border rounded p-1 w-full truncate"
+                    />
+                  ) : (
+                    expense.payeeName
+                  )}
+                </td>
+
+                {/* Contact */}
+                <td className="border px-2">
+                  {editRowId === expense._id ? (
+                    <input
+                      type="text"
+                      value={editFormData.payeeContact || ""}
+                      onChange={(e) =>
+                        handleChange(
+                          "payeeContact",
+                          e.target.value as Expense["payeeContact"]
+                        )
+                      }
+                      className="border rounded p-1 w-full truncate"
+                    />
+                  ) : (
+                    expense.payeeContact || "-"
+                  )}
+                </td>
+
+                {/* Amount */}
+                <td className="border px-2 text-right">
+                  {editRowId === expense._id ? (
+                    <input
+                      type="number"
+                      value={editFormData.amount || ""}
+                      onChange={(e) =>
+                        handleChange(
+                          "amount",
+                          Number(e.target.value) as Expense["amount"]
+                        )
+                      }
+                      className="border rounded p-1 w-full truncate text-right"
+                    />
+                  ) : (
+                    `₹${expense.amount}`
+                  )}
+                </td>
+
+                {/* Details */}
+                <td className="border px-2 truncate">
+                  {editRowId === expense._id ? (
+                    <input
+                      type="text"
+                      value={editFormData.details || ""}
+                      onChange={(e) =>
+                        handleChange(
+                          "details",
+                          e.target.value as Expense["details"]
+                        )
+                      }
+                      className="border rounded p-1 w-full truncate"
+                    />
+                  ) : (
+                    expense.details || "-"
+                  )}
+                </td>
+
+                {/* Actions */}
+                <td className="border px-2">
+                  {editRowId === expense._id ? (
+                    <div className="flex gap-2 justify-center">
+                      <Button
+                        onClick={() => handleSaveClick(expense._id)}
+                        className="bg-green-500 text-white rounded px-2"
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        onClick={handleCancelClick}
+                        className="bg-gray-500 text-white rounded px-2"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2 justify-center">
+                      <Button
+                        onClick={() => handleEditClick(expense)}
+                        className="bg-blue-500 text-white rounded px-2"
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        onClick={() => handleDeleteClick(expense._id)}
+                        className="bg-red-500 text-white rounded px-2"
+                      >
+                        Delete
+                      </Button>
+                    </div>
                   )}
                 </td>
               </tr>
@@ -237,12 +455,6 @@ const ViewExpenses = () => {
             Next
           </button>
         </div>
-      )}
-
-      {filteredExpenses.length === 0 && (
-        <p className="text-center  text-white underline mt-6 italic font-bold">
-          No expenses match the filter.
-        </p>
       )}
     </div>
   );
