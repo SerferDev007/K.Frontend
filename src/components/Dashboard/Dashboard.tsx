@@ -21,7 +21,8 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import { Table } from "../UI/table";
+
+import { DataTable } from "../UI/DataTable";
 
 interface CardProps {
   title: string;
@@ -238,7 +239,7 @@ const Dashboard = () => {
         {/* Recent Expenses */}
         <div className="bg-white p-4 rounded shadow overflow-auto">
           <h3 className="font-semibold mb-2 text-center">Recent Expenses</h3>
-          <Table<Expense>
+          <DataTable<Expense>
             data={filteredExpenses.slice(-5).reverse()}
             columns={[
               {
@@ -258,7 +259,7 @@ const Dashboard = () => {
         {/* Recent Donations */}
         <div className="bg-white p-4 rounded shadow overflow-auto">
           <h3 className="font-semibold mb-2 text-center">Recent Donations</h3>
-          <Table<Donation>
+          <DataTable<Donation>
             data={filteredDonations.slice(-5).reverse()}
             columns={[
               {
@@ -278,7 +279,7 @@ const Dashboard = () => {
         {/* Pending Tenants */}
         <div className="bg-white p-4 rounded shadow overflow-auto">
           <h3 className="font-semibold mb-2 text-center">Pending Rent/EMI</h3>
-          <Table<TenantData>
+          <DataTable<TenantData>
             data={tenantsWithPending}
             columns={[
               {
