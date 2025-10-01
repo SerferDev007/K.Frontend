@@ -1,29 +1,48 @@
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { Button } from "@/components/UI/Button";
+import { getExpenseCategories, addExpense } from "@/services/financeServices";
+import toast from "react-hot-toast";
 
 interface ExpenseFormProps {
   onBack: () => void;
-  categories: string[];
-  subCategories: string[];
 }
 
-interface ExpenseData {
-  date: string | undefined;
-  category: string | undefined;
-  subCategory: string | undefined;
-  payeeName: string | undefined;
-  payeeContact: string | undefined;
-  amount: number;
-  details: string | undefined;
-  receiptImage?: File;
-}
-
-const ExpenseForm: React.FC<ExpenseFormProps> = ({
-  onBack,
-  categories,
-  subCategories,
-}) => {
+const ExpenseForm: React.FC<ExpenseFormProps> = ({ onBack }) => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [categories, setCategories] = useState<string[]>([]);
+  const [subCategories, setSubCategories] = useState<string[]>([]);
+  const [allCategories, setAllCategories] = useState<Record<string, string[]>>(
+    {}
+  );
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // ✅ Fetch categories on mount
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await getExpenseCategories();
+        setAllCategories(data.categories);
+        setCategories(Object.keys(data.categories));
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          toast.error(
+            err.message || "Error fetching Categories / Sub-Categories"
+          );
+        }
+      }
+    })();
+  }, []);
+
+  // ✅ Update subcategories when category changes
+  useEffect(() => {
+    if (selectedCategory && allCategories[selectedCategory]) {
+      setSubCategories(allCategories[selectedCategory]);
+    } else {
+      setSubCategories([]);
+    }
+  }, [selectedCategory, allCategories]);
 
   const validate = (formData: FormData) => {
     const newErrors: { [key: string]: string } = {};
@@ -44,51 +63,82 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
     return newErrors;
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+
+    const formData = new FormData(form);
     const validationErrors = validate(formData);
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
 
-    const data: ExpenseData = {
-      date: formData.get("date")?.toString(),
-      category: formData.get("category")?.toString(),
-      subCategory: formData.get("subCategory")?.toString(),
-      payeeName: formData.get("payeeName")?.toString(),
+    // Build a properly typed payload after validation of required fields
+    const payload = {
+      date: formData.get("date")!.toString(),
+      category: formData.get("category")!.toString(),
+      subCategory: formData.get("subCategory")!.toString(),
+      payeeName: formData.get("payeeName")!.toString(),
       payeeContact: formData.get("payeeContact")?.toString(),
       amount: Number(formData.get("amount")),
       details: formData.get("details")?.toString(),
-    };
+    } as const;
 
-    const receipt = formData.get("receiptImage") as File | null;
-    if (receipt) data.receiptImage = receipt;
+    // Optional file
+    const billImage = formData.get("billImage") as File | null;
 
-    console.log("Submitting expense:", data);
+    try {
+      const result = await addExpense(
+        billImage ? { ...payload, billImage } : { ...payload }
+      );
+      toast.success(result.message);
+      setSuccessMessage(result.message || "Expense added successfully");
+      setErrorMessage(null);
+
+      // hide after 3s
+      setTimeout(() => setSuccessMessage(null), 3000);
+      form.reset();
+      setSelectedCategory("");
+      setSubCategories([]);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+        setErrorMessage(error.message || "Failed to add expense");
+        setSuccessMessage(null);
+
+        setTimeout(() => setErrorMessage(null), 3000);
+      }
+    }
   };
 
   return (
-    <div className="flex w-full justify-center max-h-screen ">
+    <div className="flex w-full justify-center">
       <form
         onSubmit={handleSubmit}
         className="md:px-8 w-full max-w-2xl p-3 rounded-lg border-4 border-amber-400 bg-green-300 dark:bg-gray-500 text-gray-900 dark:text-gray-100 shadow-sm"
       >
-        <div className="text-center">
+        <div className="flex items-center justify-between">
           <h3 className="font-bold text-2xl head-text-shadow text-gray-900 dark:text-gray-100">
             Add Expense
           </h3>
+          <Button
+            type="button"
+            onClick={onBack}
+            className="!rounded-2xl text-white bg-blue-900"
+          >
+            Back
+          </Button>
         </div>
         <div className="w-full h-px bg-gray-300 m-2 mt-3" />
 
         {/* Category & SubCategory */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
-              Category
-            </label>
+            <label className="block text-sm font-medium mb-1">Category</label>
             <select
               name="category"
-              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 cursor-pointer text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 cursor-pointer ${
                 errors.category ? "border-red-500" : "border-gray-200"
               }`}
             >
@@ -106,12 +156,13 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text-sm font-medium mb-1">
               Sub Category
             </label>
             <select
               name="subCategory"
-              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 cursor-pointer text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
+              disabled={!selectedCategory}
+              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 cursor-pointer ${
                 errors.subCategory ? "border-red-500" : "border-gray-200"
               }`}
             >
@@ -133,14 +184,12 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
         {/* Payee Name & Contact */}
         <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
-              Payee Name
-            </label>
+            <label className="block text-sm font-medium mb-1">Payee Name</label>
             <input
               type="text"
               name="payeeName"
               placeholder="Enter payee name"
-              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
+              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 ${
                 errors.payeeName ? "border-red-500" : "border-gray-200"
               }`}
             />
@@ -149,14 +198,14 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text-sm font-medium mb-1">
               Payee Contact
             </label>
             <input
               type="number"
               name="payeeContact"
               placeholder="Enter payee contact"
-              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
+              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 ${
                 errors.payeeContact ? "border-red-500" : "border-gray-200"
               }`}
             />
@@ -166,17 +215,15 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
           </div>
         </div>
 
+        {/* Amount & Date */}
         <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
-          {/* Amount */}
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
-              Amount
-            </label>
+            <label className="block text-sm font-medium mb-1">Amount</label>
             <input
               type="number"
               name="amount"
               placeholder="Enter amount"
-              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
+              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 ${
                 errors.amount ? "border-red-500" : "border-gray-200"
               }`}
             />
@@ -184,16 +231,12 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
               <p className="text-red-500 text-sm mt-1">{errors.amount}</p>
             )}
           </div>
-
-          {/* Date */}
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
-              Date
-            </label>
+            <label className="block text-sm font-medium mb-1">Date</label>
             <input
               type="date"
               name="date"
-              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
+              className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 ${
                 errors.date ? "border-red-500" : "border-gray-200"
               }`}
             />
@@ -205,27 +248,25 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
 
         {/* Details */}
         <div className="mt-2">
-          <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
-            Details
-          </label>
+          <label className="block text-sm font-medium mb-1">Details</label>
           <textarea
             name="details"
             placeholder="Enter details"
-            className="focus-visible:ring-1 border-2 border-gray-200 rounded-xl w-full p-2 resize-none text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300"
+            className="focus-visible:ring-1 border-2 border-gray-200 rounded-xl w-full p-2 resize-none"
             rows={3}
           />
         </div>
 
         {/* Receipt Upload */}
         <div className="mt-2">
-          <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+          <label className="block text-sm font-medium mb-1">
             Upload Receipt (max 1MB)
           </label>
           <input
             type="file"
-            name="receiptImage"
+            name="billImage"
             accept="image/*,.pdf"
-            className="focus-visible:ring-1 border-2 border-gray-200 rounded-xl w-full p-2 cursor-pointer text-gray-900 dark:text-gray-100 file:py-1 file:px-3 file:rounded-lg file:bg-amber-400 file:text-gray-900 hover:file:bg-orange-400"
+            className="focus-visible:ring-1 border-2 border-gray-200 rounded-xl w-full p-2 cursor-pointer file:py-1 file:px-3 file:rounded-lg file:bg-amber-400 file:text-gray-900 hover:file:bg-orange-400"
           />
         </div>
 
@@ -245,6 +286,22 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
             Submit Expense
           </Button>
         </div>
+        {/* Messages */}
+        {successMessage ||
+          (errorMessage && (
+            <div className="flex justify-center mt-4">
+              {successMessage && (
+                <p className="bg-green-100 text-green-800 px-4 py-2 rounded-lg shadow-md text-center font-medium animate-fadeIn">
+                  {successMessage}
+                </p>
+              )}
+              {errorMessage && (
+                <p className="bg-red-100 text-red-800 px-4 py-2 rounded-lg shadow-md text-center font-medium animate-fadeIn">
+                  {errorMessage}
+                </p>
+              )}
+            </div>
+          ))}
       </form>
     </div>
   );

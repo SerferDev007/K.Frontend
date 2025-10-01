@@ -144,19 +144,6 @@ export const FloatingNav = ({
               {isOpen && (
                 <div className="absolute mt-2 w-44 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-md shadow-lg z-50">
                   <NavLink
-                    to="/add-tenant"
-                    className={({ isActive }) =>
-                      cn(
-                        "px-4 py-2 rounded-sm text-neutral-600 hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1 no-underline",
-                        isActive &&
-                          "font-bold bg-yellow-400 text-black rounded-md"
-                      )
-                    }
-                    style={{ textDecoration: "none" }}
-                  >
-                    Add Tenant
-                  </NavLink>
-                  <NavLink
                     to="/profile"
                     className={({ isActive }) =>
                       cn(

@@ -93,15 +93,15 @@ const ViewDonations = () => {
   }
 
   return (
-    <div className="w-full p-4">
+    <div className="w-full p-2">
       {/* Filters */}
       <div className="flex flex-col justify-around md:flex-row gap-4 mb-4">
         <div>
-          <label className="block mb-1 font-medium">Filter by Category</label>
+          <label className="block mb-1 font-medium">Filter by Category </label>
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="border-2 border-gray-300 rounded-xl p-2 w-full md:w-64"
+            className="border-2 ms-2 border-gray-300 rounded-xl p-2 w-full md:w-64"
           >
             <option value="">All Categories</option>
             {categories.map((cat) => (
@@ -118,7 +118,7 @@ const ViewDonations = () => {
             type="month"
             value={monthFilter}
             onChange={(e) => setMonthFilter(e.target.value)}
-            className="border-2 border-gray-300 rounded-xl p-2 w-full md:w-64"
+            className="border-2 ms-2 border-gray-300 rounded-xl p-2 w-full md:w-64"
           />
         </div>
       </div>
@@ -166,7 +166,7 @@ const ViewDonations = () => {
                 <td className="border !border-gray-900 px-2 py-2 text-center">
                   {indexOfFirstEntry + index + 1}
                 </td>
-                <td className="border !border-gray-900 px-2 py-2">
+                <td className="border !border-gray-900 px-2 py-2 text-center">
                   {formatDate(donation.date)}
                 </td>
                 <td className="border !border-gray-900 px-2 py-2">
@@ -178,10 +178,10 @@ const ViewDonations = () => {
                 <td className="border !border-gray-900 px-2 py-2">
                   {donation.donorName}
                 </td>
-                <td className="border !border-gray-900 px-2 py-2">
+                <td className="border  text-right !border-gray-900 px-2 py-2">
                   {donation.donorContact}
                 </td>
-                <td className="border !border-gray-900 px-2 py-2">
+                <td className="border  text-right !border-gray-900 px-2 py-2">
                   ₹{donation.amount}
                 </td>
                 <td className="border !border-gray-900 px-2 py-2 truncate max-w-[250px]">
@@ -225,7 +225,9 @@ const ViewDonations = () => {
       )}
 
       {filteredDonations.length === 0 && (
-        <p className="text-center mt-6">No donations match the filter.</p>
+        <p className="text-center text-white underline mt-6 italic font-bold">
+          No donations match the filter.
+        </p>
       )}
     </div>
   );

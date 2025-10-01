@@ -134,7 +134,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
     <div className="flex w-full justify-center ">
       <form
         onSubmit={handleSubmit}
-        className="md:px-8 w-full max-w-2xl p-3 rounded-lg border-4 border-amber-400 bg-green-300 dark:bg-gray-500 text-gray-900 dark:text-gray-100 shadow-sm"
+        className="md:px-8 w-full max-w-2xl p-3 rounded-lg border-4 border-amber-400 !bg-gray-500 dark:bg-gray-500 text-gray-900 dark:text-gray-100 shadow-sm"
       >
         <div className="flex items-center justify-between">
           <h3 className="font-bold text-2xl head-text-shadow text-gray-900 dark:text-gray-100">

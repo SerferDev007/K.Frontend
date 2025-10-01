@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getAllTenants } from "@/services/tenantApi";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { getUnpaidTenantsLastMonth } from "@/lib/utils"; // ✅ use shared util
+import { getUnpaidTenantsLastMonth } from "@/lib/utils"; // ✅ shared util
 
 interface RentPayment {
   year: number;
@@ -37,6 +37,10 @@ const TenantsDetails = () => {
   const [searchName, setSearchName] = useState("");
   const [filterType, setFilterType] = useState<"rent" | "emi" | "">("");
   const navigate = useNavigate();
+
+  // ✅ Pagination state
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const entriesPerPage = 20;
 
   // compute last month in 1-12 convention
   const now = new Date();
@@ -94,7 +98,22 @@ const TenantsDetails = () => {
     }
 
     setFilteredTenants(updated);
+    setCurrentPage(1); // reset to page 1 on filter/search
   }, [searchName, tenants, filterType, lastYear, lastMonth]);
+
+  // ✅ Pagination logic
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentEntries = filteredTenants.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
+  );
+  const totalPages = Math.ceil(filteredTenants.length / entriesPerPage);
+
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
 
   return (
     <div className="flex flex-col items-center w-full p-4">
@@ -111,7 +130,7 @@ const TenantsDetails = () => {
         </div>
 
         {/* ✅ Filters */}
-        <div className="flex gap-4 items-center">
+        <div className="flex justify-center w-1/2 gap-4 items-center !bg-green-300 rounded-3xl">
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
@@ -119,11 +138,9 @@ const TenantsDetails = () => {
               onChange={() =>
                 setFilterType(filterType === "rent" ? "" : "rent")
               }
-              className="w-4 h-4 me-2 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              className="w-5 h-5 me-2 text-blue-600 bg-gray-100 border-gray-300 rounded-sm"
             />
-            <span className="text-black font-semibold">
-              Unpaid Rent (Last Month)
-            </span>
+            <span className="text-black font-semibold">Unpaid Rent</span>
           </label>
 
           <label className="flex items-center gap-2 cursor-pointer">
@@ -131,29 +148,60 @@ const TenantsDetails = () => {
               type="checkbox"
               checked={filterType === "emi"}
               onChange={() => setFilterType(filterType === "emi" ? "" : "emi")}
-              className="w-4 h-4 me-2 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              className="w-5 h-5 me-2 text-blue-600 bg-gray-100 border-gray-300 rounded-sm"
             />
-            <span className="text-black font-semibold">
-              Unpaid EMI (Last Month)
-            </span>
+            <span className="text-black font-semibold">Unpaid EMI</span>
           </label>
         </div>
       </div>
 
       {/* Tenant Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full max-w-6xl">
-        {filteredTenants?.map((tenant) => (
+        {currentEntries?.map((tenant, index) => (
           <div
             key={tenant._id}
             onClick={() => navigate(`/tenants/${tenant._id}`)}
-            className="p-3 rounded-xl border-2 border-amber-400 !bg-yellow-500 
+            className="text-center rounded-xl border-2 border-amber-400 !bg-yellow-500 
               dark:bg-gray-500 !text-gray-900 dark:text-gray-100 
-              shadow-lg flex items-center !justify-start cursor-pointer hover:border-amber-50 hover:scale-105 transition-transform"
+              shadow-lg flex !justify-start cursor-pointer hover:border-amber-50 hover:scale-105 transition-transform"
           >
-            <h3 className="font-bold !text-lg truncate">{tenant.tenantName}</h3>
+            <h3 className="font-bold m-2 !text-lg truncate">
+              {indexOfFirstEntry + index + 1}. {tenant.tenantName}
+            </h3>
           </div>
         ))}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-4 gap-2">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            Prev
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => handlePageChange(page)}
+              className={`px-3 py-1 border rounded ${
+                page === currentPage ? "bg-amber-400 text-white" : ""
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {filteredTenants.length === 0 && (
         <p className="text-gray-700 mt-6 text-lg">No tenants found.</p>

@@ -5,6 +5,7 @@ import LoanForm from "../Loans/LoanForm";
 import { Button } from "../UI/Button";
 import { useAuth } from "@/hooks/useAuth";
 import TenantsDetails from "./TenantsDetails";
+import { useNavigate } from "react-router-dom";
 //import TenantsDetails from "./TenantsDetails";
 
 const Tenants = () => {
@@ -13,6 +14,7 @@ const Tenants = () => {
   const [isLoanForm, setIsLoanForm] = useState(false);
 
   const { token } = useAuth();
+  const navigate = useNavigate();
 
   const addRentBtnHandler = () => {
     setIsPaymentForm(true);
@@ -30,6 +32,10 @@ const Tenants = () => {
     setIsLoanForm(true);
     setIsShopForm(false);
     setIsPaymentForm(false);
+  };
+
+  const addTenantBtnHandler = () => {
+    navigate(`/add-tenant`);
   };
 
   return (
@@ -58,6 +64,12 @@ const Tenants = () => {
               onClick={addLoanBtnHandler}
             >
               🪙 Assign Loan
+            </Button>
+            <Button
+              className="!rounded-xl bg-gradient-to-r from-yellow-300 to-amber-400 hover:from-orange-300 hover:to-orange-500 !text-gray-900 dark:text-white font-semibold shadow-md px-3 py-2"
+              onClick={addTenantBtnHandler}
+            >
+              Add Tenant
             </Button>
           </div>
         </div>

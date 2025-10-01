@@ -6,17 +6,6 @@ import ExpenseForm from "./ExpenseForm";
 const Expenses = () => {
   const [isExpenseForm, setIsExpenseForm] = useState(false);
 
-  // Sample categories and sub-categories - in real app, these would come from API
-  const categories = ["Festivals", "Maintenance", "Salaries", "Bills", "Other"];
-  const subCategories = [
-    "Shiv Jayanti",
-    "Electricity",
-    "Water",
-    "Repair",
-    "Cleaning",
-    "Miscellaneous",
-  ];
-
   const addExpenseBtnHandler = () => {
     setIsExpenseForm(true);
   };
@@ -46,11 +35,7 @@ const Expenses = () => {
       {/* Content */}
       <div>
         {isExpenseForm ? (
-          <ExpenseForm
-            onBack={() => setIsExpenseForm(false)}
-            categories={categories}
-            subCategories={subCategories}
-          />
+          <ExpenseForm onBack={() => setIsExpenseForm(false)} />
         ) : (
           <ViewExpenses />
         )}

@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Button } from "@/components/UI/Button";
 import { toast } from "react-hot-toast";
 import { createTenant } from "@/services/tenantApi";
+import { useNavigate } from "react-router-dom";
 
 interface TenantFormProps {
   onBack: () => void;
@@ -14,10 +15,12 @@ interface TenantData {
   adharNumber?: string | undefined;
 }
 
-const TenantForm: React.FC<TenantFormProps> = ({ onBack }) => {
+const TenantForm: React.FC<TenantFormProps> = () => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [tenantId, setTenantId] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const validate = (formData: FormData) => {
     const newErrors: { [key: string]: string } = {};
@@ -84,6 +87,10 @@ const TenantForm: React.FC<TenantFormProps> = ({ onBack }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const backBtnHandler = () => {
+    navigate(`/tenants`);
   };
 
   return (
@@ -167,7 +174,7 @@ const TenantForm: React.FC<TenantFormProps> = ({ onBack }) => {
         <div className="flex justify-between mt-4 gap-2">
           <Button
             type="button"
-            onClick={onBack}
+            onClick={backBtnHandler}
             className="flex-1 !rounded-xl bg-gray-700 hover:bg-gray-900 text-white"
           >
             Back
