@@ -199,7 +199,7 @@ const ViewDonations = () => {
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            className="px-3 py-1 border bg-amber-100 rounded disabled:opacity-50"
           >
             Prev
           </button>
@@ -207,7 +207,7 @@ const ViewDonations = () => {
             <button
               key={page}
               onClick={() => handlePageChange(page)}
-              className={`px-3 py-1 border rounded ${
+              className={`px-3 py-1 border rounded bg-amber-100  ${
                 page === currentPage ? "bg-amber-400 text-white" : ""
               }`}
             >
@@ -217,7 +217,7 @@ const ViewDonations = () => {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            className="px-3 py-1 bg-amber-100  border rounded disabled:opacity-50"
           >
             Next
           </button>

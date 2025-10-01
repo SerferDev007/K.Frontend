@@ -214,7 +214,7 @@ const ViewExpenses = () => {
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            className="px-3 py-1 bg-red-100 border rounded disabled:opacity-50"
           >
             Prev
           </button>
@@ -222,7 +222,7 @@ const ViewExpenses = () => {
             <button
               key={page}
               onClick={() => handlePageChange(page)}
-              className={`px-3 py-1 border rounded ${
+              className={`px-3 py-1 bg-red-100 border rounded ${
                 page === currentPage ? "bg-red-400 text-white" : ""
               }`}
             >
@@ -232,7 +232,7 @@ const ViewExpenses = () => {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            className="px-3 py-1 bg-red-100 border rounded disabled:opacity-50"
           >
             Next
           </button>
