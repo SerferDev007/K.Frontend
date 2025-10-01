@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { AuthContext, type User } from "./authContext";
 import { loginUser, logoutUser, type LoginData } from "../services/authService";
 import Cookies from "js-cookie";
@@ -13,14 +13,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [token, setToken] = useState<string | null>(null);
 
   // Load user + token on first render
-  // useEffect(() => {
-  //   const storedUser = localStorage.getItem("authUser");
-  //   if (storedUser) {
-  //     setUser(JSON.parse(storedUser));
-  //   }
-  //   const cookieToken = Cookies.get("authToken");
-  //   if (cookieToken) setToken(cookieToken);
-  // }, []);
+  useEffect(() => {
+    const storedUser = localStorage.getItem("authUser");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+    const cookieToken = Cookies.get("authToken");
+    if (cookieToken) setToken(cookieToken);
+  }, []);
 
   // 🔹 Login
   const login = async (data: LoginData) => {
