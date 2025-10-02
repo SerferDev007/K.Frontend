@@ -245,6 +245,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
         const rentData = {
           ...baseData,
           rentAmount: selectedShop.rentAmount,
+          isPaid: true,
+          penalty: baseData.penalty,
         };
         const res = await payRent(rentData, token);
         if (res.success) {

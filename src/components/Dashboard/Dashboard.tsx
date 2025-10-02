@@ -158,7 +158,7 @@ const Dashboard = () => {
   if (loading) return <p className="text-center mt-6">Loading dashboard...</p>;
 
   return (
-    <div className="p-4 space-y-6">
+    <div className="p-4 mt-3 space-y-6">
       {/* Year Filter */}
       <div className="flex items-center gap-4">
         <label className="font-semibold">Select Year:</label>
