@@ -6,7 +6,7 @@ import {
   getShopsByTenant,
 } from "@/services/tenantApi";
 import toast from "react-hot-toast";
-import { generateLoanAssignmentReceipt } from "@/services/reportsApi"; // 👈 import your receipt function
+import { generateLoanAssignmentReceipt } from "@/services/receiptsApi"; // 👈 import your receipt function
 
 interface LoanFormProps {
   onBack: () => void;

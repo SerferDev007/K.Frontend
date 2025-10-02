@@ -8,7 +8,7 @@ import {
   checkPenalties, // ✅ single API for both rent & emi
 } from "@/services/tenantApi";
 import toast from "react-hot-toast";
-import { generateReceipt } from "@/services/reportsApi";
+import { generateReceipt } from "@/services/receiptsApi";
 
 interface PaymentFormProps {
   onBack: () => void;
