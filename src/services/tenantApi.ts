@@ -23,12 +23,12 @@ export interface LoanData {
   loanAmount: number;
   tenureMonths: number;
   startDate: string;
-  emiPerMonth: number;
-  emiPaymentHistory: EmiData[];
+  emiPerMonth?: number;
+  emiPaymentHistory?: EmiData[];
 }
 
 export interface RentData {
-  isPaid: boolean;
+  isPaid?: boolean;
   tenantId: string;
   shopNo: string;
   year: number;
@@ -48,7 +48,7 @@ export interface EmiData {
   emiPerMonth: number; // 👈 changed from rentAmount
   details?: string;
   penalty?: number; // 👈 add this so penalty passes properly
-  isEmiPaid: boolean;
+  isEmiPaid?: boolean;
 }
 
 export interface RawPenaltyDetail {
