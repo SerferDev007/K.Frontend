@@ -116,9 +116,9 @@ const TenantsDetails = () => {
   };
 
   return (
-    <div className="flex flex-col items-center w-full p-4">
+    <div className="flex flex-col items-center w-full p-2">
       {/* Search bar + Filters */}
-      <div className="flex md:flex-row gap-4 mb-6 w-full max-w-4xl">
+      <div className="flex md:flex-row gap-4 mb-2 w-full max-w-4xl">
         <div className="w-full">
           <input
             type="text"
@@ -130,7 +130,7 @@ const TenantsDetails = () => {
         </div>
 
         {/* ✅ Filters */}
-        <div className="flex justify-center w-1/2 gap-4 items-center !bg-green-300 rounded-3xl">
+        <div className="flex justify-center w-1/2 gap-4 items-center !bg-blue-300 rounded-xl">
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
@@ -154,16 +154,16 @@ const TenantsDetails = () => {
           </label>
         </div>
       </div>
-
+      <div className="w-full h-px bg-gray-300 my-2" />
       {/* Tenant Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full max-w-6xl">
+      <div className="grid grid-cols-1 md:grid-cols-4 mt-2 gap-3 w-full max-w-6xl">
         {currentEntries?.map((tenant, index) => (
           <div
             key={tenant._id}
             onClick={() => navigate(`/tenants/${tenant._id}`)}
-            className="text-center rounded-xl border-2 border-amber-50 !bg-yellow-200 
-              dark:bg-gray-500 !text-gray-900 dark:text-gray-100 
-              shadow-lg flex !justify-start cursor-pointer hover:border-amber-50 hover:scale-105 transition-transform"
+            className="text-center rounded-xl border-2 border-blue-50 !bg-blue-200
+              dark:bg-gray-500 !text-gray-900 dark:text-gray-100
+              shadow-lg flex !justify-start cursor-pointer hover:border-blue-50 hover:scale-105 transition-transform"
           >
             <h3 className="font-bold m-2 !text-lg truncate">
               {indexOfFirstEntry + index + 1}. {tenant.tenantName}
@@ -187,7 +187,7 @@ const TenantsDetails = () => {
               key={page}
               onClick={() => handlePageChange(page)}
               className={`px-3 py-1 border rounded ${
-                page === currentPage ? "bg-amber-400 text-white" : ""
+                page === currentPage ? "bg-blue-400 text-white" : ""
               }`}
             >
               {page}

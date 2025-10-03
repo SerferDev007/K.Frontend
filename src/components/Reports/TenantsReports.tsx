@@ -95,11 +95,11 @@ const TenantsReports: React.FC = () => {
           <h3 className="text-center text-2xl font-bold mb-4 text-gray-900">
             Download Tenant Reports
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="flex justify-center gap-3 w-full">
             {/* Tenant Selector */}
             <div>
               <label className="block mb-1 font-medium text-gray-800">
-                Tenant
+                Tenant*
               </label>
               <select
                 value={selectedTenantId}
@@ -118,7 +118,7 @@ const TenantsReports: React.FC = () => {
             {/* Shop Selector */}
             <div>
               <label className="block mb-1 font-medium text-gray-800">
-                Shop Number
+                Shop Number*
               </label>
               <select
                 value={selectedShop}
@@ -154,7 +154,7 @@ const TenantsReports: React.FC = () => {
             {/* Year Selector */}
             <div>
               <label className="block mb-1 font-medium text-gray-800">
-                Year
+                Year*
               </label>
               <input
                 type="number"
@@ -168,7 +168,7 @@ const TenantsReports: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-4 flex justify-end gap-2">
+          <div className="mt-3 flex justify-end gap-2">
             <Button
               type="submit"
               className="bg-blue-600 hover:bg-blue-700 text-white !rounded-xl px-6 py-2"

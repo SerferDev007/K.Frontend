@@ -124,18 +124,18 @@ const ShopForm: React.FC<ShopFormProps> = ({ onBack, token }) => {
         <form
           ref={formRef}
           onSubmit={handleSubmit}
-          className="md:px-8 w-full max-w-2xl p-3 rounded-lg border-4 border-amber-400 bg-green-300 dark:bg-gray-500 text-gray-900 dark:text-gray-100 shadow-sm"
+          className="md:px-8 w-full max-w-2xl p-3 rounded-lg border-4 border-blue-600 !bg-gray-100 dark:bg-gray-500 !text-black dark:text-gray-100 shadow-sm"
         >
           <div className="text-center">
-            <h3 className="font-bold text-2xl head-text-shadow text-gray-900 dark:text-gray-100">
+            <h3 className="font-bold text-2xl text-black dark:text-gray-100">
               Assign Shop to Tenant
             </h3>
           </div>
-          <div className="w-full h-px bg-gray-300 m-2 mt-3" />
+          <div className="w-full h-px bg-black m-2 mt-3" />
 
           {/* Tenant Dropdown */}
           <div className="mt-2">
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
               Select Tenant
             </label>
             <select
@@ -161,7 +161,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ onBack, token }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
             {/* Shop Number */}
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+              <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
                 Shop Number
               </label>
               <select
@@ -185,7 +185,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ onBack, token }) => {
             </div>
             {/* Agreement Start */}
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+              <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
                 Agreement Start
               </label>
               <input
@@ -206,7 +206,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ onBack, token }) => {
           {/* Rent & Deposit */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+              <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
                 Rent Amount
               </label>
               <input
@@ -222,7 +222,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ onBack, token }) => {
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+              <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
                 Deposit Amount
               </label>
               <input
@@ -241,14 +241,14 @@ const ShopForm: React.FC<ShopFormProps> = ({ onBack, token }) => {
 
           {/* Agreement File Upload */}
           <div className="mt-2">
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
               Upload Agreement (PDF only, max 2MB)
             </label>
             <input
               type="file"
               name="agreementFile"
               accept=".pdf"
-              className="focus-visible:ring-1 border-2 border-gray-200 rounded-xl w-full p-2 cursor-pointer text-gray-900 dark:text-gray-100 file:py-1 file:px-3 file:rounded-lg file:bg-amber-400 file:text-gray-900 hover:file:bg-orange-400"
+              className="focus-visible:ring-1 border-2 border-gray-200 rounded-xl w-full p-2 cursor-pointer text-gray-900 dark:text-gray-100 file:py-1 file:px-3 file:rounded-lg file:bg-blue-600 file:text-white hover:file:bg-blue-400"
             />
           </div>
 
@@ -264,7 +264,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ onBack, token }) => {
             <Button
               type="submit"
               disabled={loading}
-              className="flex-1 !rounded-xl bg-amber-400 hover:bg-orange-400 text-gray-900"
+              className="flex-1 !rounded-xl bg-blue-600 hover:bg-blue-400 text-white"
             >
               {loading ? "Processing..." : "Assign Shop"}
             </Button>

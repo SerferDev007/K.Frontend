@@ -8,7 +8,7 @@ import ExpensePage from "../pages/ExpensePage";
 import ReportPage from "../pages/ReportPage";
 import TenantsPage from "../pages/TenantsPage";
 import LoanPage from "../pages/LoanPage";
-import AddTenant from "../pages/AddTenantPage";
+import AddTenantPage from "../pages/AddTenantPage";
 import Profile from "../pages/ProfilePage";
 import ErrorPage from "../pages/ErrorPage";
 import ViewTenantsDetailsPage from "@/pages/ViewTenantsDetailsPage";
@@ -29,7 +29,7 @@ const PageRoutes = () => {
         <Route path={route.LOANS} element={<LoanPage />} />
         <Route path={route.REPORTS} element={<ReportPage />} />
         <Route path={route.LOGIN} element={<LoginPage />} />
-        <Route path={route["ADD-TENANT"]} element={<AddTenant />} />
+        <Route path={route["ADD-TENANT"]} element={<AddTenantPage />} />
         <Route path={route.PROFILE} element={<Profile />} />
       </Route>
       <Route path="*" element={<ErrorPage />} />

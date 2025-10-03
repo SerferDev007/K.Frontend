@@ -32,63 +32,74 @@ const FinanceReports: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center mt-6">
+    <div className="flex flex-col justify-center items-center gap-5 mt-5 w-full">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-2xl border-4 w-full max-w-md flex flex-col gap-4"
+        className="bg-white p-4 border-4 rounded-2xl w-full max-w-4xl"
       >
         <h3 className="text-center text-2xl font-bold">
           Download Finance Report
         </h3>
+        <div className="flex justify-center gap-3 w-full">
+          {/* Type Selector */}
+          <div>
+            <label className="block mb-1 font-medium text-gray-800">
+              Report Type*
+            </label>
+            <select
+              value={type}
+              onChange={(e) =>
+                setType(e.target.value as "donation" | "expense")
+              }
+              className="border-2 rounded-xl w-full p-2 text-gray-900 focus:ring-1 focus:ring-blue-500"
+            >
+              <option value="donation">Donation</option>
+              <option value="expense">Expense</option>
+            </select>
+          </div>
 
-        {/* Type Selector */}
-        <div>
-          <label className="block mb-1 font-medium">Report Type</label>
-          <select
-            value={type}
-            onChange={(e) => setType(e.target.value as "donation" | "expense")}
-            className="border-2 rounded-xl w-full p-2 focus:ring-1 focus:ring-blue-500"
+          {/* Month Selector */}
+          <div>
+            <label className="block mb-1 font-medium text-gray-800">
+              Month*
+            </label>
+            <input
+              type="number"
+              min={1}
+              max={12}
+              placeholder="1-12"
+              value={month}
+              onChange={(e) => setMonth(e.target.value)}
+              className="border-2 rounded-xl w-full p-2 text-gray-900 focus:ring-1 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Year Selector */}
+          <div>
+            <label className="block mb-1 font-medium text-gray-800">
+              Year*
+            </label>
+            <input
+              type="number"
+              min={2000}
+              max={2100}
+              placeholder={new Date().getFullYear().toString()}
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+              className="border-2 rounded-xl w-full p-2 text-gray-900 focus:ring-1 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+
+        <div className="mt-3 flex justify-end gap-2">
+          <Button
+            type="submit"
+            disabled={loading}
+            className="bg-blue-600 hover:bg-blue-700 text-white !rounded-xl py-2 px-6"
           >
-            <option value="donation">Donation</option>
-            <option value="expense">Expense</option>
-          </select>
+            {loading ? "Generating..." : "Download Report"}
+          </Button>
         </div>
-
-        {/* Month Selector */}
-        <div>
-          <label className="block mb-1 font-medium">Month</label>
-          <input
-            type="number"
-            min={1}
-            max={12}
-            placeholder="1-12"
-            value={month}
-            onChange={(e) => setMonth(e.target.value)}
-            className="border-2 rounded-xl w-full p-2 focus:ring-1 focus:ring-blue-500"
-          />
-        </div>
-
-        {/* Year Selector */}
-        <div>
-          <label className="block mb-1 font-medium">Year</label>
-          <input
-            type="number"
-            min={2000}
-            max={2100}
-            placeholder={new Date().getFullYear().toString()}
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
-            className="border-2 rounded-xl w-full p-2 focus:ring-1 focus:ring-blue-500"
-          />
-        </div>
-
-        <Button
-          type="submit"
-          disabled={loading}
-          className="bg-blue-600 hover:bg-blue-700 text-white !rounded-xl py-2 mt-2"
-        >
-          {loading ? "Generating..." : "Download Report"}
-        </Button>
       </form>
     </div>
   );

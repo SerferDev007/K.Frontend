@@ -148,19 +148,19 @@ const AssignLoan: React.FC<LoanFormProps> = ({ onBack, token }) => {
       <form
         ref={formRef}
         onSubmit={handleSubmit}
-        className="md:px-8 w-full max-w-2xl p-3 rounded-lg border-4 border-amber-400 bg-green-300 dark:bg-gray-500 text-gray-900 dark:text-gray-100 shadow-sm"
+        className="md:px-8 w-full max-w-2xl p-3 rounded-lg border-4 border-blue-600 !bg-gray-100 dark:bg-gray-500 !text-black dark:text-gray-100 shadow-sm"
       >
         <div className="text-center">
-          <h3 className="font-bold text-2xl !text-yellow-500 dark:text-gray-100">
+          <h3 className="font-bold text-2xl !text-black dark:text-gray-100">
             Assign Loan to Tenant
           </h3>
         </div>
-        <div className="w-full h-px bg-gray-300 m-2 mt-3" />
+        <div className="w-full h-px bg-black m-2 mt-3" />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
           {/* Tenant Dropdown */}
           <div className="mt-2">
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
               Select Tenant
             </label>
             <select
@@ -184,7 +184,7 @@ const AssignLoan: React.FC<LoanFormProps> = ({ onBack, token }) => {
 
           {/* Shop Dropdown */}
           <div className="mt-2">
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
               Select Shop
             </label>
             <select
@@ -216,7 +216,7 @@ const AssignLoan: React.FC<LoanFormProps> = ({ onBack, token }) => {
         {/* Loan Amount & Tenure */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
               Loan Amount
             </label>
             <input
@@ -232,7 +232,7 @@ const AssignLoan: React.FC<LoanFormProps> = ({ onBack, token }) => {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
               Tenure (Months)
             </label>
             <input
@@ -252,7 +252,7 @@ const AssignLoan: React.FC<LoanFormProps> = ({ onBack, token }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
           {/* Loan Start Date */}
           <div className="mt-2">
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
               Loan Start Date
             </label>
             <input
@@ -280,7 +280,7 @@ const AssignLoan: React.FC<LoanFormProps> = ({ onBack, token }) => {
           <Button
             type="submit"
             disabled={loading}
-            className="flex-1 !rounded-xl bg-amber-400 hover:bg-orange-400 text-gray-900"
+            className="flex-1 !rounded-xl bg-blue-600 hover:bg-blue-400 text-white"
           >
             {loading ? "Processing..." : "Assign Loan"}
           </Button>

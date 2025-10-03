@@ -39,44 +39,45 @@ const Tenants = () => {
   };
 
   return (
-    <div className="relative mt-4 w-full p-4">
+    <div className="relative w-full min-h-screen">
       {/* Header Section */}
       {!isPaymentForm && !isShopForm && !isLoanForm && (
-        <div className="flex flex-col md:flex-row justify-between items-center border border-gray-200 dark:border-gray-700 rounded-2xl shadow-md p-3">
-          <h4 className="text-xl md:text-2xl font-extrabold !text-white-800 dark:text-gray-100 tracking-tight">
-            🏢 Manage Tenants
-          </h4>
-          <div className="flex gap-4  md:mt-0">
-            <Button
-              className="!rounded-xl bg-gradient-to-r from-yellow-300 to-amber-400 hover:from-orange-300 hover:to-orange-500 !text-gray-900 dark:text-white font-semibold shadow-md px-3 py-2"
-              onClick={addRentBtnHandler}
-            >
-              ➕ Add Rent
-            </Button>
-            <Button
-              className="!rounded-xl bg-gradient-to-r from-green-400 to-green-600 hover:from-green-400 hover:to-green-700 !text-gray-900 dark:text-white font-semibold shadow-md px-3 py-2"
-              onClick={addShopBtnHandler}
-            >
-              🏬 Assign Shop
-            </Button>
-            <Button
-              className="!rounded-xl bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 !text-gray-900 dark:text-white font-semibold shadow-md px-3 py-2"
-              onClick={addLoanBtnHandler}
-            >
-              🪙 Assign Loan
-            </Button>
-            <Button
-              className="!rounded-xl bg-gradient-to-r from-yellow-300 to-amber-400 hover:from-orange-300 hover:to-orange-500 !text-gray-900 dark:text-white font-semibold shadow-md px-3 py-2"
-              onClick={addTenantBtnHandler}
-            >
-              Add Tenant
-            </Button>
+        <>
+          <div className="w-full h-px bg-gray-300 my-2" />
+          <div className="flex justify-between items-center m-2">
+            <h4 className="text-xl md:text-2xl font-extrabold !text-white dark:text-gray-100 tracking-tight">
+              Manage Tenants
+            </h4>
+            <div className="flex gap-4  md:mt-0">
+              <Button
+                className="!rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 text-white dark:text-white font-semibold shadow-md px-3 py-2"
+                onClick={addRentBtnHandler}
+              >
+                ➕ Add Rent
+              </Button>
+              <Button
+                className="!rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 text-white dark:text-white font-semibold shadow-md px-3 py-2"
+                onClick={addShopBtnHandler}
+              >
+                🏬 Assign Shop
+              </Button>
+              <Button
+                className="!rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 text-white dark:text-white font-semibold shadow-md px-3 py-2"
+                onClick={addLoanBtnHandler}
+              >
+                🪙 Assign Loan
+              </Button>
+              <Button
+                className="!rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 text-white dark:text-white font-semibold shadow-md px-3 py-2"
+                onClick={addTenantBtnHandler}
+              >
+                ➕ Add Tenant
+              </Button>
+            </div>
           </div>
-        </div>
+          <div className="w-full h-px bg-gray-300 my-2" />
+        </>
       )}
-
-      {/* Divider */}
-      <div className="w-full h-px bg-gray-300 dark:bg-gray-700 my-2" />
 
       {/* Content Section */}
 

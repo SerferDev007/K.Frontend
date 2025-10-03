@@ -354,14 +354,14 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
       <form
         ref={formRef}
         onSubmit={handleSubmit}
-        className="md:px-8 w-full max-w-2xl p-3 rounded-lg border-4 border-amber-400 !bg-gradient-to-br !from-gray-400 !to-gray-800 dark:bg-gray-500 text-gray-900 dark:text-gray-100 shadow-sm"
+        className="md:px-8 w-full max-w-2xl p-3 rounded-lg border-4 border-blue-600 !bg-gray-100 dark:bg-gray-500 !text-black dark:text-gray-100 shadow-sm"
       >
         <div className="text-center">
-          <h3 className="font-bold text-2xl head-text-shadow text-gray-900 dark:text-gray-100">
+          <h3 className="font-bold text-2xl text-black dark:text-gray-100">
             Pay Rent & EMI
           </h3>
         </div>
-        <div className="w-full h-px bg-gray-300 m-2 mt-3" />
+        <div className="w-full h-px bg-black m-2 mt-3" />
 
         {/* Payment Type */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
@@ -393,7 +393,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
         {/* Tenant + Shop selectors */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
               Select Tenant
             </label>
             <select
@@ -417,7 +417,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
               Shop Number
             </label>
             <select
@@ -458,7 +458,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
             <Button
               type="button"
               onClick={checkPenaltiesBtnHandler}
-              className="!rounded-2xl mt-2"
+              className="!rounded text-white mt-2"
               disabled={penaltyLoading}
             >
               {penaltyLoading ? "Checking..." : "Check Penalties"}
@@ -522,7 +522,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
               Penalty Amount
             </label>
             <input
@@ -533,7 +533,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
               Paid Date
             </label>
             <input
@@ -547,7 +547,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
               Rent Amount
             </label>
             <input
@@ -558,7 +558,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
               className="focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 bg-gray-200"
             />
             {payRentChecked && selectedShop && (
-              <p className="text-sm font-bold mt-1 bg-yellow-200 border-2 border-yellow-700 text-black p-1 rounded">
+              <p className="text-sm font-bold mt-1 bg-blue-200 border-2 border-blue-700 text-black p-1 rounded">
                 Total Rent (Pending + Current): ₹
                 {(() => {
                   const pendingMonths = penaltyDetails.filter(
@@ -571,7 +571,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
               EMI Amount
             </label>
             <input
@@ -585,7 +585,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
               className="focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 bg-gray-200"
             />
             {payEmiChecked && selectedShop && (
-              <p className="text-sm font-bold mt-1 bg-yellow-200 border-2 border-yellow-700 text-black p-1 rounded">
+              <p className="text-sm font-bold mt-1 bg-blue-200 border-2 border-blue-700 text-black p-1 rounded">
                 Total EMI (Pending + Current): ₹
                 {(() => {
                   const activeLoan = selectedShop.loans?.find(
@@ -604,7 +604,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+          <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
             Details
           </label>
           <textarea
@@ -625,7 +625,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
           </Button>
           <Button
             type="submit"
-            className="flex-1 !rounded-xl bg-amber-400 hover:bg-orange-400 text-gray-900"
+            className="flex-1 !rounded-xl bg-blue-600 hover:bg-blue-400 text-white"
           >
             {loading ? "Processing..." : "Submit Payment"}
           </Button>
