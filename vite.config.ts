@@ -12,6 +12,7 @@ export default defineConfig({
   },
   publicDir: "public", // ensures everything in public/ is copied to dist/
   build: {
-    outDir: "dist", // default Vite build folder
+    outDir: "dist",
+    chunkSizeWarningLimit: 2000, // increase limit to 2 MB
   },
 });
