@@ -2,6 +2,7 @@ services:
   - type: web
     name: khandeshwar-frontend
     env: static
+    rootDir: Frontend
     buildCommand: npm install && npm run build
     staticPublishPath: build
     routes:
