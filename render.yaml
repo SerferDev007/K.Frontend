@@ -1,1 +1,8 @@
-render.yaml
+services:
+  - type: web
+    name: khandeshwar-frontend
+    env: static
+    staticPublishPath: dist
+    rewrite:
+      - source: "/*"
+        destination: "/index.html"
