@@ -162,7 +162,7 @@ const Dashboard = () => {
   if (loading) return <p className="text-center mt-6">Loading dashboard...</p>;
 
   return (
-    <div className="mt-20 space-y-8 w-full p-5 min-h-screen rounded-xl">
+    <div className=" space-y-8 w-full p-5 min-h-screen rounded-xl">
       {/* Year Filter */}
       <div className="flex items-center gap-4 bg-white p-4 rounded-xl shadow-sm">
         <label className="font-semibold text-gray-600">Select Year:</label>

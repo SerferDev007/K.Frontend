@@ -13,7 +13,7 @@ const DashboardPage = () => {
 
   return (
     <>
-      <div className="flex items-center justify-center min-h-screen max-w-full sm:max-w-8xl mx-auto backdrop-blur-md  shadow-lg">
+      <div className="flex items-center justify-center min-h-screen max-w-full sm:max-w-8xl mx-auto backdrop-blur-md shadow-lg">
         <Dashboard />
       </div>
     </>
