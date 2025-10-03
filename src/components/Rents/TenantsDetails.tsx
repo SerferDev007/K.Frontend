@@ -161,7 +161,7 @@ const TenantsDetails = () => {
           <div
             key={tenant._id}
             onClick={() => navigate(`/tenants/${tenant._id}`)}
-            className="text-center rounded-xl border-2 border-amber-400 !bg-yellow-500 
+            className="text-center rounded-xl border-2 border-amber-50 !bg-yellow-200 
               dark:bg-gray-500 !text-gray-900 dark:text-gray-100 
               shadow-lg flex !justify-start cursor-pointer hover:border-amber-50 hover:scale-105 transition-transform"
           >
