@@ -10,4 +10,8 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"), // 👈 this line maps @ to /src
     },
   },
+  publicDir: "public", // ensures everything in public/ is copied to dist/
+  build: {
+    outDir: "dist", // default Vite build folder
+  },
 });
