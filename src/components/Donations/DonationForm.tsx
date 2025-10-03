@@ -134,16 +134,16 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
     <div className="flex w-full justify-center ">
       <form
         onSubmit={handleSubmit}
-        className="md:px-8 w-full max-w-2xl p-3 rounded-lg border-4 border-amber-400 !bg-gray-500 dark:bg-gray-500 text-gray-900 dark:text-gray-100 shadow-sm"
+        className="md:px-8 w-full max-w-2xl p-3 rounded-lg border-4 border-blue-600 !bg-gray-100 dark:bg-gray-500 !text-black dark:text-gray-100 shadow-sm"
       >
         <div className="flex items-center justify-between">
-          <h3 className="font-bold text-2xl head-text-shadow text-gray-900 dark:text-gray-100">
+          <h3 className="font-bold text-2xl !text-gray-900 dark:text-gray-100">
             Add Donation
           </h3>
           <Button
             type="button"
             onClick={onBack}
-            className="!rounded-2xl text-white bg-blue-900"
+            className="!rounded-2xl text-white bg-blue-600"
           >
             Back
           </Button>
@@ -153,7 +153,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
         {/* Category & SubCategory */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text-sm font-medium mb-1 !text-black dark:text-gray-200">
               Category
             </label>
             <select
@@ -178,7 +178,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text-sm font-medium mb-1 !text-black dark:text-gray-200">
               Sub Category
             </label>
             <select
@@ -206,7 +206,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
         {/* Donor Name & Contact */}
         <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text-sm font-medium mb-1 !text-black dark:text-gray-200">
               Donor Name
             </label>
             <input
@@ -222,7 +222,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text-sm font-medium mb-1 !text-black dark:text-gray-200">
               Donor Contact
             </label>
             <input
@@ -242,7 +242,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
         <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
           {/* Amount */}
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text-sm font-medium mb-1 !text-black dark:text-gray-200">
               Amount
             </label>
             <input
@@ -259,7 +259,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
           </div>
           {/* Date */}
           <div>
-            <label className="block text sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            <label className="block text sm font-medium mb-1 !text-black dark:text-gray-200">
               Date
             </label>
             <input
@@ -277,7 +277,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
 
         {/* Details */}
         <div className="mt-2">
-          <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+          <label className="block text-sm font-medium mb-1 !text-black dark:text-gray-200">
             Details
           </label>
           <textarea
@@ -299,7 +299,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
           </Button>
           <Button
             type="submit"
-            className="flex-1 !rounded-xl bg-amber-400 hover:bg-orange-400 text-gray-900"
+            className="flex-1 !rounded-xl bg-blue-600 hover:bg-blue-400 text-white"
           >
             Submit Donation
           </Button>

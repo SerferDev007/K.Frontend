@@ -172,7 +172,9 @@ const ViewDonations = () => {
       {/* Filters */}
       <div className="flex flex-col justify-around md:flex-row gap-4 mb-4">
         <div>
-          <label className="block mb-1 font-medium">Filter by Category </label>
+          <label className="block mb-1 text-white font-medium">
+            Filter by Category{" "}
+          </label>
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
@@ -188,7 +190,9 @@ const ViewDonations = () => {
         </div>
 
         <div>
-          <label className="block mb-1 font-medium">Filter by Month</label>
+          <label className="block mb-1 text-white font-medium">
+            Filter by Month
+          </label>
           <input
             type="month"
             value={monthFilter}
@@ -199,14 +203,14 @@ const ViewDonations = () => {
       </div>
 
       {/* Total Donation */}
-      <div className="text-center mb-4 font-bold text-lg bg-amber-300 w-1/4 shadow-black">
+      <div className="text-center mb-4 font-bold text-lg bg-blue-600 w-1/4 text-white shadow-black">
         Total Donation: ₹{totalDonation.toLocaleString()}
       </div>
 
       {/* Table */}
       <div className="w-full overflow-x-auto border !border-gray-900 !rounded-2xl">
         <table className="w-full border-collapse border !border-gray-900 text-left table-fixed">
-          <thead className="text-center !bg-amber-200 border !border-gray-900 ">
+          <thead className="text-center !bg-blue-100 border !border-gray-900 ">
             <tr>
               <th className="border px-2 py-2 w-[4%]">Sr.No.</th>
               <th className="border px-2 py-2 w-[10%]">Date</th>
@@ -223,7 +227,7 @@ const ViewDonations = () => {
             {currentEntries.map((donation, index) => (
               <tr
                 key={donation._id}
-                className="bg-amber-50 hover:bg-amber-200 text-center"
+                className="bg-blue-50 hover:bg-gray-300 text-center"
               >
                 {/* Sr.No */}
                 <td className="border px-2 w-[5%]">
@@ -424,7 +428,7 @@ const ViewDonations = () => {
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-3 py-1 border bg-amber-100 rounded disabled:opacity-50"
+            className="px-3 py-1 border bg-blue-100 rounded disabled:opacity-50"
           >
             Prev
           </button>
@@ -432,8 +436,8 @@ const ViewDonations = () => {
             <button
               key={page}
               onClick={() => handlePageChange(page)}
-              className={`px-3 py-1 border rounded bg-amber-100 ${
-                page === currentPage ? "bg-amber-400 text-white" : ""
+              className={`px-3 py-1 border rounded bg-blue-100 ${
+                page === currentPage ? "bg-blue-400 text-white" : ""
               }`}
             >
               {page}
@@ -442,7 +446,7 @@ const ViewDonations = () => {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-3 py-1 bg-amber-100 border rounded disabled:opacity-50"
+            className="px-3 py-1 bg-blue-100 border rounded disabled:opacity-50"
           >
             Next
           </button>

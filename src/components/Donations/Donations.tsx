@@ -10,18 +10,18 @@ const Donations = () => {
     setIsDonantionForm(true);
   };
   return (
-    <div className="relative w-full mt-2 p-4 min-h-screen">
+    <div className="relative w-full min-h-screen">
       {/* Button fixed at top-right of this div */}
       {!isDonationForm && (
         <>
           {" "}
           <div className="w-full h-px bg-gray-300 my-2" />
           <div className="flex justify-between items-center m-2">
-            <h4 className="text-lg font-bold text-gray-800 dark:text-gray-100">
+            <h4 className="text-lg font-bold text-white dark:text-gray-100">
               Manage Donations
             </h4>
             <Button
-              className="!rounded-xl bg-amber-400 hover:bg-orange-400 !text-gray-900 dark:text-white disabled:cursor-not-allowed"
+              className="!rounded-xl bg-blue-600 hover:bg-blue-300 !text-white disabled:cursor-not-allowed"
               onClick={addDonationBtnhandler}
             >
               Add Donation
