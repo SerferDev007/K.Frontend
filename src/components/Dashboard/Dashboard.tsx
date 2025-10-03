@@ -7,7 +7,6 @@ import {
 } from "@/services/financeServices";
 import { getAllTenants, type TenantData } from "@/services/tenantApi";
 import toast from "react-hot-toast";
-
 import {
   LineChart,
   Line,
@@ -21,18 +20,34 @@ import {
   Pie,
   Cell,
 } from "recharts";
-
 import { DataTable } from "../UI/DataTable";
+import {
+  Users,
+  Wallet,
+  TrendingDown,
+  TrendingUp,
+  AlertTriangle,
+} from "lucide-react";
 
 interface CardProps {
   title: string;
   value: string | number;
+  icon?: React.ReactNode;
+  color?: string;
 }
 
-export const Card: React.FC<CardProps> = ({ title, value }) => (
-  <div className="bg-white p-4 rounded shadow text-center">
-    <p className="text-gray-500">{title}</p>
-    <p className="font-semibold text-xl">{value}</p>
+export const Card: React.FC<CardProps> = ({ title, value, icon, color }) => (
+  <div
+    className={`rounded-xl p-3 text-white shadow-md flex flex-col gap-1 items-start transition-transform hover:scale-105`}
+    style={{ background: color }}
+  >
+    <div className="flex items-center gap-2">
+      {icon && <div className="text-2xl">{icon}</div>}
+      <p className="uppercase tracking-wide text-sm font-medium opacity-90">
+        {title}
+      </p>
+    </div>
+    <p className="font-bold text-2xl ps-3">{value}</p>
   </div>
 );
 
@@ -66,7 +81,7 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  // Filter by selected year
+  // ------- Data processing remains same --------
   const filteredExpenses = useMemo(
     () =>
       expenses.filter(
@@ -74,7 +89,6 @@ const Dashboard = () => {
       ),
     [expenses, yearFilter]
   );
-
   const filteredDonations = useMemo(
     () =>
       donations.filter(
@@ -82,8 +96,6 @@ const Dashboard = () => {
       ),
     [donations, yearFilter]
   );
-
-  // Metrics
   const totalTenants = tenants.length;
   const totalExpenses = filteredExpenses.reduce(
     (sum, e) => sum + Number(e.amount),
@@ -94,15 +106,12 @@ const Dashboard = () => {
     0
   );
   const netBalance = totalDonations - totalExpenses;
-
-  // Pending Rent/EMI calculation
   const tenantsWithPending = tenants.filter((t) => {
     const hasPendingRent = t.shopsAllotted?.some((shop) =>
       shop.rentPaymentHistory?.some(
         (r) => r.year.toString() === yearFilter && !r.isPaid
       )
     );
-
     const hasPendingEmi = t.shopsAllotted?.some((shop) =>
       shop.loans?.some((loan) =>
         loan.emiPaymentHistory?.some(
@@ -110,33 +119,27 @@ const Dashboard = () => {
         )
       )
     );
-
     return hasPendingRent || hasPendingEmi;
   });
   const pendingRentCount = tenantsWithPending.length;
 
-  // Monthly chart data
   const monthlyData = useMemo(() => {
     const months = Array.from({ length: 12 }, (_, i) => ({
       month: new Date(0, i).toLocaleString("default", { month: "short" }),
       donations: 0,
       expenses: 0,
     }));
-
     filteredExpenses.forEach((e) => {
       const monthIndex = new Date(e.date).getMonth();
       months[monthIndex].expenses += Number(e.amount);
     });
-
     filteredDonations.forEach((d) => {
       const monthIndex = new Date(d.date).getMonth();
       months[monthIndex].donations += Number(d.amount);
     });
-
     return months;
   }, [filteredExpenses, filteredDonations]);
 
-  // Expense category breakdown
   const categoryData = useMemo(() => {
     const catMap: Record<string, number> = {};
     filteredExpenses.forEach((e) => {
@@ -158,58 +161,85 @@ const Dashboard = () => {
   if (loading) return <p className="text-center mt-6">Loading dashboard...</p>;
 
   return (
-    <div className="p-4 mt-3 space-y-6">
+    <div className="p-6 mt-3 space-y-8 min-h-screen rounded-xl">
       {/* Year Filter */}
-      <div className="flex items-center gap-4">
-        <label className="font-semibold">Select Year:</label>
+      <div className="flex items-center gap-4 bg-white p-4 rounded-xl shadow-sm">
+        <label className="font-semibold text-gray-600">Select Year:</label>
         <input
           type="number"
-          min={2000}
+          min={2025}
           max={2100}
           value={yearFilter}
           onChange={(e) => setYearFilter(e.target.value)}
-          className="border-2 border-gray-300 rounded px-2 py-1 w-32"
+          className="border border-gray-300 rounded-lg px-3 py-2 w-32 focus:ring-2 focus:ring-blue-400 outline-none"
         />
       </div>
 
-      {/* Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <Card title="Total Tenants" value={totalTenants} />
+      {/* Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+        <Card
+          title="Total Tenants"
+          value={totalTenants}
+          icon={<Users />}
+          color="linear-gradient(135deg,#6366F1,#4F46E5)"
+        />
         <Card
           title="Total Donations"
           value={`₹${totalDonations.toLocaleString()}`}
+          icon={<TrendingUp />}
+          color="linear-gradient(135deg,#10B981,#059669)"
         />
         <Card
           title="Total Expenses"
           value={`₹${totalExpenses.toLocaleString()}`}
+          icon={<TrendingDown />}
+          color="linear-gradient(135deg,#F59E0B,#D97706)"
         />
-        <Card title="Net Balance" value={`₹${netBalance.toLocaleString()}`} />
-        <Card title="Pending Rent/EMI" value={pendingRentCount} />
+        <Card
+          title="Net Balance"
+          value={`₹${netBalance.toLocaleString()}`}
+          icon={<Wallet />}
+          color="linear-gradient(135deg,#3B82F6,#2563EB)"
+        />
+        <Card
+          title="Pending Rent/EMI"
+          value={pendingRentCount}
+          icon={<AlertTriangle />}
+          color="linear-gradient(135deg,#EF4444,#B91C1C)"
+        />
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Monthly Donations vs Expenses */}
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="font-semibold mb-2 text-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="bg-white p-6 rounded-2xl shadow-md">
+          <h3 className="font-semibold mb-4 text-center text-gray-700 uppercase tracking-wide">
             Monthly Donations vs Expenses
           </h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={monthlyData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <XAxis dataKey="month" stroke="#6b7280" />
+              <YAxis stroke="#6b7280" />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="donations" stroke="#00C49F" />
-              <Line type="monotone" dataKey="expenses" stroke="#FF8042" />
+              <Line
+                type="monotone"
+                dataKey="donations"
+                stroke="#10B981"
+                strokeWidth={2}
+              />
+              <Line
+                type="monotone"
+                dataKey="expenses"
+                stroke="#EF4444"
+                strokeWidth={2}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
-        {/* Expense Category Breakdown */}
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="font-semibold mb-2 text-center">
+        <div className="bg-white p-6 rounded-2xl shadow-md">
+          <h3 className="font-semibold mb-4 text-center text-gray-700 uppercase tracking-wide">
             Expense Category Breakdown
           </h3>
           <ResponsiveContainer width="100%" height={300}>
@@ -235,10 +265,11 @@ const Dashboard = () => {
       </div>
 
       {/* Tables */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Recent Expenses */}
-        <div className="bg-white p-4 rounded shadow overflow-auto">
-          <h3 className="font-semibold mb-2 text-center">Recent Expenses</h3>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="bg-white p-6 rounded-2xl shadow-md">
+          <h3 className="font-semibold mb-4 text-center text-gray-700 uppercase tracking-wide">
+            Recent Expenses
+          </h3>
           <DataTable<Expense>
             data={filteredExpenses.slice(-5).reverse()}
             columns={[
@@ -256,9 +287,10 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Recent Donations */}
-        <div className="bg-white p-4 rounded shadow overflow-auto">
-          <h3 className="font-semibold mb-2 text-center">Recent Donations</h3>
+        <div className="bg-white p-6 rounded-2xl shadow-md">
+          <h3 className="font-semibold mb-4 text-center text-gray-700 uppercase tracking-wide">
+            Recent Donations
+          </h3>
           <DataTable<Donation>
             data={filteredDonations.slice(-5).reverse()}
             columns={[
@@ -276,9 +308,10 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Pending Tenants */}
-        <div className="bg-white p-4 rounded shadow overflow-auto">
-          <h3 className="font-semibold mb-2 text-center">Pending Rent/EMI</h3>
+        <div className="bg-white p-6 rounded-2xl shadow-md">
+          <h3 className="font-semibold mb-4 text-center text-gray-700 uppercase tracking-wide">
+            Pending Rent/EMI
+          </h3>
           <DataTable<TenantData>
             data={tenantsWithPending}
             columns={[
