@@ -1,14 +1,12 @@
 import { useAuth } from "@/hooks/useAuth";
 import route from "../../routes/routes.json";
 import { FloatingNav } from "../UI/FloatingNavbar";
-import { FloatingTextBar } from "../UI/FloatingTextBar";
 
 const AppHeader = () => {
   const { user, isAuthenticated, logout } = useAuth();
 
   return (
-    <div className="fixed top-3 inset-x-0 mx-auto flex justify-between max-w-8xl z-[5000]">
-      <FloatingTextBar text="येळकोट येळकोट जय मल्हार 🚩" />
+    <div className="flex justify-between max-w-8xl z-[5000]">
       <FloatingNav
         navItems={[
           { name: "Dashboard", link: route.DASHBOARD },

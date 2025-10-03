@@ -38,8 +38,7 @@ interface CardProps {
 
 export const Card: React.FC<CardProps> = ({ title, value, icon, color }) => (
   <div
-    className={`rounded-xl p-3 text-white shadow-md flex flex-col gap-1 items-start transition-transform hover:scale-105`}
-    style={{ background: color }}
+    className={`rounded-xl p-3 text-black bg-amber-50 shadow-md flex flex-col gap-1 items-start transition-transform hover:scale-105`}
   >
     <div className="flex items-center gap-2">
       {icon && <div className="text-2xl">{icon}</div>}
@@ -47,7 +46,9 @@ export const Card: React.FC<CardProps> = ({ title, value, icon, color }) => (
         {title}
       </p>
     </div>
-    <p className="font-bold text-2xl ps-3">{value}</p>
+    <p className="font-bold text-2xl ps-3" style={{ color }}>
+      {value}
+    </p>
   </div>
 );
 
@@ -161,7 +162,7 @@ const Dashboard = () => {
   if (loading) return <p className="text-center mt-6">Loading dashboard...</p>;
 
   return (
-    <div className="p-6 mt-3 space-y-8 min-h-screen rounded-xl">
+    <div className="mt-20 space-y-8 w-full p-5 min-h-screen rounded-xl">
       {/* Year Filter */}
       <div className="flex items-center gap-4 bg-white p-4 rounded-xl shadow-sm">
         <label className="font-semibold text-gray-600">Select Year:</label>
@@ -181,31 +182,31 @@ const Dashboard = () => {
           title="Total Tenants"
           value={totalTenants}
           icon={<Users />}
-          color="linear-gradient(135deg,#6366F1,#4F46E5)"
+          color="blue"
         />
         <Card
           title="Total Donations"
           value={`₹${totalDonations.toLocaleString()}`}
           icon={<TrendingUp />}
-          color="linear-gradient(135deg,#10B981,#059669)"
+          color="green"
         />
         <Card
           title="Total Expenses"
           value={`₹${totalExpenses.toLocaleString()}`}
           icon={<TrendingDown />}
-          color="linear-gradient(135deg,#F59E0B,#D97706)"
+          color="red"
         />
         <Card
           title="Net Balance"
           value={`₹${netBalance.toLocaleString()}`}
           icon={<Wallet />}
-          color="linear-gradient(135deg,#3B82F6,#2563EB)"
+          color="#6366F1"
         />
         <Card
           title="Pending Rent/EMI"
           value={pendingRentCount}
           icon={<AlertTriangle />}
-          color="linear-gradient(135deg,#EF4444,#B91C1C)"
+          color="gray"
         />
       </div>
 

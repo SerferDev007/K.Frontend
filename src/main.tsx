@@ -37,7 +37,7 @@ createRoot(document.getElementById("root")!).render(
           },
           loading: {
             style: {
-              background: "yellow",
+              background: "blue",
               color: "#000",
             },
           },

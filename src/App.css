@@ -3,7 +3,7 @@ input:-webkit-autofill {
   -webkit-text-fill-color: #111827 !important;
 }
 .dark input:-webkit-autofill {
-  -webkit-text-fill-color: #F9FAFB !important;
+  -webkit-text-fill-color: #f9fafb !important;
 }
 
 /* Optional: smooth transition for focus */
@@ -18,5 +18,5 @@ input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(251,191,36,0.5); /* amber-400 ring */
+  box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.5); /* blue-400 ring */
 }

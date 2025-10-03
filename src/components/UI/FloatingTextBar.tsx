@@ -62,7 +62,7 @@ export const FloatingTextBar = ({
         animate={{ y: visible ? 0 : -100, opacity: visible ? 1 : 0 }}
         transition={{ duration: 0.2 }}
         className={cn(
-          "flex top-20 inset-x-0 mx-auto max-w-fit z-[5000] px-6  items-center rounded shadow-md  !bg-yellow-100 text-neutral-700 dark:text-neutral-50",
+          "flex top-20 inset-x-0 mx-auto max-w-fit z-[5000] px-6  items-center rounded shadow-md  !bg-blue-100 text-neutral-700 dark:text-neutral-50",
           className
         )}
       >

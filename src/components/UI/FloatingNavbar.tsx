@@ -95,81 +95,92 @@ export const FloatingNav = ({
         animate={{ y: visible ? 0 : -100, opacity: visible ? 1 : 0 }}
         transition={{ duration: 0.2 }}
         className={cn(
-          "flex top-5 inset-x-0 mx-auto max-w-fit z-[5000] px-6 items-center !bg-yellow-100  rounded shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] space-x-4",
+          "flex justify-around inset-x-0 mx-auto w-full z-[5000] items-center bg-blue-600 rounded",
           className
         )}
       >
-        {/* Nav items */}
-        {navItems.map((item) => (
-          <NavLink
-            key={item.name}
-            to={item.link}
-            className={({ isActive }) =>
-              cn(
-                "p-2 rounded-sm text-neutral-600 hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1 no-underline",
-                isActive && "font-bold bg-yellow-400 text-black rounded-md"
-              )
-            }
-            style={{ textDecoration: "none" }}
-          >
-            {item.icon && <span>{item.icon}</span>}
-            <span className="text-sm">{item.name}</span>
-          </NavLink>
-        ))}
-
-        {/* Login / User Dropdown */}
-        <div className="relative">
-          {!isLogin ? (
-            <NavLink
-              to={loginPath}
-              className={({ isActive }) =>
-                cn(
-                  "p-2 rounded-sm text-neutral-600 hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1 no-underline",
-                  isActive && "font-bold bg-yellow-400 text-black rounded-md"
-                )
-              }
-              style={{ textDecoration: "none" }}
-            >
-              <span className="text-sm">Login</span>
-            </NavLink>
-          ) : (
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className=" !text-blue-600 font-bold flex items-center space-x-1"
+        <div className="mt-2">
+          <p className="font-bold flex flex-col">
+            <span className="text-4xl text-white">
+              Shree Kshetra Khandeshwar
+            </span>
+            <span className="text-gray-200">Kusalamb</span>
+          </p>
+        </div>
+        <div>
+          <div className="flex">
+            {" "}
+            {/* Nav items */}
+            {navItems.map((item) => (
+              <NavLink
+                key={item.name}
+                to={item.link}
+                className={({ isActive }) =>
+                  cn(
+                    "p-2  rounded-sm text-white hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1 no-underline",
+                    isActive && "font-bold bg-blue-100 text-black rounded-md"
+                  )
+                }
+                style={{ textDecoration: "none" }}
               >
-                <span className="!text-lg">{userName ?? "User"} ▾</span>
-              </button>
-
-              {isOpen && (
-                <div className="absolute mt-2 w-44 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-md shadow-lg z-50">
-                  <NavLink
-                    to="/profile"
-                    className={({ isActive }) =>
-                      cn(
-                        "px-4 py-2 rounded-sm text-neutral-600 hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1 no-underline",
-                        isActive &&
-                          "font-bold bg-yellow-400 text-black rounded-md"
-                      )
-                    }
-                    style={{ textDecoration: "none" }}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Profile
-                  </NavLink>
+                {item.icon && <span>{item.icon}</span>}
+                <span className="text-lg">{item.name}</span>
+              </NavLink>
+            ))}
+            <div className="m-auto ps-2">
+              {!isLogin ? (
+                <NavLink
+                  to={loginPath}
+                  className={({ isActive }) =>
+                    cn(
+                      "p-2 rounded-sm !text-white hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1 no-underline",
+                      isActive && "font-bold bg-blue-100 !text-black rounded-md"
+                    )
+                  }
+                  style={{ textDecoration: "none" }}
+                >
+                  <span className="text-lg">Login</span>
+                </NavLink>
+              ) : (
+                <div className="relative" ref={dropdownRef}>
                   <button
-                    onClick={() => {
-                      onLogout?.();
-                      setIsOpen(false);
-                    }}
-                    className="w-full text-left block px-4 py-2 text-sm text-red-600 font-bold"
+                    onClick={() => setIsOpen(!isOpen)}
+                    className=" !text-white font-bold flex items-center space-x-1"
                   >
-                    Logout
+                    <span className="!text-lg">{userName ?? "User"} ▾</span>
                   </button>
+
+                  {isOpen && (
+                    <div className="absolute mt-2 w-44 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-md shadow-lg z-50">
+                      <NavLink
+                        to="/profile"
+                        className={({ isActive }) =>
+                          cn(
+                            "px-4 py-2 rounded-sm text-neutral-600  dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1 no-underline",
+                            isActive &&
+                              "font-bold bg-blue-100 text-black rounded-md"
+                          )
+                        }
+                        style={{ textDecoration: "none" }}
+                        onClick={() => setIsOpen(false)}
+                      >
+                        Profile
+                      </NavLink>
+                      <button
+                        onClick={() => {
+                          onLogout?.();
+                          setIsOpen(false);
+                        }}
+                        className="w-full text-left block px-4 py-2 text-sm text-red-600 font-bold"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-          )}
+          </div>
         </div>
       </motion.div>
     </AnimatePresence>
