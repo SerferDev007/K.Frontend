@@ -32,7 +32,7 @@ const FinanceReports: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center gap-5 mt-5 w-full">
+    <div className="flex flex-col justify-center items-center gap-5 mt-4 w-full">
       <form
         onSubmit={handleSubmit}
         className="bg-white p-4 border-4 rounded-2xl w-full max-w-4xl"

@@ -85,100 +85,98 @@ const TenantsReports: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-5 mt-5">
-      <div className="flex w-full justify-center">
-        <form
-          ref={formRef}
-          onSubmit={handleSubmit}
-          className="bg-white p-4 border-4 rounded-2xl w-full max-w-4xl"
-        >
-          <h3 className="text-center text-2xl font-bold mb-4 text-gray-900">
-            Download Tenant Reports
-          </h3>
-          <div className="flex justify-center gap-3 w-full">
-            {/* Tenant Selector */}
-            <div>
-              <label className="block mb-1 font-medium text-gray-800">
-                Tenant*
-              </label>
-              <select
-                value={selectedTenantId}
-                onChange={(e) => setSelectedTenantId(e.target.value)}
-                className="border-2 rounded-xl w-full p-2 text-gray-900 focus:ring-1 focus:ring-blue-500"
-              >
-                <option value="">-- All Tenants --</option>
-                {allTenants.map((tenant) => (
-                  <option key={tenant._id} value={tenant._id}>
-                    {tenant.tenantName}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Shop Selector */}
-            <div>
-              <label className="block mb-1 font-medium text-gray-800">
-                Shop Number*
-              </label>
-              <select
-                value={selectedShop}
-                onChange={(e) => setSelectedShop(e.target.value)}
-                className="border-2 rounded-xl w-full p-2 text-gray-900 focus:ring-1 focus:ring-blue-500"
-                disabled={!assignedShops.length}
-              >
-                <option value="">-- All Shops --</option>
-                {assignedShops.map((shop) => (
-                  <option key={shop.shopNo} value={shop.shopNo}>
-                    {shop.shopNo}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Month Selector */}
-            <div>
-              <label className="block mb-1 font-medium text-gray-800">
-                Month
-              </label>
-              <input
-                type="number"
-                min={1}
-                max={12}
-                placeholder="1-12"
-                value={month}
-                onChange={(e) => setMonth(e.target.value)}
-                className="border-2 rounded-xl w-full p-2 text-gray-900 focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* Year Selector */}
-            <div>
-              <label className="block mb-1 font-medium text-gray-800">
-                Year*
-              </label>
-              <input
-                type="number"
-                min={2000}
-                max={2100}
-                placeholder={new Date().getFullYear().toString()}
-                value={year}
-                onChange={(e) => setYear(e.target.value)}
-                className="border-2 rounded-xl w-full p-2 text-gray-900 focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-
-          <div className="mt-3 flex justify-end gap-2">
-            <Button
-              type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white !rounded-xl px-6 py-2"
-              disabled={loading}
+    <div className="flex w-full justify-center mt-4">
+      <form
+        ref={formRef}
+        onSubmit={handleSubmit}
+        className="bg-white p-4 border-4 rounded-2xl w-full max-w-4xl"
+      >
+        <h3 className="text-center text-2xl font-bold mb-4 text-gray-900">
+          Download Tenant Reports
+        </h3>
+        <div className="flex justify-center gap-3 w-full">
+          {/* Tenant Selector */}
+          <div>
+            <label className="block mb-1 font-medium text-gray-800">
+              Tenant*
+            </label>
+            <select
+              value={selectedTenantId}
+              onChange={(e) => setSelectedTenantId(e.target.value)}
+              className="border-2 rounded-xl w-full p-2 text-gray-900 focus:ring-1 focus:ring-blue-500"
             >
-              {loading ? "Generating..." : "Download Report"}
-            </Button>
+              <option value="">-- All Tenants --</option>
+              {allTenants.map((tenant) => (
+                <option key={tenant._id} value={tenant._id}>
+                  {tenant.tenantName}
+                </option>
+              ))}
+            </select>
           </div>
-        </form>
-      </div>
+
+          {/* Shop Selector */}
+          <div>
+            <label className="block mb-1 font-medium text-gray-800">
+              Shop Number*
+            </label>
+            <select
+              value={selectedShop}
+              onChange={(e) => setSelectedShop(e.target.value)}
+              className="border-2 rounded-xl w-full p-2 text-gray-900 focus:ring-1 focus:ring-blue-500"
+              disabled={!assignedShops.length}
+            >
+              <option value="">-- All Shops --</option>
+              {assignedShops.map((shop) => (
+                <option key={shop.shopNo} value={shop.shopNo}>
+                  {shop.shopNo}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Month Selector */}
+          <div>
+            <label className="block mb-1 font-medium text-gray-800">
+              Month
+            </label>
+            <input
+              type="number"
+              min={1}
+              max={12}
+              placeholder="1-12"
+              value={month}
+              onChange={(e) => setMonth(e.target.value)}
+              className="border-2 rounded-xl w-full p-2 text-gray-900 focus:ring-1 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Year Selector */}
+          <div>
+            <label className="block mb-1 font-medium text-gray-800">
+              Year*
+            </label>
+            <input
+              type="number"
+              min={2000}
+              max={2100}
+              placeholder={new Date().getFullYear().toString()}
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+              className="border-2 rounded-xl w-full p-2 text-gray-900 focus:ring-1 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+
+        <div className="mt-3 flex justify-end gap-2">
+          <Button
+            type="submit"
+            className="bg-blue-600 hover:bg-blue-700 text-white !rounded-xl px-6 py-2"
+            disabled={loading}
+          >
+            {loading ? "Generating..." : "Download Report"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 };
