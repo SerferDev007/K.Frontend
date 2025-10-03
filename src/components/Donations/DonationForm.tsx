@@ -137,13 +137,13 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
         className="md:px-8 w-full max-w-2xl p-3 rounded-lg border-4 border-blue-600 !bg-gray-100 dark:bg-gray-500 !text-black dark:text-gray-100 shadow-sm"
       >
         <div className="flex items-center justify-between">
-          <h3 className="font-bold text-2xl !text-gray-900 dark:text-gray-100">
+          <h3 className="font-bold text-2xl !text-black dark:text-gray-100">
             Add Donation
           </h3>
           <Button
             type="button"
             onClick={onBack}
-            className="!rounded-2xl text-white bg-blue-600"
+            className="!rounded-2xl text-white bg-blue-900"
           >
             Back
           </Button>

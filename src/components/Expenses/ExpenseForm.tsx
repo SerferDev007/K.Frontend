@@ -114,10 +114,10 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onBack }) => {
     <div className="flex w-full justify-center">
       <form
         onSubmit={handleSubmit}
-        className="md:px-8 w-full max-w-2xl p-3 rounded-lg border-4 border-amber-400 bg-green-300 dark:bg-gray-500 text-gray-900 dark:text-gray-100 shadow-sm"
+        className="md:px-8 w-full max-w-2xl p-3 rounded-lg border-4 border-blue-600 !bg-gray-100 dark:bg-gray-500 !text-black dark:text-gray-100 shadow-sm"
       >
         <div className="flex items-center justify-between">
-          <h3 className="font-bold text-2xl head-text-shadow text-gray-900 dark:text-gray-100">
+          <h3 className="font-bold text-2xl text-black dark:text-gray-100">
             Add Expense
           </h3>
           <Button
@@ -266,7 +266,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onBack }) => {
             type="file"
             name="billImage"
             accept="image/*,.pdf"
-            className="focus-visible:ring-1 border-2 border-gray-200 rounded-xl w-full p-2 cursor-pointer file:py-1 file:px-3 file:rounded-lg file:bg-amber-400 file:text-gray-900 hover:file:bg-orange-400"
+            className="focus-visible:ring-1 border-2 border-gray-200 rounded-xl w-full p-2 cursor-pointer file:py-1 file:px-3 file:rounded-lg file:bg-blue-600 file:text-white hover:file:bg-blue-400"
           />
         </div>
 
@@ -281,7 +281,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onBack }) => {
           </Button>
           <Button
             type="submit"
-            className="flex-1 !rounded-xl bg-amber-400 hover:bg-orange-400 text-gray-900"
+            className="flex-1 !rounded-xl bg-blue-600 hover:bg-blue-400 text-white"
           >
             Submit Expense
           </Button>

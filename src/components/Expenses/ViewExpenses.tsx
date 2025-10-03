@@ -205,7 +205,9 @@ const ViewExpenses = () => {
       {/* Filters */}
       <div className="flex flex-col justify-around md:flex-row gap-4 mb-4">
         <div>
-          <label className="block mb-1 font-medium">Filter by Category</label>
+          <label className="block mb-1 text-white font-medium">
+            Filter by Category
+          </label>
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
@@ -220,7 +222,9 @@ const ViewExpenses = () => {
           </select>
         </div>
         <div>
-          <label className="block mb-1 font-medium">Filter by Month</label>
+          <label className="block mb-1 text-white font-medium">
+            Filter by Month
+          </label>
           <input
             type="month"
             value={monthFilter}
@@ -231,14 +235,14 @@ const ViewExpenses = () => {
       </div>
 
       {/* Total Expense */}
-      <div className="text-center mb-4 font-bold text-lg bg-red-300 w-1/4 shadow-black">
+      <div className="text-center mb-4 font-bold text-lg text-white bg-red-600 w-1/4 shadow-black">
         Total Expense: ₹{totalExpense.toLocaleString()}
       </div>
 
       {/* Table */}
-      <div className="w-full overflow-x-auto border !border-gray-900 !rounded-2xl">
+      <div className="w-full overflow-x-auto border !border-gray-900 !rounded">
         <table className="w-full border-collapse border !border-gray-900 text-left table-fixed">
-          <thead className="text-center !bg-red-200 border !border-gray-900">
+          <thead className="text-center !bg-red-100 border !border-gray-900">
             <tr>
               <th className="border px-2 py-2 w-[4%]">Sr.No.</th>
               <th className="border px-2 py-2 w-[8%]">Date</th>
@@ -256,7 +260,7 @@ const ViewExpenses = () => {
             {currentEntries.map((expense, index) => (
               <tr
                 key={expense._id}
-                className="bg-red-50 hover:bg-red-300 text-center"
+                className="bg-red-50 hover:bg-gray-300 text-center"
               >
                 <td className="border px-2">{indexOfFirstEntry + index + 1}</td>
 

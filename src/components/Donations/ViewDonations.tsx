@@ -208,7 +208,7 @@ const ViewDonations = () => {
       </div>
 
       {/* Table */}
-      <div className="w-full overflow-x-auto border !border-gray-900 !rounded-2xl">
+      <div className="w-full overflow-x-auto border !border-gray-900 !rounded">
         <table className="w-full border-collapse border !border-gray-900 text-left table-fixed">
           <thead className="text-center !bg-blue-100 border !border-gray-900 ">
             <tr>
