@@ -2,8 +2,10 @@ import { useState } from "react";
 import { Button } from "@/components/UI/Button";
 import { getFinanceReport } from "@/services/reportsServices";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 const FinanceReports: React.FC = () => {
+  const { t } = useTranslation();
   const [month, setMonth] = useState<string>("");
   const [year, setYear] = useState<string>("");
   const [type, setType] = useState<"donation" | "expense">("donation");
@@ -38,13 +40,13 @@ const FinanceReports: React.FC = () => {
         className="bg-white p-4 border-4 border-blue-600 rounded-2xl w-full max-w-4xl"
       >
         <h3 className="text-center text-2xl font-bold">
-          Download Finance Report
+          {t("downloadFinanceReport")}
         </h3>
         <div className="flex justify-center gap-3 w-full">
           {/* Type Selector */}
           <div>
             <label className="block mb-1 font-medium text-gray-800">
-              Report Type*
+              {t("reportType")}*
             </label>
             <select
               value={type}
@@ -61,7 +63,7 @@ const FinanceReports: React.FC = () => {
           {/* Month Selector */}
           <div>
             <label className="block mb-1 font-medium text-gray-800">
-              Month*
+              {t("month")}*
             </label>
             <input
               type="number"
@@ -77,7 +79,7 @@ const FinanceReports: React.FC = () => {
           {/* Year Selector */}
           <div>
             <label className="block mb-1 font-medium text-gray-800">
-              Year*
+              {t("year")}*
             </label>
             <input
               type="number"
@@ -97,7 +99,7 @@ const FinanceReports: React.FC = () => {
             disabled={loading}
             className="bg-blue-600 hover:bg-blue-700 text-white !rounded-xl py-2 px-6"
           >
-            {loading ? "Generating..." : "Download Report"}
+            {loading ? t("processing") : t("downloadReport")}
           </Button>
         </div>
       </form>

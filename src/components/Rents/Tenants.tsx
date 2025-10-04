@@ -6,9 +6,10 @@ import { Button } from "../UI/Button";
 import { useAuth } from "@/hooks/useAuth";
 import TenantsDetails from "./TenantsDetails";
 import { useNavigate } from "react-router-dom";
-//import TenantsDetails from "./TenantsDetails";
+import { useTranslation } from "react-i18next";
 
 const Tenants = () => {
+  const { t } = useTranslation();
   const [isPaymentForm, setIsPaymentForm] = useState(false);
   const [isShopForm, setIsShopForm] = useState(false);
   const [isLoanForm, setIsLoanForm] = useState(false);
@@ -46,32 +47,32 @@ const Tenants = () => {
           <div className="w-full h-px bg-gray-300 my-2" />
           <div className="flex justify-between items-center m-2">
             <h4 className="text-xl md:text-2xl font-extrabold !text-white dark:text-gray-100 tracking-tight">
-              Manage Tenants
+              {t("manageTenants")}
             </h4>
             <div className="flex gap-4  md:mt-0">
               <Button
                 className="!rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 text-white dark:text-white font-semibold shadow-md px-3 py-2"
                 onClick={addRentBtnHandler}
               >
-                ➕ Add Rent
+                ➕ {t("addRent")}
               </Button>
               <Button
                 className="!rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 text-white dark:text-white font-semibold shadow-md px-3 py-2"
                 onClick={addShopBtnHandler}
               >
-                🏬 Assign Shop
+                🏬 {t("assignShop")}
               </Button>
               <Button
                 className="!rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 text-white dark:text-white font-semibold shadow-md px-3 py-2"
                 onClick={addLoanBtnHandler}
               >
-                🪙 Assign Loan
+                🪙 {t("assignLoan")}
               </Button>
               <Button
                 className="!rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 text-white dark:text-white font-semibold shadow-md px-3 py-2"
                 onClick={addTenantBtnHandler}
               >
-                ➕ Add Tenant
+                ➕ {t("addTenant")}
               </Button>
             </div>
           </div>

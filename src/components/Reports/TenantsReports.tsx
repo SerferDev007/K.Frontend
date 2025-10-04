@@ -3,6 +3,7 @@ import { Button } from "@/components/UI/Button";
 import { getAllTenants, getShopsByTenant } from "@/services/tenantApi";
 import { getTenantReports } from "@/services/reportsServices";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 interface Tenant {
   _id: string;
@@ -14,6 +15,7 @@ interface AssignedShop {
 }
 
 const TenantsReports: React.FC = () => {
+  const { t } = useTranslation();
   const [allTenants, setAllTenants] = useState<Tenant[]>([]);
   const [assignedShops, setAssignedShops] = useState<AssignedShop[]>([]);
   const [selectedTenantId, setSelectedTenantId] = useState<string>("");
@@ -92,20 +94,20 @@ const TenantsReports: React.FC = () => {
         className="bg-white p-4 border-4 border-blue-600 rounded-2xl w-full max-w-4xl"
       >
         <h3 className="text-center text-2xl font-bold mb-4 text-gray-900">
-          Download Tenant Reports
+          {t("downloadTenantReport")}
         </h3>
         <div className="flex justify-center gap-3 w-full">
           {/* Tenant Selector */}
           <div>
             <label className="block mb-1 font-medium text-gray-800">
-              Tenant*
+              {t("selectTenant")}
             </label>
             <select
               value={selectedTenantId}
               onChange={(e) => setSelectedTenantId(e.target.value)}
               className="border-2 rounded-xl w-full p-2 text-gray-900 focus:ring-1 focus:ring-blue-500"
             >
-              <option value="">-- All Tenants --</option>
+              <option value="">-- {t("allTenants")} --</option>
               {allTenants.map((tenant) => (
                 <option key={tenant._id} value={tenant._id}>
                   {tenant.tenantName}
@@ -117,7 +119,7 @@ const TenantsReports: React.FC = () => {
           {/* Shop Selector */}
           <div>
             <label className="block mb-1 font-medium text-gray-800">
-              Shop Number*
+              {t("shopNumber")}*
             </label>
             <select
               value={selectedShop}
@@ -125,7 +127,7 @@ const TenantsReports: React.FC = () => {
               className="border-2 rounded-xl w-full p-2 text-gray-900 focus:ring-1 focus:ring-blue-500"
               disabled={!assignedShops.length}
             >
-              <option value="">-- All Shops --</option>
+              <option value="">-- {t("allShops")} --</option>
               {assignedShops.map((shop) => (
                 <option key={shop.shopNo} value={shop.shopNo}>
                   {shop.shopNo}
@@ -137,7 +139,7 @@ const TenantsReports: React.FC = () => {
           {/* Month Selector */}
           <div>
             <label className="block mb-1 font-medium text-gray-800">
-              Month
+              {t("month")}*
             </label>
             <input
               type="number"
@@ -153,7 +155,7 @@ const TenantsReports: React.FC = () => {
           {/* Year Selector */}
           <div>
             <label className="block mb-1 font-medium text-gray-800">
-              Year*
+              {t("year")}*
             </label>
             <input
               type="number"
@@ -173,7 +175,7 @@ const TenantsReports: React.FC = () => {
             className="bg-blue-600 hover:bg-blue-700 text-white !rounded-xl px-6 py-2"
             disabled={loading}
           >
-            {loading ? "Generating..." : "Download Report"}
+            {loading ? t("processing") : t("downloadReport")}
           </Button>
         </div>
       </form>

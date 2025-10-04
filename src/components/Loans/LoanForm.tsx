@@ -6,7 +6,8 @@ import {
   getShopsByTenant,
 } from "@/services/tenantApi";
 import toast from "react-hot-toast";
-import { generateLoanAssignmentReceipt } from "@/services/receiptsApi"; // 👈 import your receipt function
+import { generateLoanAssignmentReceipt } from "@/services/receiptsApi";
+import { useTranslation } from "react-i18next";
 
 interface LoanFormProps {
   onBack: () => void;
@@ -26,6 +27,7 @@ interface Shop {
 }
 
 const AssignLoan: React.FC<LoanFormProps> = ({ onBack, token }) => {
+  const { t } = useTranslation();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [selectedTenantId, setSelectedTenantId] = useState<string>("");
   const [allTenants, setAllTenants] = useState<Tenant[]>([]);
@@ -152,7 +154,7 @@ const AssignLoan: React.FC<LoanFormProps> = ({ onBack, token }) => {
       >
         <div className="text-center">
           <h3 className="font-bold text-2xl !text-black dark:text-gray-100">
-            Assign Loan to Tenant
+            {t("assignLoanToTenant")}
           </h3>
         </div>
         <div className="w-full h-px bg-black m-2 mt-3" />
@@ -161,7 +163,7 @@ const AssignLoan: React.FC<LoanFormProps> = ({ onBack, token }) => {
           {/* Tenant Dropdown */}
           <div className="mt-2">
             <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-              Select Tenant
+              {t("selectTenant")}
             </label>
             <select
               value={selectedTenantId}
@@ -170,7 +172,7 @@ const AssignLoan: React.FC<LoanFormProps> = ({ onBack, token }) => {
                 errors.tenant ? "border-red-500" : "border-gray-200"
               }`}
             >
-              <option value="">-- Select Tenant --</option>
+              <option value="">-- {t("selectTenant")} --</option>
               {allTenants.map((tenant) => (
                 <option key={tenant._id} value={tenant._id}>
                   {tenant.tenantName}
@@ -185,7 +187,7 @@ const AssignLoan: React.FC<LoanFormProps> = ({ onBack, token }) => {
           {/* Shop Dropdown */}
           <div className="mt-2">
             <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-              Select Shop
+              {t("selectShop")}
             </label>
             <select
               name="shopNo"
@@ -194,7 +196,7 @@ const AssignLoan: React.FC<LoanFormProps> = ({ onBack, token }) => {
               }`}
               defaultValue=""
             >
-              <option value="">-- Select Shop --</option>
+              <option value="">-- {t("selectShop")} --</option>
               {tenantShops
                 .filter(
                   (shop) =>
@@ -217,12 +219,12 @@ const AssignLoan: React.FC<LoanFormProps> = ({ onBack, token }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
           <div>
             <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-              Loan Amount
+              {t("loanAmount")}
             </label>
             <input
               type="number"
               name="loanAmount"
-              placeholder="Enter loan amount"
+              placeholder={`${t("enterLoanAmount")}`}
               className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 ${
                 errors.loanAmount ? "border-red-500" : "border-gray-200"
               }`}
@@ -233,12 +235,12 @@ const AssignLoan: React.FC<LoanFormProps> = ({ onBack, token }) => {
           </div>
           <div>
             <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-              Tenure (Months)
+              {t("tenure(Months)")}
             </label>
             <input
               type="number"
               name="tenureMonths"
-              placeholder="Enter tenure in months"
+              placeholder={`${t("enterTenureInMonths")}`}
               className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 ${
                 errors.tenureMonths ? "border-red-500" : "border-gray-200"
               }`}
@@ -253,7 +255,7 @@ const AssignLoan: React.FC<LoanFormProps> = ({ onBack, token }) => {
           {/* Loan Start Date */}
           <div className="mt-2">
             <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-              Loan Start Date
+              {t("loanStartDate")}
             </label>
             <input
               type="date"
@@ -275,14 +277,14 @@ const AssignLoan: React.FC<LoanFormProps> = ({ onBack, token }) => {
             onClick={onBack}
             className="flex-1 !rounded-xl bg-gray-700 hover:bg-gray-900 text-white"
           >
-            Back
+            {t("back")}
           </Button>
           <Button
             type="submit"
             disabled={loading}
             className="flex-1 !rounded-xl bg-blue-600 hover:bg-blue-400 text-white"
           >
-            {loading ? "Processing..." : "Assign Loan"}
+            {loading ? t("processing") : t("assignLoan")}
           </Button>
         </div>
         <div className="mt-3 text-center">
@@ -292,7 +294,7 @@ const AssignLoan: React.FC<LoanFormProps> = ({ onBack, token }) => {
               onClick={handlePrintReceipt}
               className="flex-1 !rounded-xl bg-green-600 hover:bg-green-700 text-white"
             >
-              Print Loan Assigned Receipt
+              {t("printReceipt")}
             </Button>
           )}
         </div>

@@ -3,6 +3,7 @@ import { Button } from "@/components/UI/Button";
 import { toast } from "react-hot-toast";
 import { createTenant } from "@/services/tenantApi";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface TenantFormProps {
   onBack: () => void;
@@ -16,10 +17,10 @@ interface TenantData {
 }
 
 const TenantForm: React.FC<TenantFormProps> = () => {
+  const { t } = useTranslation();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [tenantId, setTenantId] = useState("");
   const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
 
   const validate = (formData: FormData) => {
@@ -101,7 +102,7 @@ const TenantForm: React.FC<TenantFormProps> = () => {
       >
         <div className="text-center">
           <h3 className="font-bold text-2xl text-black dark:text-gray-100">
-            Add Tenant
+            {t("addTenant")}
           </h3>
         </div>
         <div className="w-full h-px bg-black m-2 mt-3" />
@@ -110,12 +111,12 @@ const TenantForm: React.FC<TenantFormProps> = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
           <div>
             <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-              Tenant Name
+              {t("tenantName")}
             </label>
             <input
               type="text"
               name="tenantName"
-              placeholder="Enter tenant name"
+              placeholder={`${t("enterTenantName")}`}
               className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
                 errors.tenantName ? "border-red-500" : "border-gray-200"
               }`}
@@ -126,12 +127,12 @@ const TenantForm: React.FC<TenantFormProps> = () => {
           </div>
           <div>
             <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-              Contact Number
+              {t("contact")}
             </label>
             <input
               type="number"
               name="contactNumber"
-              placeholder="Enter contact number"
+              placeholder={`${t("enterContactName")}`}
               className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
                 errors.contactNumber ? "border-red-500" : "border-gray-200"
               }`}
@@ -148,18 +149,18 @@ const TenantForm: React.FC<TenantFormProps> = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
           <div>
             <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-              Aadhaar Number
+              {t("aadhaarNumber")}
             </label>
             <input
               type="text"
               name="adharNumber"
-              placeholder="Enter Aadhaar number"
+              placeholder={`${t("enterAadhaarNumber")}`}
               className="focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300"
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-              Upload Photo
+              {t("uploadPhoto")}
             </label>
             <input
               type="file"
@@ -177,14 +178,14 @@ const TenantForm: React.FC<TenantFormProps> = () => {
             onClick={backBtnHandler}
             className="flex-1 !rounded-xl bg-gray-700 hover:bg-gray-900 text-white"
           >
-            Back
+            {t("back")}
           </Button>
           <Button
             type="submit"
             disabled={loading}
             className="flex-1 !rounded-xl bg-blue-600 hover:bg-blue-400 text-white"
           >
-            {loading ? "Processing..." : "Submit Tenant"}
+            {loading ? t("processing") : t("addTenant")}
           </Button>
         </div>
       </form>

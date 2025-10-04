@@ -9,6 +9,7 @@ import {
 } from "@/services/tenantApi";
 import toast from "react-hot-toast";
 import { generateReceipt } from "@/services/receiptsApi";
+import { useTranslation } from "react-i18next";
 
 interface PaymentFormProps {
   onBack: () => void;
@@ -93,6 +94,7 @@ interface AssignedShop {
 }
 
 const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
+  const { t } = useTranslation();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [allTenants, setAllTenants] = useState<Tenant[]>([]);
   const [assignedShops, setAssignedShops] = useState<AssignedShop[]>([]);
@@ -108,6 +110,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
   const [payRentChecked, setPayRentChecked] = useState(false);
   const [payEmiChecked, setPayEmiChecked] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+
   const handleTenantDropdownClick = async () => {
     try {
       const res = await getAllTenants();
@@ -358,7 +361,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
       >
         <div className="text-center">
           <h3 className="font-bold text-2xl text-black dark:text-gray-100">
-            Pay Rent & EMI
+            {t("payRent&EMI")}
           </h3>
         </div>
         <div className="w-full h-px bg-black m-2 mt-3" />
@@ -372,7 +375,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
                 checked={payRentChecked}
                 onChange={(e) => setPayRentChecked(e.target.checked)}
               />{" "}
-              Pay Rent
+              {t("payRent")}
             </label>
           </div>
           <div>
@@ -382,7 +385,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
                 checked={payEmiChecked}
                 onChange={(e) => setPayEmiChecked(e.target.checked)}
               />{" "}
-              Pay EMI
+              {t("payEMI")}
             </label>
           </div>
         </div>
@@ -394,7 +397,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
           <div>
             <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-              Select Tenant
+              {t("tenant")} {t("select")}
             </label>
             <select
               value={selectedTenantId}
@@ -404,7 +407,9 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
                 errors.tenantName ? "border-red-500" : "border-gray-200"
               }`}
             >
-              <option value="">-- Select Tenant --</option>
+              <option value="">
+                -- {t("tenant")} {t("select")} --
+              </option>
               {allTenants.map((tenant) => (
                 <option key={tenant._id} value={tenant._id}>
                   {tenant.tenantName}
@@ -418,7 +423,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
 
           <div>
             <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-              Shop Number
+              {t("shopNumber")}
             </label>
             <select
               name="shopNo"
@@ -436,7 +441,10 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
                 errors.shopNo ? "border-red-500" : "border-gray-200"
               }`}
             >
-              <option value="">-- Select Shop --</option>
+              <option value="">
+                {" "}
+                -- {t("shop")} {t("select")} --
+              </option>
               {assignedShops && assignedShops.length > 0 ? (
                 assignedShops.map((shop) => (
                   <option key={shop.shopNo} value={shop.shopNo}>
@@ -444,7 +452,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
                   </option>
                 ))
               ) : (
-                <option disabled>No Shops Assigned</option>
+                <option disabled>{t("noShopsAssigned")}</option>
               )}
             </select>
             {errors.shopNo && (
@@ -461,7 +469,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
               className="!rounded text-white mt-2"
               disabled={penaltyLoading}
             >
-              {penaltyLoading ? "Checking..." : "Check Penalties"}
+              {penaltyLoading ? t("checking") : t("checkPenalties")}
             </Button>
           </div>
         </div>
@@ -472,7 +480,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
               {/* Rent Penalty */}
               <div className="mx-3">
                 <h4 className="font-semibold mb-1 !text-red-700">
-                  Rent Penalty Details:
+                  {t("rent")} {t("penalty")} {t("details")} :
                 </h4>
                 {penaltyDetails
                   .filter((d) => d.type === "rent")
@@ -485,7 +493,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
                     </p>
                   ))}
                 <p className="text-sm font-bold mt-1 bg-green-300 border-2 border-green-900 text-black px-2 py-1 rounded">
-                  Total Rent Penalty: ₹
+                  {t("total")} {t("rent")} {t("penalty")} : ₹
                   {penaltyDetails
                     .filter((d) => d.type === "rent")
                     .reduce((sum, d) => sum + d.penalty, 0)
@@ -496,7 +504,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
               {/* EMI Penalty */}
               <div className="mx-3">
                 <h4 className="font-semibold mb-1 !text-red-700">
-                  Loan Penalty Details:
+                  {t("emi")} {t("penalty")} {t("details")} :
                 </h4>
                 {penaltyDetails
                   .filter((d) => d.type === "emi")
@@ -509,7 +517,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
                     </p>
                   ))}
                 <p className="text-sm font-bold mt-1 bg-green-300 border-2 border-green-900 text-black px-2 py-1 rounded">
-                  Total EMI Penalty: ₹
+                  {t("total")} {t("emi")} {t("penalty")} : ₹
                   {penaltyDetails
                     .filter((d) => d.type === "emi")
                     .reduce((sum, d) => sum + d.penalty, 0)
@@ -523,7 +531,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
           <div>
             <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-              Penalty Amount
+              {t("penalty")} {t("amount")}
             </label>
             <input
               type="number"
@@ -534,7 +542,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
           </div>
           <div>
             <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-              Paid Date
+              {t("paid")} {t("date")}
             </label>
             <input
               type="date"
@@ -548,7 +556,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
           <div>
             <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-              Rent Amount
+              {t("rent")} {t("amount")}
             </label>
             <input
               type="number"
@@ -559,7 +567,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
             />
             {payRentChecked && selectedShop && (
               <p className="text-sm font-bold mt-1 bg-blue-200 border-2 border-blue-700 text-black p-1 rounded">
-                Total Rent (Pending + Current): ₹
+                {t("total")} {t("rent")} ({t("pending")} + {t("current")}): ₹
                 {(() => {
                   const pendingMonths = penaltyDetails.filter(
                     (d) => d.type === "rent"
@@ -572,7 +580,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
           </div>
           <div>
             <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-              EMI Amount
+              {t("emi")} {t("amount")}
             </label>
             <input
               type="number"
@@ -586,7 +594,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
             />
             {payEmiChecked && selectedShop && (
               <p className="text-sm font-bold mt-1 bg-blue-200 border-2 border-blue-700 text-black p-1 rounded">
-                Total EMI (Pending + Current): ₹
+                {t("total")} {t("emi")} ({t("pending")} + {t("current")}): ₹
                 {(() => {
                   const activeLoan = selectedShop.loans?.find(
                     (l) => l.isLoanActive
@@ -605,11 +613,11 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
 
         <div>
           <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-            Details
+            {t("details")}
           </label>
           <textarea
             name="details"
-            placeholder="Any details"
+            placeholder={`${t("any")} ${t("details")}`}
             className="focus-visible:ring-1 border-2 border-gray-200 rounded-xl w-full p-2 resize-none text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300"
             rows={1}
           />
@@ -621,13 +629,13 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
             onClick={onBack}
             className="flex-1 !rounded-xl bg-gray-700 hover:bg-gray-900 text-white"
           >
-            Back
+            {t("back")}
           </Button>
           <Button
             type="submit"
             className="flex-1 !rounded-xl bg-blue-600 hover:bg-blue-400 text-white"
           >
-            {loading ? "Processing..." : "Submit Payment"}
+            {loading ? t("processing") : t("submitPayment")}
           </Button>
         </div>
 
@@ -638,7 +646,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onBack, token }) => {
               onClick={handlePrintReceipt}
               className="!rounded-xl bg-green-600 hover:bg-green-800 text-white"
             >
-              Print Receipt(s)
+              {t("printReceipt")}
             </Button>
           </div>
         )}

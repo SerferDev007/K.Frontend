@@ -7,6 +7,7 @@ import {
 } from "@/services/tenantApi";
 import toast from "react-hot-toast";
 import { useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 interface ShopFormProps {
   onBack: () => void;
@@ -27,12 +28,12 @@ interface Tenant {
 }
 
 const ShopForm: React.FC<ShopFormProps> = ({ onBack, token }) => {
+  const { t } = useTranslation();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [selectedTenantId, setSelectedTenantId] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [allTenants, setAllTenants] = useState<Tenant[]>([]);
   const [availableShops, setAvailableShops] = useState<string[]>([]);
-
   const formRef = useRef<HTMLFormElement>(null);
 
   // Fetch tenants once
@@ -128,7 +129,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ onBack, token }) => {
         >
           <div className="text-center">
             <h3 className="font-bold text-2xl text-black dark:text-gray-100">
-              Assign Shop to Tenant
+              {t("assignShop")}
             </h3>
           </div>
           <div className="w-full h-px bg-black m-2 mt-3" />
@@ -136,7 +137,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ onBack, token }) => {
           {/* Tenant Dropdown */}
           <div className="mt-2">
             <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-              Select Tenant
+              {t("tenant")} {t("select")}
             </label>
             <select
               value={selectedTenantId}
@@ -145,7 +146,9 @@ const ShopForm: React.FC<ShopFormProps> = ({ onBack, token }) => {
                 errors.tenantName ? "border-red-500" : "border-gray-200"
               }`}
             >
-              <option value="">-- Select Tenant --</option>
+              <option value="">
+                -- {t("tenant")} {t("select")} --
+              </option>
               {allTenants.map((tenant) => (
                 <option key={tenant._id} value={tenant._id}>
                   {tenant.tenantName}
@@ -162,7 +165,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ onBack, token }) => {
             {/* Shop Number */}
             <div>
               <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-                Shop Number
+                {t("shopNumber")}
               </label>
               <select
                 name="shopNo"
@@ -171,7 +174,9 @@ const ShopForm: React.FC<ShopFormProps> = ({ onBack, token }) => {
                 }`}
                 defaultValue=""
               >
-                <option value="">-- Select Shop --</option>
+                <option value="">
+                  -- {t("shop")} {t("select")} --
+                </option>
                 {availableShops.map((shop) => (
                   <option key={shop} value={shop}>
                     {shop}
@@ -186,7 +191,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ onBack, token }) => {
             {/* Agreement Start */}
             <div>
               <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-                Agreement Start
+                {t("agreementStart")}
               </label>
               <input
                 type="date"
@@ -207,12 +212,12 @@ const ShopForm: React.FC<ShopFormProps> = ({ onBack, token }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
             <div>
               <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-                Rent Amount
+                {t("rent")} {t("amount")}
               </label>
               <input
                 type="number"
                 name="rentAmount"
-                placeholder="Enter rent amount"
+                placeholder={`${t("payRentAmount")}`}
                 className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
                   errors.rentAmount ? "border-red-500" : "border-gray-200"
                 }`}
@@ -223,12 +228,12 @@ const ShopForm: React.FC<ShopFormProps> = ({ onBack, token }) => {
             </div>
             <div>
               <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-                Deposit Amount
+                {t("depositAmount")}
               </label>
               <input
                 type="number"
                 name="deposit"
-                placeholder="Enter deposit amount"
+                placeholder={`${t("enterDepositAmount")}`}
                 className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
                   errors.deposit ? "border-red-500" : "border-gray-200"
                 }`}
@@ -242,7 +247,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ onBack, token }) => {
           {/* Agreement File Upload */}
           <div className="mt-2">
             <label className="block text-sm font-medium mb-1 text-black dark:text-gray-200">
-              Upload Agreement (PDF only, max 2MB)
+              {t("agreement")} (PDF {t("only")}, max 2MB)
             </label>
             <input
               type="file"
@@ -259,14 +264,14 @@ const ShopForm: React.FC<ShopFormProps> = ({ onBack, token }) => {
               onClick={onBack}
               className="flex-1 !rounded-xl bg-gray-700 hover:bg-gray-900 text-white"
             >
-              Back
+              {t("back")}
             </Button>
             <Button
               type="submit"
               disabled={loading}
               className="flex-1 !rounded-xl bg-blue-600 hover:bg-blue-400 text-white"
             >
-              {loading ? "Processing..." : "Assign Shop"}
+              {loading ? t("processing") : t("assignShop")}
             </Button>
           </div>
         </form>

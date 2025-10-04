@@ -3,6 +3,7 @@ import { getAllTenants } from "@/services/tenantApi";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { getUnpaidTenantsLastMonth } from "@/lib/utils"; // ✅ shared util
+import { useTranslation } from "react-i18next";
 
 interface RentPayment {
   year: number;
@@ -32,6 +33,7 @@ interface Tenant {
 }
 
 const TenantsDetails = () => {
+  const { t } = useTranslation();
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [filteredTenants, setFilteredTenants] = useState<Tenant[]>([]);
   const [searchName, setSearchName] = useState("");
@@ -122,7 +124,7 @@ const TenantsDetails = () => {
         <div className="w-full">
           <input
             type="text"
-            placeholder="Search by tenant name..."
+            placeholder={`${t("searchByTenantName")}`}
             value={searchName}
             onChange={(e) => setSearchName(e.target.value)}
             className="focus-visible:ring-1 border-2 border-gray-300 rounded-xl w-1/2 p-2 text-lg"
@@ -140,7 +142,7 @@ const TenantsDetails = () => {
               }
               className="w-5 h-5 me-2 text-blue-600 bg-gray-100 border-gray-300 rounded-sm"
             />
-            <span className="text-black font-semibold">Unpaid Rent</span>
+            <span className="text-black font-semibold">{t("unpaidRent")}</span>
           </label>
 
           <label className="flex items-center gap-2 cursor-pointer">
@@ -150,7 +152,7 @@ const TenantsDetails = () => {
               onChange={() => setFilterType(filterType === "emi" ? "" : "emi")}
               className="w-5 h-5 me-2 text-blue-600 bg-gray-100 border-gray-300 rounded-sm"
             />
-            <span className="text-black font-semibold">Unpaid EMI</span>
+            <span className="text-black font-semibold">{t("unpaidEMI")}</span>
           </label>
         </div>
       </div>
@@ -180,7 +182,7 @@ const TenantsDetails = () => {
             disabled={currentPage === 1}
             className="px-3 py-1 border rounded disabled:opacity-50"
           >
-            Prev
+            {t("prev")}
           </button>
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
@@ -198,13 +200,13 @@ const TenantsDetails = () => {
             disabled={currentPage === totalPages}
             className="px-3 py-1 border rounded disabled:opacity-50"
           >
-            Next
+            {t("next")}
           </button>
         </div>
       )}
 
       {filteredTenants.length === 0 && (
-        <p className="text-gray-700 mt-6 text-lg">No tenants found.</p>
+        <p className="text-gray-700 mt-6 text-lg"> {t("noTenantsFound")}</p>
       )}
     </div>
   );
