@@ -4,9 +4,13 @@ import { Navigate, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const Profile = () => {
-  const { isAuthenticated } = useAuth();
-
+  const { isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
+
+  if (loading) {
+    return <div className="text-white">Checking authentication...</div>;
+  }
+
   if (!isAuthenticated) {
     toast.loading("Please login first");
     return <Navigate to="/login" replace />;

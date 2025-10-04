@@ -4,7 +4,11 @@ import { Navigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const TenantPage = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return <div className="text-white">Checking authentication...</div>;
+  }
 
   if (!isAuthenticated) {
     toast.loading("Please login first");

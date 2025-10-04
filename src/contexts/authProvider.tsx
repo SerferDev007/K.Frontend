@@ -11,6 +11,7 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true); // 👈 new state
 
   // Load user + token on first render
   useEffect(() => {
@@ -20,6 +21,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
     const cookieToken = Cookies.get("authToken");
     if (cookieToken) setToken(cookieToken);
+
+    setLoading(false); // 👈 finished checking
   }, []);
 
   // 🔹 Login
@@ -61,6 +64,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         login,
         logout,
         token,
+        loading, // 👈 exposed in context
       }}
     >
       {children}
