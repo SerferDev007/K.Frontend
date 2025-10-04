@@ -66,6 +66,8 @@ export const addDonation = async (
     credentials: "include",
   });
 
+  console.log(`donation`, data.date);
+
   const result = await res.json(); // read once
 
   if (!res.ok) {
@@ -220,7 +222,11 @@ export const addExpense = async (
   let body: BodyInit;
   let headers: HeadersInit | undefined;
 
-  if (data.billImage) {
+  if (
+    data.billImage &&
+    data.billImage instanceof File &&
+    data.billImage.size > 0
+  ) {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
@@ -234,8 +240,18 @@ export const addExpense = async (
     body = formData;
   } else {
     headers = { "Content-Type": "application/json" };
-    body = JSON.stringify(data);
+    body = JSON.stringify({
+      date: data.date,
+      category: data.category,
+      subCategory: data.subCategory,
+      payeeName: data.payeeName,
+      payeeContact: data.payeeContact,
+      amount: data.amount,
+      details: data.details,
+    });
   }
+
+  console.log("➡️ Sending expense payload:", data);
 
   const res = await fetch(`${BASE_URL}/api/expense`, {
     method: "POST",
@@ -245,6 +261,8 @@ export const addExpense = async (
   });
 
   const result = await res.json();
+
+  console.log("⬅️ Expense API response:", result);
 
   if (!res.ok) {
     throw new Error(result.message || "Failed to add expense");

@@ -188,7 +188,7 @@ export const FloatingNav = ({
             </div>
 
             {/* ✅ Language Switcher */}
-            <div className="ml-4">
+            <div className="ml-4 fixed right-8">
               {i18n.language === "en" ? (
                 <button
                   onClick={() => i18n.changeLanguage("mr")}

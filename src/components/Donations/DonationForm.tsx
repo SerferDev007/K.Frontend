@@ -3,6 +3,7 @@ import { Button } from "@/components/UI/Button";
 import { getDonationCategories } from "@/services/financeServices";
 import toast from "react-hot-toast";
 import { addDonation } from "@/services/financeServices";
+import { useTranslation } from "react-i18next";
 
 interface DonationFormProps {
   onBack: () => void;
@@ -19,6 +20,7 @@ interface DonationData {
 }
 
 const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
+  const { t } = useTranslation();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [categories, setCategories] = useState<string[]>([]);
   const [subCategories, setSubCategories] = useState<string[]>([]);
@@ -138,14 +140,14 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
       >
         <div className="flex items-center justify-between">
           <h3 className="font-bold text-2xl !text-black dark:text-gray-100">
-            Add Donation
+            {t("addDonation")}
           </h3>
           <Button
             type="button"
             onClick={onBack}
             className="!rounded-2xl text-white bg-blue-900"
           >
-            Back
+            {t("back")}
           </Button>
         </div>
         <div className="w-full h-px bg-gray-300 m-2 mt-3" />
@@ -154,7 +156,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
           <div>
             <label className="block text-sm font-medium mb-1 !text-black dark:text-gray-200">
-              Category
+              {t("category")}
             </label>
             <select
               name="category"
@@ -165,7 +167,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
               }`}
             >
               <option value="" disabled hidden>
-                Select Category
+                {t("selectCategory")}
               </option>
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
@@ -179,7 +181,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
           </div>
           <div>
             <label className="block text-sm font-medium mb-1 !text-black dark:text-gray-200">
-              Sub Category
+              {t("subCategory")}
             </label>
             <select
               name="subCategory"
@@ -188,8 +190,8 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
                 errors.subCategory ? "border-red-500" : "border-gray-200"
               }`}
             >
-              <option value="" disabled hidden>
-                Select Sub Category
+              <option value="" disabled>
+                {t("subCategory")} {t("select")}
               </option>
               {subCategories.map((sub) => (
                 <option key={sub} value={sub}>
@@ -207,12 +209,12 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
         <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
           <div>
             <label className="block text-sm font-medium mb-1 !text-black dark:text-gray-200">
-              Donor Name
+              {t("donorName")}
             </label>
             <input
               type="text"
               name="donorName"
-              placeholder="Enter donor name"
+              placeholder={`${t("donorName")} ${t("enter")}`}
               className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
                 errors.donorName ? "border-red-500" : "border-gray-200"
               }`}
@@ -223,12 +225,12 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
           </div>
           <div>
             <label className="block text-sm font-medium mb-1 !text-black dark:text-gray-200">
-              Donor Contact
+              {t("contact")}
             </label>
             <input
               type="number"
               name="donorContact"
-              placeholder="Enter donor contact"
+              placeholder={`${t("contact")} ${t("enter")}`}
               className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
                 errors.donorContact ? "border-red-500" : "border-gray-200"
               }`}
@@ -243,12 +245,12 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
           {/* Amount */}
           <div>
             <label className="block text-sm font-medium mb-1 !text-black dark:text-gray-200">
-              Amount
+              {t("amount")}
             </label>
             <input
               type="number"
               name="amount"
-              placeholder="Enter amount"
+              placeholder={`${t("amount")} ${t("enter")}`}
               className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300 ${
                 errors.amount ? "border-red-500" : "border-gray-200"
               }`}
@@ -260,7 +262,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
           {/* Date */}
           <div>
             <label className="block text sm font-medium mb-1 !text-black dark:text-gray-200">
-              Date
+              {t("date")}
             </label>
             <input
               type="date"
@@ -278,11 +280,11 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
         {/* Details */}
         <div className="mt-2">
           <label className="block text-sm font-medium mb-1 !text-black dark:text-gray-200">
-            Details
+            {t("details")}
           </label>
           <textarea
             name="details"
-            placeholder="Enter details"
+            placeholder={`${t("details")} ${t("enter")}`}
             className="focus-visible:ring-1 border-2 border-gray-200 rounded-xl w-full p-2 resize-none text-gray-900 dark:text-gray-100 placeholder-gray-700 dark:placeholder-gray-300"
             rows={3}
           />
@@ -295,13 +297,13 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
             onClick={onBack}
             className="flex-1 !rounded-xl bg-gray-700 hover:bg-gray-900 text-white"
           >
-            Back
+            {t("back")}
           </Button>
           <Button
             type="submit"
             className="flex-1 !rounded-xl bg-blue-600 hover:bg-blue-400 text-white"
           >
-            Submit Donation
+            {t("submitDonation")}
           </Button>
         </div>
 
@@ -310,12 +312,12 @@ const DonationForm: React.FC<DonationFormProps> = ({ onBack }) => {
           (errorMessage && (
             <div className="flex justify-center mt-4">
               {successMessage && (
-                <p className="bg-green-100 text-green-800 px-4 py-2 rounded-lg shadow-md text-center font-medium animate-fadeIn">
+                <p className="!bg-green-100 !text-green-800 px-4 py-2 rounded-lg shadow-md text-center font-medium animate-fadeIn">
                   {successMessage}
                 </p>
               )}
               {errorMessage && (
-                <p className="bg-red-100 text-red-800 px-4 py-2 rounded-lg shadow-md text-center font-medium animate-fadeIn">
+                <p className="!bg-red-100 !text-red-800 px-4 py-2 rounded-lg shadow-md text-center font-medium animate-fadeIn">
                   {errorMessage}
                 </p>
               )}

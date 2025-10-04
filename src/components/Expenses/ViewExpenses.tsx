@@ -8,6 +8,7 @@ import {
 } from "@/services/financeServices";
 import toast from "react-hot-toast";
 import { Button } from "../UI/Button";
+import { useTranslation } from "react-i18next";
 
 // Utility to format date to dd/mm/yyyy
 const formatDate = (dateStr: string) => {
@@ -19,6 +20,7 @@ const formatDate = (dateStr: string) => {
 };
 
 const ViewExpenses = () => {
+  const { t } = useTranslation();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [filteredExpenses, setFilteredExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -206,14 +208,14 @@ const ViewExpenses = () => {
       <div className="flex flex-col justify-around md:flex-row gap-4 mb-4">
         <div>
           <label className="block mb-1 text-white font-medium">
-            Filter by Category
+            {t("filterByCategory")} :{" "}
           </label>
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
             className="border-2 ms-2 border-gray-300 rounded-xl p-2 w-full md:w-64"
           >
-            <option value="">All Categories</option>
+            <option value="">{t("allCategories")}</option>
             {categories.map((cat) => (
               <option key={cat} value={cat}>
                 {cat}
@@ -223,7 +225,7 @@ const ViewExpenses = () => {
         </div>
         <div>
           <label className="block mb-1 text-white font-medium">
-            Filter by Month
+            {t("filterByMonth")} :
           </label>
           <input
             type="month"
@@ -236,7 +238,7 @@ const ViewExpenses = () => {
 
       {/* Total Expense */}
       <div className="text-center mb-4 font-bold text-lg text-white bg-red-600 w-1/4 shadow-black">
-        Total Expense: ₹{totalExpense.toLocaleString()}
+        {t("totalExpenses")} : ₹{totalExpense.toLocaleString()}
       </div>
 
       {/* Table */}
@@ -244,16 +246,16 @@ const ViewExpenses = () => {
         <table className="w-full border-collapse border !border-gray-900 text-left table-fixed">
           <thead className="text-center !bg-red-100 border !border-gray-900">
             <tr>
-              <th className="border px-2 py-2 w-[4%]">Sr.No.</th>
-              <th className="border px-2 py-2 w-[8%]">Date</th>
-              <th className="border px-2 py-2 w-[10%]">Category</th>
-              <th className="border px-2 py-2 w-[10%]">Sub-Category</th>
-              <th className="border px-2 py-2 w-[21%]">Paid To</th>
-              <th className="border px-2 py-2 w-[9%]">Contact</th>
-              <th className="border px-2 py-2 w-[6%]">Amount</th>
-              <th className="border px-2 py-2 w-[18%]">Details</th>
-              <th className="border px-2 py-2 w-[4%]">Bill</th>
-              <th className="border px-2 py-2 w-[10%]">Actions</th>
+              <th className="border px-2 py-2 w-[5%]">{t("srNo")}</th>
+              <th className="border px-2 py-2 w-[8%]">{t("date")}</th>
+              <th className="border px-2 py-2 w-[10%]">{t("category")}</th>
+              <th className="border px-2 py-2 w-[10%]">{t("subCategory")}</th>
+              <th className="border px-2 py-2 w-[21%]">{t("donorName")}</th>
+              <th className="border px-2 py-2 w-[9%]">{t("contact")}</th>
+              <th className="border px-2 py-2 w-[7%]">{t("amount")}</th>
+              <th className="border px-2 py-2 w-[18%]">{t("details")}</th>
+              <th className="border px-2 py-2 w-[4%]">{t("bill")}</th>
+              <th className="border px-2 py-2 w-[12%]">{t("actions")}</th>
             </tr>
           </thead>
           <tbody>
@@ -429,13 +431,13 @@ const ViewExpenses = () => {
                         onClick={() => handleSaveClick(expense._id)}
                         className="bg-green-500 text-white rounded px-2"
                       >
-                        Save
+                        {t("save")}
                       </Button>
                       <Button
                         onClick={handleCancelClick}
                         className="bg-gray-500 text-white rounded px-2"
                       >
-                        Cancel
+                        {t("cancel")}
                       </Button>
                     </div>
                   ) : (
@@ -444,13 +446,13 @@ const ViewExpenses = () => {
                         onClick={() => handleEditClick(expense)}
                         className="bg-blue-500 text-white rounded px-2"
                       >
-                        Edit
+                        {t("edit")}
                       </Button>
                       <Button
                         onClick={() => handleDeleteClick(expense._id)}
                         className="bg-red-500 text-white rounded px-2"
                       >
-                        Delete
+                        {t("delete")}
                       </Button>
                     </div>
                   )}

@@ -8,6 +8,7 @@ import {
 } from "@/services/financeServices";
 import toast from "react-hot-toast";
 import { Button } from "../UI/Button";
+import { useTranslation } from "react-i18next";
 
 // Utility to format date
 const formatDate = (dateStr: string) => {
@@ -19,6 +20,7 @@ const formatDate = (dateStr: string) => {
 };
 
 const ViewDonations = () => {
+  const { t } = useTranslation();
   const [donations, setDonations] = useState<Donation[]>([]);
   const [filteredDonations, setFilteredDonations] = useState<Donation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -172,15 +174,16 @@ const ViewDonations = () => {
       {/* Filters */}
       <div className="flex flex-col justify-around md:flex-row gap-4 mb-4">
         <div>
-          <label className="block mb-1 text-white font-medium">
-            Filter by Category{" "}
+          <label className="block mb-1 text-white font-bold">
+            {" "}
+            {t("filterByCategory")} :{" "}
           </label>
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
             className="border-2 ms-2 border-gray-300 rounded-xl p-2 w-full md:w-64"
           >
-            <option value="">All Categories</option>
+            <option value="">{t("allCategories")}</option>
             {categories.map((cat) => (
               <option key={cat} value={cat}>
                 {cat}
@@ -190,8 +193,8 @@ const ViewDonations = () => {
         </div>
 
         <div>
-          <label className="block mb-1 text-white font-medium">
-            Filter by Month
+          <label className="block mb-1 text-white font-bold">
+            {t("filterByMonth")} :
           </label>
           <input
             type="month"
@@ -204,7 +207,7 @@ const ViewDonations = () => {
 
       {/* Total Donation */}
       <div className="text-center mb-4 font-bold text-lg bg-blue-600 w-1/4 text-white shadow-black">
-        Total Donation: ₹{totalDonation.toLocaleString()}
+        {t("totalDonation")} : ₹{totalDonation.toLocaleString()}/-
       </div>
 
       {/* Table */}
@@ -212,15 +215,15 @@ const ViewDonations = () => {
         <table className="w-full border-collapse border !border-gray-900 text-left table-fixed">
           <thead className="text-center !bg-blue-100 border !border-gray-900 ">
             <tr>
-              <th className="border px-2 py-2 w-[4%]">Sr.No.</th>
-              <th className="border px-2 py-2 w-[10%]">Date</th>
-              <th className="border px-2 py-2 w-[10%]">Category</th>
-              <th className="border px-2 py-2 w-[10%]">Sub-Category</th>
-              <th className="border px-2 py-2 w-[21%]">Donor Name</th>
-              <th className="border px-2 py-2 w-[9%]">Contact</th>
-              <th className="border px-2 py-2 w-[8%]">Amount</th>
-              <th className="border px-2 py-2 w-[18%]">Details</th>
-              <th className="border px-2 py-2 w-[10%]">Actions</th>
+              <th className="border px-2 py-2 w-[5%]">{t("srNo")}</th>
+              <th className="border px-2 py-2 w-[8%]">{t("date")}</th>
+              <th className="border px-2 py-2 w-[10%]">{t("category")}</th>
+              <th className="border px-2 py-2 w-[10%]">{t("subCategory")}</th>
+              <th className="border px-2 py-2 w-[21%]">{t("donorName")}</th>
+              <th className="border px-2 py-2 w-[9%]">{t("contact")}</th>
+              <th className="border px-2 py-2 w-[7%]">{t("amount")}</th>
+              <th className="border px-2 py-2 w-[18%]">{t("details")}</th>
+              <th className="border px-2 py-2 w-[12%]">{t("actions")}</th>
             </tr>
           </thead>
           <tbody>
@@ -390,13 +393,13 @@ const ViewDonations = () => {
                         onClick={() => handleSaveClick(donation._id)}
                         className="bg-green-500 text-white rounded px-2"
                       >
-                        Save
+                        {t("save")}
                       </Button>
                       <Button
                         onClick={handleCancelClick}
                         className="bg-gray-500 text-white rounded px-2"
                       >
-                        Cancel
+                        {t("cancel")}
                       </Button>
                     </div>
                   ) : (
@@ -405,13 +408,13 @@ const ViewDonations = () => {
                         onClick={() => handleEditClick(donation)}
                         className="bg-blue-500 text-white rounded px-2"
                       >
-                        Edit
+                        {t("edit")}
                       </Button>
                       <Button
                         onClick={() => handleDeleteClick(donation._id)}
                         className="bg-red-500 text-white rounded px-2"
                       >
-                        Delete
+                        {t("delete")}
                       </Button>
                     </div>
                   )}
@@ -430,7 +433,7 @@ const ViewDonations = () => {
             disabled={currentPage === 1}
             className="px-3 py-1 border bg-blue-100 rounded disabled:opacity-50"
           >
-            Prev
+            {t("prev")}
           </button>
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
@@ -448,7 +451,7 @@ const ViewDonations = () => {
             disabled={currentPage === totalPages}
             className="px-3 py-1 bg-blue-100 border rounded disabled:opacity-50"
           >
-            Next
+            {t("next")}
           </button>
         </div>
       )}

@@ -2,12 +2,14 @@ import { useState, useEffect, type FormEvent } from "react";
 import { Button } from "@/components/UI/Button";
 import { getExpenseCategories, addExpense } from "@/services/financeServices";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 interface ExpenseFormProps {
   onBack: () => void;
 }
 
 const ExpenseForm: React.FC<ExpenseFormProps> = ({ onBack }) => {
+  const { t } = useTranslation();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [categories, setCategories] = useState<string[]>([]);
   const [subCategories, setSubCategories] = useState<string[]>([]);
@@ -74,10 +76,10 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onBack }) => {
 
     // Build a properly typed payload after validation of required fields
     const payload = {
-      date: formData.get("date")!.toString(),
-      category: formData.get("category")!.toString(),
-      subCategory: formData.get("subCategory")!.toString(),
-      payeeName: formData.get("payeeName")!.toString(),
+      date: formData.get("date")?.toString(),
+      category: formData.get("category")?.toString(),
+      subCategory: formData.get("subCategory")?.toString(),
+      payeeName: formData.get("payeeName")?.toString(),
       payeeContact: formData.get("payeeContact")?.toString(),
       amount: Number(formData.get("amount")),
       details: formData.get("details")?.toString(),
@@ -118,14 +120,14 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onBack }) => {
       >
         <div className="flex items-center justify-between">
           <h3 className="font-bold text-2xl text-black dark:text-gray-100">
-            Add Expense
+            {t("addExpense")}
           </h3>
           <Button
             type="button"
             onClick={onBack}
             className="!rounded-2xl text-white bg-blue-900"
           >
-            Back
+            {t("back")}
           </Button>
         </div>
         <div className="w-full h-px bg-gray-300 m-2 mt-3" />
@@ -133,7 +135,10 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onBack }) => {
         {/* Category & SubCategory */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
           <div>
-            <label className="block text-sm font-medium mb-1">Category</label>
+            <label className="block text-sm font-medium mb-1">
+              {" "}
+              {t("category")}
+            </label>
             <select
               name="category"
               value={selectedCategory}
@@ -143,7 +148,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onBack }) => {
               }`}
             >
               <option value="" disabled hidden>
-                Select Category
+                {t("selectCategory")}
               </option>
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
@@ -157,7 +162,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onBack }) => {
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">
-              Sub Category
+              {t("subCategory")}
             </label>
             <select
               name="subCategory"
@@ -166,8 +171,8 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onBack }) => {
                 errors.subCategory ? "border-red-500" : "border-gray-200"
               }`}
             >
-              <option value="" disabled hidden>
-                Select Sub Category
+              <option value="" disabled>
+                {t("subCategory")} {t("select")}
               </option>
               {subCategories.map((sub) => (
                 <option key={sub} value={sub}>
@@ -184,11 +189,13 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onBack }) => {
         {/* Payee Name & Contact */}
         <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
           <div>
-            <label className="block text-sm font-medium mb-1">Payee Name</label>
+            <label className="block text-sm font-medium mb-1">
+              {t("payeeName")}
+            </label>
             <input
               type="text"
               name="payeeName"
-              placeholder="Enter payee name"
+              placeholder={`${t("payeeName")} ${t("enter")}`}
               className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 ${
                 errors.payeeName ? "border-red-500" : "border-gray-200"
               }`}
@@ -199,12 +206,12 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onBack }) => {
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">
-              Payee Contact
+              {t("contact")}
             </label>
             <input
               type="number"
               name="payeeContact"
-              placeholder="Enter payee contact"
+              placeholder={`${t("contact")} ${t("enter")}`}
               className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 ${
                 errors.payeeContact ? "border-red-500" : "border-gray-200"
               }`}
@@ -218,11 +225,13 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onBack }) => {
         {/* Amount & Date */}
         <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
           <div>
-            <label className="block text-sm font-medium mb-1">Amount</label>
+            <label className="block text-sm font-medium mb-1">
+              {t("amount")}
+            </label>
             <input
               type="number"
               name="amount"
-              placeholder="Enter amount"
+              placeholder={`${t("amount")} ${t("enter")}`}
               className={`focus-visible:ring-1 border-2 rounded-xl w-full p-2 ${
                 errors.amount ? "border-red-500" : "border-gray-200"
               }`}
@@ -232,7 +241,9 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onBack }) => {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Date</label>
+            <label className="block text-sm font-medium mb-1">
+              {t("date")}
+            </label>
             <input
               type="date"
               name="date"
@@ -248,10 +259,12 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onBack }) => {
 
         {/* Details */}
         <div className="mt-2">
-          <label className="block text-sm font-medium mb-1">Details</label>
+          <label className="block text-sm font-medium mb-1">
+            {t("details")}
+          </label>
           <textarea
             name="details"
-            placeholder="Enter details"
+            placeholder={`${t("details")} ${t("enter")}`}
             className="focus-visible:ring-1 border-2 border-gray-200 rounded-xl w-full p-2 resize-none"
             rows={3}
           />
@@ -260,7 +273,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onBack }) => {
         {/* Receipt Upload */}
         <div className="mt-2">
           <label className="block text-sm font-medium mb-1">
-            Upload Receipt (max 1MB)
+            {t("uploadBill")} (1MB)
           </label>
           <input
             type="file"
@@ -277,13 +290,13 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onBack }) => {
             onClick={onBack}
             className="flex-1 !rounded-xl bg-gray-700 hover:bg-gray-900 text-white"
           >
-            Back
+            {t("back")}
           </Button>
           <Button
             type="submit"
             className="flex-1 !rounded-xl bg-blue-600 hover:bg-blue-400 text-white"
           >
-            Submit Expense
+            {t("submitExpense")}
           </Button>
         </div>
         {/* Messages */}
@@ -291,12 +304,12 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onBack }) => {
           (errorMessage && (
             <div className="flex justify-center mt-4">
               {successMessage && (
-                <p className="bg-green-100 text-green-800 px-4 py-2 rounded-lg shadow-md text-center font-medium animate-fadeIn">
+                <p className="!bg-green-100 !text-green-800 px-4 py-2 rounded-lg shadow-md text-center font-medium animate-fadeIn">
                   {successMessage}
                 </p>
               )}
               {errorMessage && (
-                <p className="bg-red-100 text-red-800 px-4 py-2 rounded-lg shadow-md text-center font-medium animate-fadeIn">
+                <p className="!bg-red-100 !text-red-800 px-4 py-2 rounded-lg shadow-md text-center font-medium animate-fadeIn">
                   {errorMessage}
                 </p>
               )}
