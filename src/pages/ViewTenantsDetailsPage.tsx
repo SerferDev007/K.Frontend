@@ -81,7 +81,7 @@ const ViewTenantsDetailsPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-start justify-center h-screen max-w-full sm:max-w-8xl mx-auto bg-black/30 backdrop-blur-md rounded-xl shadow-lg px-5">
+    <div className="flex flex-col items-start justify-center p-5 max-w-full sm:max-w-8xl mx-auto bg-black/30 backdrop-blur-md rounded-xl shadow-lg px-5">
       {/* Tenant Info Card */}
       <div className="w-full flex justify-between bg-blue-300 border border-gray-300 dark:border-gray-700 rounded-2xl shadow-md ps-4 pt-2 mb-4">
         <div>
