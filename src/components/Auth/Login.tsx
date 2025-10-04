@@ -42,24 +42,24 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen py-10">
+    <div className="w-full flex justify-center ">
       <form
         onSubmit={handleLogin}
-        className="md:px-8 w-full max-w-md p-3 rounded-lg border-5 border-amber-400
+        className="md:px-8 w-full max-w-md p-3 rounded-lg border-5 border-blue-600
         bg-white dark:bg-neutral-900
         text-gray-900 dark:text-gray-100
         shadow-sm"
       >
         <div className="text-center">
-          <h3 className="dark:text-white font-bold text-2xl head-text-shadow head-text-stroke">
+          <h3 className="text-black dark:text-white font-bold text-2xl">
             Shree Kshetra Khandeshwar
           </h3>
-          <h4 className="dark:text-white font-bold text-2xl head-text-shadow head-text-stroke">
+          <h4 className="text-black dark:text-white font-bold text-2xl">
             Kusalamb
           </h4>
         </div>
 
-        <div className="w-full h-px bg-gray-300 my-4" />
+        <div className="w-full h-px bg-black my-4" />
 
         {/* Email */}
         <div className="relative flex items-center mt-2 mb-2 border-2 rounded-xl border-gray-200">
@@ -99,7 +99,7 @@ const Login = () => {
           <Button
             type="submit"
             disabled={loading}
-            className="w-full !rounded-xl bg-amber-400 hover:bg-orange-400 text-gray-900 disabled:cursor-not-allowed"
+            className="w-full !rounded-xl bg-blue-600 hover:bg-blue-400 text-white disabled:cursor-not-allowed"
           >
             {loading ? "Logging in..." : "Login"}
           </Button>

@@ -101,15 +101,16 @@ export const FloatingNav = ({
       >
         <div className="mt-2">
           <p className="font-bold flex flex-col">
-            <span className="text-4xl text-white">
+            <span className="text-2xl text-white">
               Shree Kshetra Khandeshwar
             </span>
-            <span className="text-gray-200">Kusalamb</span>
+            <span className="text-gray-200">
+              Kusalamb Tq. Patoda, Dist. Beed
+            </span>
           </p>
         </div>
         <div>
           <div className="flex">
-            {" "}
             {/* Nav items */}
             {navItems.map((item) => (
               <NavLink
@@ -117,7 +118,7 @@ export const FloatingNav = ({
                 to={item.link}
                 className={({ isActive }) =>
                   cn(
-                    "p-2  rounded-sm text-white hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1 no-underline",
+                    "p-2 me-3 rounded-sm text-white hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300 flex items-center space-x-1 no-underline",
                     isActive && "font-bold bg-blue-100 text-black rounded-md"
                   )
                 }
@@ -180,6 +181,7 @@ export const FloatingNav = ({
                 </div>
               )}
             </div>
+            <div></div>
           </div>
         </div>
       </motion.div>
