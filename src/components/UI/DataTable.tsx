@@ -20,23 +20,27 @@ interface DataTableProps<T> {
 
 export const DataTable = <T,>({ data, columns }: DataTableProps<T>) => {
   return (
-    <ShadcnTable>
-      <TableHeader>
-        <TableRow>
-          {columns.map((col, idx) => (
-            <TableHead key={idx}>{col.header}</TableHead>
-          ))}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {data.map((row, idx) => (
-          <TableRow key={idx}>
-            {columns.map((col, cidx) => (
-              <TableCell key={cidx}>{col.accessor(row)}</TableCell>
+    <div className="border">
+      <ShadcnTable className="min-w-full">
+        <TableHeader>
+          <TableRow className=" border-1 border-gray-300  bg-gray-200">
+            {columns.map((col, idx) => (
+              <TableHead key={idx} className="font-bold text-left px-4 py-2">
+                {col.header}
+              </TableHead>
             ))}
           </TableRow>
-        ))}
-      </TableBody>
-    </ShadcnTable>
+        </TableHeader>
+        <TableBody>
+          {data.map((row, idx) => (
+            <TableRow key={idx} className="border-1 border-gray-200 px-4 py-2">
+              {columns.map((col, cidx) => (
+                <TableCell key={cidx}>{col.accessor(row)}</TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </ShadcnTable>
+    </div>
   );
 };

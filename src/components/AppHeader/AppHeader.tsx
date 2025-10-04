@@ -9,11 +9,11 @@ const AppHeader = () => {
     <div className="flex justify-between max-w-8xl z-[5000]">
       <FloatingNav
         navItems={[
-          { name: "Dashboard", link: route.DASHBOARD },
-          { name: "Donations", link: route.DONATIONS },
-          { name: "Expenses", link: route.EXPENSES },
-          { name: "Tenants", link: route.TENANTS },
-          { name: "Reports", link: route.REPORTS },
+          { name: "dashboard", link: route.DASHBOARD },
+          { name: "donations", link: route.DONATIONS },
+          { name: "expenses", link: route.EXPENSES },
+          { name: "tenants", link: route.TENANTS },
+          { name: "reports", link: route.REPORTS },
         ]}
         isLogin={isAuthenticated}
         loginPath={route.LOGIN}

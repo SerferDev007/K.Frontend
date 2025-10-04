@@ -3,7 +3,8 @@ import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import App from "./App.tsx";
 import { AuthProvider } from "./contexts/authProvider.tsx";
-import { Toaster } from "react-hot-toast"; // ✅ make sure you import this
+import { Toaster } from "react-hot-toast";
+import "./i18n";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>

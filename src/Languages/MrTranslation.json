@@ -1,0 +1,35 @@
+{
+  "ShreeKshetraKhandeshwar": "श्री क्षेत्र खंडेश्वर",
+  "kusalambTqPatodaDistBeed": "कुसलंब ता. पाटोडा जि. बीड",
+
+  "dashboard": "डॅशबोर्ड",
+  "donations": "देणग्या",
+  "expenses": "खर्च",
+  "tenants": "भाडेकरू",
+  "reports": "अहवाल",
+
+  "login": "लॉगिन",
+  "logout": "लॉगआउट",
+
+  "selectYear": "वर्ष निवडा",
+  "totalTenants": "एकूण भाडेकरू",
+  "totalDonations": "एकूण देणगी",
+  "totalExpenses": "एकूण खर्च",
+  "netBalance": "निव्वळ शिल्लक",
+  "pendingEMI": "बाकी कर्ज हाफता",
+  "pendingRent": "बाकी भाडे",
+  "monthlyDonationsVsExpenses": "मासिक देणग्या विरुद्ध खर्च",
+  "expensesCategoryBreakdown": "खर्चाचे वर्गीकरण",
+  "recentExpenses": "अलीकडील खर्च",
+  "recentDonations": "अलीकडील देणग्या",
+  "date": "दिनांक",
+  "category": "वर्ग",
+  "amount": "रुपये",
+  "donor": "दाता",
+  "tenantName": "भाडेकरूचे नाव",
+  "contact": "संपर्क",
+  "amountDue": "बाकी रक्कम",
+  "download": "डाउनलोड",
+  "tenant": "भाडेकरू",
+  "report": "अहवाल"
+}

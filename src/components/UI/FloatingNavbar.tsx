@@ -7,6 +7,7 @@ import {
   useMotionValueEvent,
 } from "motion/react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 type NavItem = {
   name: string;
@@ -31,6 +32,7 @@ export const FloatingNav = ({
   onLogout?: () => void;
   userName?: string;
 }) => {
+  const { t } = useTranslation();
   const { scrollY } = useScroll();
   const [visible, setVisible] = useState(true);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -38,6 +40,9 @@ export const FloatingNav = ({
   // dropdown state
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // ✅ i18n hook
+  const { i18n } = useTranslation();
 
   const armHideTimer = (ms: number) => {
     if (hideTimer.current) clearTimeout(hideTimer.current);
@@ -102,15 +107,15 @@ export const FloatingNav = ({
         <div className="mt-2">
           <p className="font-bold flex flex-col">
             <span className="text-2xl text-white">
-              Shree Kshetra Khandeshwar
+              {t("ShreeKshetraKhandeshwar")}
             </span>
             <span className="text-gray-200">
-              Kusalamb Tq. Patoda, Dist. Beed
+              {t("kusalambTqPatodaDistBeed")}
             </span>
           </p>
         </div>
         <div>
-          <div className="flex">
+          <div className="flex items-center">
             {/* Nav items */}
             {navItems.map((item) => (
               <NavLink
@@ -125,7 +130,7 @@ export const FloatingNav = ({
                 style={{ textDecoration: "none" }}
               >
                 {item.icon && <span>{item.icon}</span>}
-                <span className="text-lg">{item.name}</span>
+                <span className="text-lg">{t(item.name)}</span>
               </NavLink>
             ))}
             <div className="m-auto ps-2">
@@ -140,7 +145,7 @@ export const FloatingNav = ({
                   }
                   style={{ textDecoration: "none" }}
                 >
-                  <span className="text-lg">Login</span>
+                  <span className="text-lg">{t("login")}</span>
                 </NavLink>
               ) : (
                 <div className="relative" ref={dropdownRef}>
@@ -181,7 +186,25 @@ export const FloatingNav = ({
                 </div>
               )}
             </div>
-            <div></div>
+
+            {/* ✅ Language Switcher */}
+            <div className="ml-4">
+              {i18n.language === "en" ? (
+                <button
+                  onClick={() => i18n.changeLanguage("mr")}
+                  className="px-2 py-1 text-sm text-black rounded hover:bg-gray-200"
+                >
+                  भाषा : मराठी
+                </button>
+              ) : (
+                <button
+                  onClick={() => i18n.changeLanguage("en")}
+                  className="px-2 py-1 text-sm  text-black rounded hover:bg-gray-200"
+                >
+                  Lang : EN
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </motion.div>

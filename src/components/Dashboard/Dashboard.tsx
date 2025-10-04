@@ -28,6 +28,7 @@ import {
   TrendingUp,
   AlertTriangle,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface CardProps {
   title: string;
@@ -60,6 +61,7 @@ const Dashboard = () => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [donations, setDonations] = useState<Donation[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -107,12 +109,16 @@ const Dashboard = () => {
     0
   );
   const netBalance = totalDonations - totalExpenses;
-  const tenantsWithPending = tenants.filter((t) => {
+  const tenantsWithPendingRent = tenants.filter((t) => {
     const hasPendingRent = t.shopsAllotted?.some((shop) =>
       shop.rentPaymentHistory?.some(
         (r) => r.year.toString() === yearFilter && !r.isPaid
       )
     );
+
+    return hasPendingRent;
+  });
+  const tenantsWithPendingEMI = tenants.filter((t) => {
     const hasPendingEmi = t.shopsAllotted?.some((shop) =>
       shop.loans?.some((loan) =>
         loan.emiPaymentHistory?.some(
@@ -120,9 +126,10 @@ const Dashboard = () => {
         )
       )
     );
-    return hasPendingRent || hasPendingEmi;
+    return hasPendingEmi;
   });
-  const pendingRentCount = tenantsWithPending.length;
+  const pendingRentCount = tenantsWithPendingRent.length;
+  const pendingEMICount = tenantsWithPendingEMI.length;
 
   const monthlyData = useMemo(() => {
     const months = Array.from({ length: 12 }, (_, i) => ({
@@ -165,7 +172,9 @@ const Dashboard = () => {
     <div className=" space-y-8 w-full p-5 min-h-screen rounded-xl">
       {/* Year Filter */}
       <div className="flex items-center gap-4 bg-white p-4 rounded-xl shadow-sm">
-        <label className="font-semibold text-gray-600">Select Year:</label>
+        <label className="font-semibold text-gray-600">
+          {t("selectYear")}:
+        </label>
         <input
           type="number"
           min={2025}
@@ -177,33 +186,39 @@ const Dashboard = () => {
       </div>
 
       {/* Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
         <Card
-          title="Total Tenants"
+          title={t("totalTenants")}
           value={totalTenants}
           icon={<Users />}
           color="blue"
         />
         <Card
-          title="Total Donations"
+          title={t("totalDonations")}
           value={`₹${totalDonations.toLocaleString()}`}
           icon={<TrendingUp />}
           color="green"
         />
         <Card
-          title="Total Expenses"
+          title={t("totalExpenses")}
           value={`₹${totalExpenses.toLocaleString()}`}
           icon={<TrendingDown />}
           color="red"
         />
         <Card
-          title="Net Balance"
+          title={t("netBalance")}
           value={`₹${netBalance.toLocaleString()}`}
           icon={<Wallet />}
           color="#6366F1"
         />
         <Card
-          title="Pending Rent/EMI"
+          title={t("pendingEMI")}
+          value={pendingEMICount}
+          icon={<AlertTriangle />}
+          color="gray"
+        />
+        <Card
+          title={t("pendingRent")}
           value={pendingRentCount}
           icon={<AlertTriangle />}
           color="gray"
@@ -214,7 +229,7 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="bg-white p-6 rounded-2xl shadow-md">
           <h3 className="font-semibold mb-4 text-center text-gray-700 uppercase tracking-wide">
-            Monthly Donations vs Expenses
+            {t("monthlyDonationsVsExpenses")}
           </h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={monthlyData}>
@@ -241,7 +256,7 @@ const Dashboard = () => {
 
         <div className="bg-white p-6 rounded-2xl shadow-md">
           <h3 className="font-semibold mb-4 text-center text-gray-700 uppercase tracking-wide">
-            Expense Category Breakdown
+            {t("expensesCategoryBreakdown")}
           </h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
@@ -266,66 +281,128 @@ const Dashboard = () => {
       </div>
 
       {/* Tables */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="bg-white p-6 rounded-2xl shadow-md">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <div className="bg-white p-3 rounded-2xl shadow-md">
           <h3 className="font-semibold mb-4 text-center text-gray-700 uppercase tracking-wide">
-            Recent Expenses
+            {t("recentExpenses")}
           </h3>
           <DataTable<Expense>
             data={filteredExpenses.slice(-5).reverse()}
             columns={[
               {
-                header: "Date",
+                header: `${t("date")}`,
                 accessor: (row: Expense) =>
-                  new Date(row.date).toLocaleDateString(),
+                  new Date(row.date).toLocaleDateString("en-GB"),
               },
-              { header: "Category", accessor: (row: Expense) => row.category },
               {
-                header: "Amount",
+                header: `${t("category")}`,
+                accessor: (row: Expense) => row.category,
+              },
+              {
+                header: `${t("amount")}`,
                 accessor: (row: Expense) => `₹${row.amount}`,
               },
             ]}
           />
         </div>
 
-        <div className="bg-white p-6 rounded-2xl shadow-md">
+        <div className="bg-white p-3 rounded-2xl shadow-md">
           <h3 className="font-semibold mb-4 text-center text-gray-700 uppercase tracking-wide">
-            Recent Donations
+            {t("recentDonations")}
           </h3>
           <DataTable<Donation>
             data={filteredDonations.slice(-5).reverse()}
             columns={[
               {
-                header: "Date",
+                header: `${t("date")}`,
                 accessor: (row: Donation) =>
-                  new Date(row.date).toLocaleDateString(),
+                  new Date(row.date).toLocaleDateString("en-GB"),
               },
-              { header: "Donor", accessor: (row: Donation) => row.donorName },
               {
-                header: "Amount",
+                header: `${t("donor")}`,
+                accessor: (row: Donation) => row.donorName,
+              },
+              {
+                header: `${t("amount")}`,
                 accessor: (row: Donation) => `₹${row.amount}`,
               },
             ]}
           />
         </div>
 
-        <div className="bg-white p-6 rounded-2xl shadow-md">
+        <div className="bg-white p-3 rounded-2xl shadow-md">
           <h3 className="font-semibold mb-4 text-center text-gray-700 uppercase tracking-wide">
-            Pending Rent/EMI
+            {t("pendingEMI")}
           </h3>
           <DataTable<TenantData>
-            data={tenantsWithPending}
+            data={tenantsWithPendingEMI}
             columns={[
               {
-                header: "Tenant Name",
+                header: `${t("tenantName")}`,
                 accessor: (row: TenantData) => row.tenantName,
               },
               {
-                header: "Contact",
+                header: `${t("contact")}`,
                 accessor: (row: TenantData) => row.mobileNo,
               },
               {
-                header: "Amount Due",
+                header: `${t("amountDue")}`,
+                accessor: (row: TenantData) => {
+                  const pendingRent =
+                    row.shopsAllotted?.reduce((sum, shop) => {
+                      const rentDue =
+                        shop.rentPaymentHistory?.reduce(
+                          (s, r) =>
+                            r.year.toString() === yearFilter && !r.isPaid
+                              ? s + (shop.rentAmount || 0) + (r.penalty || 0)
+                              : s,
+                          0
+                        ) || 0;
+                      return sum + rentDue;
+                    }, 0) || 0;
+
+                  const pendingEmi =
+                    row.shopsAllotted?.reduce((sum, shop) => {
+                      const emiDue =
+                        shop.loans?.reduce((s, loan) => {
+                          const emi =
+                            loan.emiPaymentHistory?.reduce(
+                              (s2, e) =>
+                                e.year.toString() === yearFilter && !e.isEmiPaid
+                                  ? s2 +
+                                    (loan.emiPerMonth || 0) +
+                                    (e.penalty || 0)
+                                  : s2,
+                              0
+                            ) || 0;
+                          return s + emi;
+                        }, 0) || 0;
+                      return sum + emiDue;
+                    }, 0) || 0;
+
+                  return `₹${pendingRent + pendingEmi}`;
+                },
+              },
+            ]}
+          />
+        </div>
+        <div className="bg-white p-3 rounded-2xl shadow-md">
+          <h3 className="font-semibold mb-4 text-center text-gray-700 uppercase tracking-wide">
+            {t("pendingRent")}
+          </h3>
+          <DataTable<TenantData>
+            data={tenantsWithPendingRent}
+            columns={[
+              {
+                header: `${t("tenantName")}`,
+                accessor: (row: TenantData) => row.tenantName,
+              },
+              {
+                header: `${t("contact")}`,
+                accessor: (row: TenantData) => row.mobileNo,
+              },
+              {
+                header: `${t("amountDue")}`,
                 accessor: (row: TenantData) => {
                   const pendingRent =
                     row.shopsAllotted?.reduce((sum, shop) => {
