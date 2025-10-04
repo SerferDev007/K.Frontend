@@ -89,7 +89,7 @@ const TenantsReports: React.FC = () => {
       <form
         ref={formRef}
         onSubmit={handleSubmit}
-        className="bg-white p-4 border-4 rounded-2xl w-full max-w-4xl"
+        className="bg-white p-4 border-4 border-blue-600 rounded-2xl w-full max-w-4xl"
       >
         <h3 className="text-center text-2xl font-bold mb-4 text-gray-900">
           Download Tenant Reports

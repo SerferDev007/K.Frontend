@@ -35,7 +35,7 @@ const FinanceReports: React.FC = () => {
     <div className="flex flex-col justify-center items-center gap-5 mt-4 w-full">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-4 border-4 rounded-2xl w-full max-w-4xl"
+        className="bg-white p-4 border-4 border-blue-600 rounded-2xl w-full max-w-4xl"
       >
         <h3 className="text-center text-2xl font-bold">
           Download Finance Report
