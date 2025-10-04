@@ -1,15 +1,15 @@
 import Dashboard from "../components/Dashboard/Dashboard";
-// import { useAuth } from "@/hooks/useAuth";
-// import { Navigate } from "react-router-dom";
-// import toast from "react-hot-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { Navigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const DashboardPage = () => {
-  // const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
 
-  // if (!isAuthenticated) {
-  //   toast.loading("Please login first");
-  //   return <Navigate to="/login" replace />;
-  // }
+  if (!isAuthenticated) {
+    toast.loading("Please login first");
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <>

@@ -42,7 +42,7 @@ const Login = () => {
   };
 
   return (
-    <div className="w-full flex justify-center ">
+    <div className="w-full flex justify-center mt-5 ">
       <form
         onSubmit={handleLogin}
         className="md:px-8 w-full max-w-md p-3 rounded-lg border-5 border-blue-600

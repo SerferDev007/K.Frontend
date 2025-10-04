@@ -81,7 +81,7 @@ const FinanceReports: React.FC = () => {
             </label>
             <input
               type="number"
-              min={2000}
+              min={2025}
               max={2100}
               placeholder={new Date().getFullYear().toString()}
               value={year}

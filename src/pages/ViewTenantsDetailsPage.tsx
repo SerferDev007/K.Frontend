@@ -1,8 +1,9 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getTenantDetails } from "@/services/tenantApi";
 import toast from "react-hot-toast";
 import { Button } from "@/components/UI/Button";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Loan {
   emiPerMonth: number;
@@ -43,7 +44,7 @@ const ViewTenantsDetailsPage = () => {
   const { tenantId } = useParams<{ tenantId: string }>();
   const [tenant, setTenant] = useState<Tenant | null>(null);
   const [loading, setLoading] = useState(true);
-
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -62,6 +63,11 @@ const ViewTenantsDetailsPage = () => {
 
     fetchTenant();
   }, [tenantId]);
+
+  if (!isAuthenticated) {
+    toast.loading("Please login first");
+    return <Navigate to="/login" replace />;
+  }
 
   if (loading) return <p className="text-center mt-6">Loading...</p>;
   if (!tenant) return <p className="text-center mt-6">Tenant not found</p>;

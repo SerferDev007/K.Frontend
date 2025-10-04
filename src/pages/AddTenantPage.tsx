@@ -1,19 +1,18 @@
 import TenantForm from "@/components/Tenants/TenantForm";
 import { useAuth } from "@/hooks/useAuth";
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Navigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const AddTenant = () => {
   const [showTenantForm, setShowTenantForm] = useState(true);
-  const navigate = useNavigate();
+
   const { isAuthenticated } = useAuth();
 
-  // Redirect if not authenticated
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/");
-    }
-  }, [isAuthenticated, navigate]);
+  if (!isAuthenticated) {
+    toast.loading("Please login first");
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <div className="flex items-start justify-center min-h-screen max-w-full sm:max-w-8xl mx-auto bg-black/30 backdrop-blur-md rounded-xl shadow-lg p-4">
